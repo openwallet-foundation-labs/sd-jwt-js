@@ -29,8 +29,10 @@ export const createKeyPair = () => {
       _sd: ['firstname', 'id', 'data2'],
       data: {
         _sd: ['list'],
+        _sd_decoy: 2,
         list: {
           _sd: [0, 2],
+          _sd_decoy: 1,
           0: {
             _sd: ['r'],
           },

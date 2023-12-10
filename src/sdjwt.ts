@@ -1,4 +1,5 @@
 import { generateSalt, hash } from './crypto';
+import { createDecoy } from './decoy';
 import { Disclosure } from './disclosure';
 import { SDJWTException } from './error';
 import { Jwt } from './jwt';
@@ -6,6 +7,7 @@ import { KBJwt } from './kbjwt';
 import {
   DisclosureFrame,
   Hasher,
+  SD_DECOY,
   SD_DIGEST,
   SD_LIST_KEY,
   SD_SEPARATOR,
@@ -141,7 +143,7 @@ export class SDJwt<
   }
 
   public keys(): string[] {
-    return listKeys(this.getClaims());
+    return listKeys(this.getClaims()).sort();
   }
 
   public presentableKeys(): string[] {
@@ -149,7 +151,7 @@ export class SDJwt<
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
     const { disclosureKeymap } = unpack(this.jwt?.payload, this.disclosures);
-    return Object.keys(disclosureKeymap);
+    return Object.keys(disclosureKeymap).sort();
   }
 
   public getClaims<T>() {
@@ -175,7 +177,6 @@ export const listKeys = (obj: any, prefix: string = '') => {
   return keys;
 };
 
-// TODO: add decoy option
 export const pack = <T extends object>(
   claims: T,
   disclosureFrame?: DisclosureFrame<T>,
@@ -187,13 +188,12 @@ export const pack = <T extends object>(
     };
   }
 
-  const sd = disclosureFrame[SD_DIGEST];
-
-  let packedClaims: any;
-  let disclosures: any[] = [];
+  const sd = disclosureFrame[SD_DIGEST] ?? [];
+  const decoyCount = disclosureFrame[SD_DECOY] ?? 0;
 
   if (claims instanceof Array) {
-    packedClaims = [];
+    const packedClaims: any[] = [];
+    const disclosures: any[] = [];
     const recursivelyPackedClaims: any = {};
 
     for (const key in disclosureFrame) {
@@ -202,7 +202,7 @@ export const pack = <T extends object>(
         // @ts-ignore
         const packed = pack(claims[idx], disclosureFrame[idx]);
         recursivelyPackedClaims[idx] = packed.packedClaims;
-        disclosures = disclosures.concat(packed.disclosures);
+        disclosures.push(...packed.disclosures);
       }
     }
 
@@ -211,7 +211,7 @@ export const pack = <T extends object>(
         ? recursivelyPackedClaims[i]
         : claims[i];
       // @ts-ignore
-      if (sd?.includes(i)) {
+      if (sd.includes(i)) {
         const salt = generateSalt(16);
         const disclosure = new Disclosure([salt, claim]);
         const digest = disclosure.digest(hash);
@@ -221,44 +221,54 @@ export const pack = <T extends object>(
         packedClaims.push(claim);
       }
     }
+    for (let j = 0; j < decoyCount; j++) {
+      const decoyDigest = createDecoy();
+      packedClaims.push({ '...': decoyDigest });
+    }
     return { packedClaims, disclosures };
-  } else {
-    packedClaims = {};
-    const recursivelyPackedClaims: any = {};
-    for (const key in disclosureFrame) {
-      if (key !== SD_DIGEST) {
-        const packed = pack(
-          // @ts-ignore
-          claims[key],
-          disclosureFrame[key],
-        );
-        recursivelyPackedClaims[key] = packed.packedClaims;
-        disclosures = disclosures.concat(packed.disclosures);
-      }
+  }
+
+  const packedClaims: any = {};
+  const disclosures: any[] = [];
+  const recursivelyPackedClaims: any = {};
+  for (const key in disclosureFrame) {
+    if (key !== SD_DIGEST) {
+      const packed = pack(
+        // @ts-ignore
+        claims[key],
+        disclosureFrame[key],
+      );
+      recursivelyPackedClaims[key] = packed.packedClaims;
+      disclosures.push(...packed.disclosures);
     }
+  }
 
-    const _sd: string[] = [];
+  const _sd: string[] = [];
 
-    for (const key in claims) {
-      const claim = recursivelyPackedClaims[key]
-        ? recursivelyPackedClaims[key]
-        : claims[key];
-      // @ts-ignore
-      if (sd?.includes(key)) {
-        const salt = generateSalt(16);
-        const disclosure = new Disclosure([salt, key, claim]);
-        const digest = disclosure.digest(hash);
+  for (const key in claims) {
+    const claim = recursivelyPackedClaims[key]
+      ? recursivelyPackedClaims[key]
+      : claims[key];
+    // @ts-ignore
+    if (sd.includes(key)) {
+      const salt = generateSalt(16);
+      const disclosure = new Disclosure([salt, key, claim]);
+      const digest = disclosure.digest(hash);
 
-        _sd.push(digest);
-        disclosures.push(disclosure);
-      } else {
-        packedClaims[key] = claim;
-      }
+      _sd.push(digest);
+      disclosures.push(disclosure);
+    } else {
+      packedClaims[key] = claim;
     }
+  }
 
-    if (_sd.length > 0) {
-      packedClaims[SD_DIGEST] = _sd.sort();
-    }
+  for (let j = 0; j < decoyCount; j++) {
+    const decoyDigest = createDecoy();
+    _sd.push(decoyDigest);
+  }
+
+  if (_sd.length > 0) {
+    packedClaims[SD_DIGEST] = _sd.sort();
   }
   return { packedClaims, disclosures };
 };

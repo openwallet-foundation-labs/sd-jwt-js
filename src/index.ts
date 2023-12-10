@@ -90,7 +90,7 @@ export class SDJwtInstance {
   public present<T>(encodedSDJwt: string, presentationKeys?: string[]): string {
     if (!presentationKeys) return encodedSDJwt;
     const sdjwt = SDJwt.fromEncode(encodedSDJwt);
-    return sdjwt.present(presentationKeys);
+    return sdjwt.present(presentationKeys.sort());
   }
 
   public async verify(

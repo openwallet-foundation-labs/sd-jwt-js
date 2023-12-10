@@ -1,21 +1,13 @@
+import { Base64Url } from './base64url';
 import { generateSalt, hash } from './crypto';
-import { SDJWTException } from './error';
 import { Hasher, SaltGenerator } from './type';
 
 export const createDecoy = (
-  count: number,
   hasher: Hasher = hash,
   saltGenerator: SaltGenerator = generateSalt,
 ): string => {
-  if (count <= 0) {
-    throw new SDJWTException('Decoy count must be more than zero');
-  }
-
-  let decoy: string = saltGenerator(16);
-
-  for (let i = 0; i < count; i++) {
-    decoy = hasher(decoy);
-  }
-
+  const salt = saltGenerator(16);
+  const digest = hasher(salt);
+  const decoy = Base64Url.encode(digest);
   return decoy;
 };
