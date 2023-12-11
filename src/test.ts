@@ -1,5 +1,6 @@
 import sdjwt from './index';
 import Crypto from 'node:crypto';
+import { DisclosureFrame } from './type';
 
 export const createKeyPair = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -8,48 +9,46 @@ export const createKeyPair = () => {
 
 (async () => {
   const { privateKey, publicKey } = createKeyPair();
-  const encodedSdjwt = await sdjwt.issue(
-    {
+  const claims = {
+    firstname: 'John',
+    lastname: 'Doe',
+    ssn: '123-45-6789',
+    id: '1234',
+    data: {
       firstname: 'John',
       lastname: 'Doe',
       ssn: '123-45-6789',
-      id: '1234',
-      data: {
-        firstname: 'John',
-        lastname: 'Doe',
-        ssn: '123-45-6789',
-        list: [{ r: '1' }, 'b', 'c'],
-      },
-      data2: {
-        hi: 'bye',
-      },
+      list: [{ r: '1' }, 'b', 'c'],
     },
-    privateKey,
-    {
-      _sd: ['firstname', 'id', 'data2'],
-      data: {
-        _sd: ['list'],
-        _sd_decoy: 2,
-        list: {
-          _sd: [0, 2],
-          _sd_decoy: 1,
-          0: {
-            _sd: ['r'],
-          },
+    data2: {
+      hi: 'bye',
+    },
+  };
+  const disclosureFrame: DisclosureFrame<typeof claims> = {
+    _sd: ['firstname', 'id', 'data2'],
+    data: {
+      _sd: ['list'],
+      _sd_decoy: 2,
+      list: {
+        _sd: [0, 2],
+        _sd_decoy: 1,
+        0: {
+          _sd: ['r'],
         },
       },
-      data2: {
-        _sd: ['hi'],
-      },
     },
-  );
+    data2: {
+      _sd: ['hi'],
+    },
+  };
+  const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame);
   console.log(encodedSdjwt);
   const validated = await sdjwt.validate(encodedSdjwt, publicKey);
   console.log(validated);
 
   const decoded = sdjwt.decode(encodedSdjwt);
-  console.log({ keys: decoded.keys() });
-  const payloads = decoded.getClaims();
+  console.log({ keys: decoded.keys() }); // wip
+  const payloads = decoded.getClaims(); // wip
   const keys = decoded.presentableKeys();
   console.log({
     payloads: JSON.stringify(payloads, null, 2),
@@ -62,6 +61,15 @@ export const createKeyPair = () => {
     '================================================================',
   );
 
-  const res = decoded.present(['firstname', 'id']);
+  const presentationFrame = ['firstname', 'id'];
+  const res = sdjwt.present(encodedSdjwt, presentationFrame);
   console.log(res);
+
+  const requiredClaimKeys = ['firstname', 'id', 'data.ssn'];
+  const verified = await sdjwt.verify(
+    encodedSdjwt,
+    publicKey,
+    requiredClaimKeys,
+  );
+  console.log(verified);
 })();
