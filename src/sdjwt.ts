@@ -282,7 +282,6 @@ export const unpackArray = (
   const unpackedArray: any[] = [];
   arr.forEach((item, idx) => {
     if (item instanceof Object) {
-      // if Array item is { '...': <SD_HASH_DIGEST> }
       if (item[SD_LIST_KEY]) {
         const hash = item[SD_LIST_KEY];
         const disclosed = map[hash];
@@ -299,7 +298,6 @@ export const unpackArray = (
           Object.assign(keys, disclosureKeys);
         }
       } else {
-        // unpack recursively
         const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
           item,
           map,
@@ -327,8 +325,6 @@ export const unpackObj = (
     }
 
     for (const key in obj) {
-      // if obj property value is an object
-      // recursively unpack
       if (
         key !== SD_DIGEST &&
         key !== SD_LIST_KEY &&
