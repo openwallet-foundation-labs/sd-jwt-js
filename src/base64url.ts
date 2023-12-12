@@ -1,19 +1,10 @@
-import { Buffer } from 'node:buffer';
+import { base64url } from 'jose';
 
-const textDecoder = new TextDecoder();
+const encode = (input: string | Uint8Array): string => base64url.encode(input);
 
-const toString = (input: string | Uint8Array): string => {
-  if (input instanceof Uint8Array) {
-    return textDecoder.decode(input);
-  }
-  return input;
+const decode = (input: string | Uint8Array): string => {
+  return new TextDecoder().decode(base64url.decode(input));
 };
-
-const encode = (input: string | Uint8Array): string =>
-  Buffer.from(toString(input)).toString('base64url');
-
-const decode = (input: string | Uint8Array): string =>
-  Buffer.from(toString(input), 'base64').toString();
 
 export const Base64Url = {
   encode,

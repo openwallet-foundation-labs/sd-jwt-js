@@ -1,13 +1,13 @@
 import { Base64Url } from './base64url';
-import { generateSalt, hash } from './crypto';
+import { generateSalt, digest } from './crypto';
 import { Hasher, SaltGenerator } from './type';
 
-export const createDecoy = (
-  hasher: Hasher = hash,
+export const createDecoy = async (
+  hasher: Hasher = digest,
   saltGenerator: SaltGenerator = generateSalt,
-): string => {
+): Promise<string> => {
   const salt = saltGenerator(16);
-  const digest = hasher(salt);
+  const digest = await hasher(salt);
   const decoy = Base64Url.encode(digest);
   return decoy;
 };

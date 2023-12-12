@@ -1,14 +1,29 @@
-import { generateSalt, hash } from './crypto';
+import { generateSalt, digest } from './crypto';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
-import { DisclosureFrame, SDJWTConfig, SD_JWT_TYP, kbPayload } from './type';
+import {
+  DisclosureFrame,
+  KB_JWT_TYP,
+  SDJWTConfig,
+  SD_JWT_TYP,
+  kbPayload,
+} from './type';
 import { KeyLike } from 'jose';
+
+export * from './type';
+export * from './sdjwt';
+export * from './kbjwt';
+export * from './crypto';
+export * from './jwt';
+export * from './base64url';
+export * from './decoy';
+export * from './disclosure';
 
 export const defaultConfig: Required<SDJWTConfig> = {
   omitDecoy: false,
   omitTyp: false,
-  hasher: hash,
+  hasher: digest,
   saltGenerator: generateSalt,
 };
 
@@ -35,7 +50,7 @@ export class SDJwtInstance {
   ): Promise<KBJwt> {
     const kbJwt = new KBJwt({
       header: {
-        typ: 'kb+jwt',
+        typ: KB_JWT_TYP,
         alg,
       },
       payload,
@@ -58,7 +73,7 @@ export class SDJwtInstance {
       };
     },
   ): Promise<string> {
-    const { packedClaims, disclosures } = pack(payload, disclosureFrame);
+    const { packedClaims, disclosures } = await pack(payload, disclosureFrame);
     const alg = options?.sign_alg ?? SDJwtInstance.DEFAULT_ALG;
     const header = this.userConfig.omitTyp ? { alg } : { alg, typ: SD_JWT_TYP };
     const jwt = new Jwt({
@@ -87,7 +102,10 @@ export class SDJwtInstance {
     return sdJwt.encodeSDJwt();
   }
 
-  public present<T>(encodedSDJwt: string, presentationKeys?: string[]): string {
+  public async present(
+    encodedSDJwt: string,
+    presentationKeys?: string[],
+  ): Promise<string> {
     if (!presentationKeys) return encodedSDJwt;
     const sdjwt = SDJwt.fromEncode(encodedSDJwt);
     return sdjwt.present(presentationKeys.sort());
@@ -113,7 +131,7 @@ export class SDJwtInstance {
     }
 
     if (requiredClaimKeys) {
-      const keys = sdjwt.keys();
+      const keys = await sdjwt.keys();
       const missingKeys = requiredClaimKeys.filter((k) => !keys.includes(k));
       if (missingKeys.length > 0) {
         return false;

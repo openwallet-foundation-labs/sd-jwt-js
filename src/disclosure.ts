@@ -44,9 +44,9 @@ export class Disclosure<T> {
       : [this.salt, this.value];
   }
 
-  public digest(hasher: Hasher) {
+  public async digest(hasher: Hasher): Promise<string> {
     if (!this._digest) {
-      const hash = hasher(this.encode());
+      const hash = await hasher(this.encode());
       this._digest = Base64Url.encode(hash);
     }
 

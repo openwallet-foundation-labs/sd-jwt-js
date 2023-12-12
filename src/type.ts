@@ -5,19 +5,20 @@ export const SD_LIST_KEY = '...';
 export const SD_DIGEST = '_sd';
 export const SD_JWT_TYP = 'sd+jwt';
 export const SD_DECOY = '_sd_decoy';
+export const KB_JWT_TYP = 'kb+jwt';
 
 export type SDJWTCompact = string;
 
 export type SDJWTConfig = {
   omitDecoy?: boolean;
   omitTyp?: boolean;
-  hasher?: (data: string) => string;
-  saltGenerator?: (length: number) => string;
+  hasher?: Hasher;
+  saltGenerator?: SaltGenerator;
 };
 
-export type kbHeader = { typ: string; alg: string };
+export type kbHeader = { typ: 'kb+jwt'; alg: string };
 export type kbPayload = {
-  iat: string;
+  iat: number;
   aud: string;
   nonce: string;
   _sd_hash: string;
@@ -29,7 +30,7 @@ export type OrPromise<T> = T | Promise<T>;
 
 export type Signer = (data: string) => OrPromise<Uint8Array>;
 export type Verifier = (data: string, sig: Uint8Array) => OrPromise<boolean>;
-export type Hasher = (data: string) => string;
+export type Hasher = (data: string) => Promise<string>;
 export type SaltGenerator = (length: number) => string;
 
 type NonNever<T> = {

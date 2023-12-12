@@ -1,4 +1,4 @@
-import { generateSalt, hash } from './crypto';
+import { generateSalt, digest as hash } from './crypto';
 import { createDecoy } from './decoy';
 import { Disclosure } from './disclosure';
 import { SDJWTException } from './error';
@@ -97,13 +97,16 @@ export class SDJwt<
     });
   }
 
-  public present(keys: string[]): string {
+  public async present(keys: string[]): Promise<string> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
 
-    const hashmap = createHashMapping(this.disclosures);
-    const { disclosureKeymap } = unpack(this.jwt?.payload, this.disclosures);
+    const hashmap = await createHashMapping(this.disclosures);
+    const { disclosureKeymap } = await unpack(
+      this.jwt?.payload,
+      this.disclosures,
+    );
 
     const presentableKeys = Object.keys(disclosureKeymap);
     const missingKeys = keys.filter((k) => !presentableKeys.includes(k));
@@ -142,23 +145,26 @@ export class SDJwt<
     return data.join(SD_SEPARATOR);
   }
 
-  public keys(): string[] {
-    return listKeys(this.getClaims()).sort();
+  public async keys(): Promise<string[]> {
+    return listKeys(await this.getClaims()).sort();
   }
 
-  public presentableKeys(): string[] {
+  public async presentableKeys(): Promise<string[]> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
-    const { disclosureKeymap } = unpack(this.jwt?.payload, this.disclosures);
+    const { disclosureKeymap } = await unpack(
+      this.jwt?.payload,
+      this.disclosures,
+    );
     return Object.keys(disclosureKeymap).sort();
   }
 
-  public getClaims<T>() {
+  public async getClaims<T>(): Promise<T> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
-    const { unpackedObj } = unpack(this.jwt?.payload, this.disclosures);
+    const { unpackedObj } = await unpack(this.jwt?.payload, this.disclosures);
     return unpackedObj as T;
   }
 }
@@ -177,10 +183,10 @@ export const listKeys = (obj: any, prefix: string = '') => {
   return keys;
 };
 
-export const pack = <T extends object>(
+export const pack = async <T extends object>(
   claims: T,
   disclosureFrame?: DisclosureFrame<T>,
-): { packedClaims: any; disclosures: Array<Disclosure<any>> } => {
+): Promise<{ packedClaims: any; disclosures: Array<Disclosure<any>> }> => {
   if (!disclosureFrame) {
     return {
       packedClaims: claims,
@@ -200,7 +206,7 @@ export const pack = <T extends object>(
       if (key !== SD_DIGEST) {
         const idx = parseInt(key);
         // @ts-ignore
-        const packed = pack(claims[idx], disclosureFrame[idx]);
+        const packed = await pack(claims[idx], disclosureFrame[idx]);
         recursivelyPackedClaims[idx] = packed.packedClaims;
         disclosures.push(...packed.disclosures);
       }
@@ -214,7 +220,7 @@ export const pack = <T extends object>(
       if (sd.includes(i)) {
         const salt = generateSalt(16);
         const disclosure = new Disclosure([salt, claim]);
-        const digest = disclosure.digest(hash);
+        const digest = await disclosure.digest(hash);
         packedClaims.push({ '...': digest });
         disclosures.push(disclosure);
       } else {
@@ -233,7 +239,7 @@ export const pack = <T extends object>(
   const recursivelyPackedClaims: any = {};
   for (const key in disclosureFrame) {
     if (key !== SD_DIGEST) {
-      const packed = pack(
+      const packed = await pack(
         // @ts-ignore
         claims[key],
         disclosureFrame[key],
@@ -253,7 +259,7 @@ export const pack = <T extends object>(
     if (sd.includes(key)) {
       const salt = generateSalt(16);
       const disclosure = new Disclosure([salt, key, claim]);
-      const digest = disclosure.digest(hash);
+      const digest = await disclosure.digest(hash);
 
       _sd.push(digest);
       disclosures.push(disclosure);
@@ -263,7 +269,7 @@ export const pack = <T extends object>(
   }
 
   for (let j = 0; j < decoyCount; j++) {
-    const decoyDigest = createDecoy();
+    const decoyDigest = await createDecoy();
     _sd.push(decoyDigest);
   }
 
@@ -368,23 +374,24 @@ export const unpackObj = (
   return { unpackedObj: obj, disclosureKeymap: keys };
 };
 
-export const createHashMapping = (
+export const createHashMapping = async (
   disclosures: Array<Disclosure<any>>,
   hasher: Hasher = hash,
 ) => {
   const map: Record<string, Disclosure<any>> = {};
-  disclosures.forEach((disclosure) => {
-    const digest = disclosure.digest(hasher);
+  for (let i = 0; i < disclosures.length; i++) {
+    const disclosure = disclosures[i];
+    const digest = await disclosure.digest(hasher);
     map[digest] = disclosure;
-  });
+  }
   return map;
 };
 
-export const unpack = (
+export const unpack = async (
   sdjwtPayload: any,
   disclosures: Array<Disclosure<any>>,
 ) => {
-  const map = createHashMapping(disclosures);
+  const map = await createHashMapping(disclosures);
 
   const { _sd_alg, ...payload } = sdjwtPayload;
   return unpackObj(payload, map);

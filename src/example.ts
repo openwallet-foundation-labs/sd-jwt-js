@@ -47,9 +47,9 @@ export const createKeyPair = () => {
   console.log(validated);
 
   const decoded = sdjwt.decode(encodedSdjwt);
-  console.log({ keys: decoded.keys() }); // wip
-  const payloads = decoded.getClaims(); // wip
-  const keys = decoded.presentableKeys();
+  console.log({ keys: await decoded.keys() }); // wip
+  const payloads = await decoded.getClaims(); // wip
+  const keys = await decoded.presentableKeys();
   console.log({
     payloads: JSON.stringify(payloads, null, 2),
     disclosures: JSON.stringify(decoded.disclosures, null, 2),
@@ -62,7 +62,7 @@ export const createKeyPair = () => {
   );
 
   const presentationFrame = ['firstname', 'id'];
-  const res = sdjwt.present(encodedSdjwt, presentationFrame);
+  const res = await sdjwt.present(encodedSdjwt, presentationFrame);
   console.log(res);
 
   const requiredClaimKeys = ['firstname', 'id', 'data.ssn'];
