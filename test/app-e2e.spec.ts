@@ -1,6 +1,8 @@
 import Crypto from 'node:crypto';
-import sdjwt, { SDJwt } from '../src';
+import sdjwt from '../src';
 import { DisclosureFrame } from '../src/type';
+import fs from 'fs';
+import path from 'path';
 
 export const createKeyPair = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -102,4 +104,56 @@ describe('App', () => {
     );
     expect(verified).toEqual(true);
   });
+
+  test('From JSON (Example1)', async () => {
+    const test = loadTestJsonFile('./example1.json');
+    const { privateKey, publicKey } = createKeyPair();
+
+    const encodedSdjwt = await sdjwt.issue(
+      test.claims,
+      privateKey,
+      test.disclosureFrame,
+    );
+
+    expect(encodedSdjwt).toBeDefined();
+
+    const validated = await sdjwt.validate(encodedSdjwt, publicKey);
+
+    expect(validated).toEqual(true);
+
+    const presentedSDJwt = await sdjwt.present(
+      encodedSdjwt,
+      test.presentationKeys,
+    );
+
+    expect(presentedSDJwt).toBeDefined();
+
+    const presentationClaims = await sdjwt.getClaims(presentedSDJwt);
+
+    expect(presentationClaims).toEqual(test.presenatedClaims);
+
+    const verified = await sdjwt.verify(
+      encodedSdjwt,
+      publicKey,
+      test.requiredClaimKeys,
+    );
+
+    expect(verified).toEqual(true);
+  });
 });
+
+type TestJson = {
+  claims: object;
+  disclosureFrame: DisclosureFrame<object>;
+  presentationKeys: string[];
+  presenatedClaims: object;
+  requiredClaimKeys: string[];
+};
+
+// load json file,
+function loadTestJsonFile(filename: string) {
+  const filepath = path.join(__dirname, filename);
+  const fileContents = fs.readFileSync(filepath, 'utf8');
+  return JSON.parse(fileContents) as TestJson;
+}
+// issue, present, and verify
