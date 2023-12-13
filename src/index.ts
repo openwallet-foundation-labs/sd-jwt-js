@@ -185,6 +185,11 @@ export class SDJwtInstance {
     const sdjwt = SDJwt.fromEncode(endcodedSDJwt);
     return sdjwt.presentableKeys();
   }
+
+  public getClaims(endcodedSDJwt: string) {
+    const sdjwt = SDJwt.fromEncode(endcodedSDJwt);
+    return sdjwt.getClaims();
+  }
 }
 
 const defaultInstance = new SDJwtInstance();
