@@ -203,21 +203,21 @@ export const pack = async <T extends object>(
   if (claims instanceof Array) {
     const packedClaims: any[] = [];
     const disclosures: any[] = [];
-    const recursivelyPackedClaims: any = {};
+    const recursivePackedClaims: any = {};
 
     for (const key in disclosureFrame) {
       if (key !== SD_DIGEST) {
         const idx = parseInt(key);
         // @ts-ignore
         const packed = await pack(claims[idx], disclosureFrame[idx], hasher);
-        recursivelyPackedClaims[idx] = packed.packedClaims;
+        recursivePackedClaims[idx] = packed.packedClaims;
         disclosures.push(...packed.disclosures);
       }
     }
 
     for (let i = 0; i < (claims as Array<any>).length; i++) {
-      const claim = recursivelyPackedClaims[i]
-        ? recursivelyPackedClaims[i]
+      const claim = recursivePackedClaims[i]
+        ? recursivePackedClaims[i]
         : claims[i];
       // @ts-ignore
       if (sd.includes(i)) {
@@ -239,7 +239,7 @@ export const pack = async <T extends object>(
 
   const packedClaims: any = {};
   const disclosures: any[] = [];
-  const recursivelyPackedClaims: any = {};
+  const recursivePackedClaims: any = {};
   for (const key in disclosureFrame) {
     if (key !== SD_DIGEST) {
       const packed = await pack(
@@ -248,7 +248,7 @@ export const pack = async <T extends object>(
         disclosureFrame[key],
         hasher,
       );
-      recursivelyPackedClaims[key] = packed.packedClaims;
+      recursivePackedClaims[key] = packed.packedClaims;
       disclosures.push(...packed.disclosures);
     }
   }
@@ -256,8 +256,8 @@ export const pack = async <T extends object>(
   const _sd: string[] = [];
 
   for (const key in claims) {
-    const claim = recursivelyPackedClaims[key]
-      ? recursivelyPackedClaims[key]
+    const claim = recursivePackedClaims[key]
+      ? recursivePackedClaims[key]
       : claims[key];
     // @ts-ignore
     if (sd.includes(key)) {
