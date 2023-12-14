@@ -336,10 +336,11 @@ export const unpackObj = (
         key !== SD_LIST_KEY &&
         obj[key] instanceof Object
       ) {
+        const newKey = prefix ? `${prefix}.${key}` : key;
         const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
           obj[key],
           map,
-          prefix,
+          newKey,
         );
         obj[key] = unpackedObj;
         Object.assign(keys, disclosureKeys);
