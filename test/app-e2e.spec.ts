@@ -105,8 +105,8 @@ describe('App', () => {
     expect(verified).toEqual(true);
   });
 
-  test('From JSON (Example1)', async () => {
-    await JSONtest('./example1.json');
+  test('From JSON (complex)', async () => {
+    await JSONtest('./complex.json');
   });
 
   test('From JSON (array_data_types)', async () => {
@@ -119,6 +119,54 @@ describe('App', () => {
 
   test('From JSON (array_in_sd)', async () => {
     await JSONtest('./array_in_sd.json');
+  });
+
+  test('From JSON (array_recursive_sd_some_disclosed)', async () => {
+    await JSONtest('./array_recursive_sd_some_disclosed.json');
+  });
+
+  test('From JSON (header_mod)', async () => {
+    await JSONtest('./header_mod.json');
+  });
+
+  test('From JSON (json_serialization)', async () => {
+    await JSONtest('./json_serialization.json');
+  });
+
+  test('From JSON (key_binding)', async () => {
+    await JSONtest('./key_binding.json');
+  });
+
+  test('From JSON (no_sd)', async () => {
+    await JSONtest('./no_sd.json');
+  });
+
+  test('From JSON (object_data_types)', async () => {
+    await JSONtest('./object_data_types.json');
+  });
+
+  test('From JSON (recursions)', async () => {
+    await JSONtest('./recursions.json');
+  });
+
+  test('From JSON (array_recursive_sd)', async () => {
+    await JSONtest('./array_recursive_sd.json');
+  });
+
+  test('From JSON (array_of_scalars)', async () => {
+    await JSONtest('./array_of_scalars.json');
+  });
+
+  test('From JSON (array_of_objects)', async () => {
+    await JSONtest('./array_of_objects.json');
+  });
+
+  test('From JSON (array_of_nulls)', async () => {
+    await JSONtest('./array_of_nulls.json');
+  });
+
+  test('From JSON (array_nested_in_plain)', async () => {
+    await JSONtest('./array_nested_in_plain.json');
   });
 });
 

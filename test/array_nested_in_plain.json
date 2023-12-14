@@ -1,0 +1,23 @@
+{
+  "claims": {
+    "nested_array": [
+      ["foo", "bar"],
+      ["baz", "qux"]
+    ]
+  },
+  "disclosureFrame": {
+    "nested_array": {
+      "0": {
+        "_sd": [0, 1]
+      },
+      "1": {
+        "_sd": [0, 1]
+      }
+    }
+  },
+  "presentationKeys": ["nested_array.0.0", "nested_array.1.1"],
+  "presenatedClaims": {
+    "nested_array": [["foo"], ["qux"]]
+  },
+  "requiredClaimKeys": ["nested_array.0.0", "nested_array.1.0"]
+}
