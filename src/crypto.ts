@@ -60,3 +60,7 @@ export async function digest(
   }
   return digestBroswer(data, algorithm);
 }
+
+export const getHasher = (algorithm: string = 'SHA-256') => {
+  return (data: string) => digest(data, algorithm);
+};

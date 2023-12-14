@@ -1,4 +1,4 @@
-import { generateSalt, digest as hash } from './crypto';
+import { generateSalt, getHasher, digest as hash } from './crypto';
 import { createDecoy } from './decoy';
 import { Disclosure } from './disclosure';
 import { SDJWTException } from './error';
@@ -11,6 +11,7 @@ import {
   SD_DIGEST,
   SD_LIST_KEY,
   SD_SEPARATOR,
+  SaltGenerator,
   kbHeader,
   kbPayload,
 } from './type';
@@ -186,6 +187,8 @@ export const listKeys = (obj: any, prefix: string = '') => {
 export const pack = async <T extends object>(
   claims: T,
   disclosureFrame?: DisclosureFrame<T>,
+  hasher: Hasher = hash,
+  saltGenerator: SaltGenerator = generateSalt,
 ): Promise<{ packedClaims: any; disclosures: Array<Disclosure<any>> }> => {
   if (!disclosureFrame) {
     return {
@@ -206,7 +209,7 @@ export const pack = async <T extends object>(
       if (key !== SD_DIGEST) {
         const idx = parseInt(key);
         // @ts-ignore
-        const packed = await pack(claims[idx], disclosureFrame[idx]);
+        const packed = await pack(claims[idx], disclosureFrame[idx], hasher);
         recursivelyPackedClaims[idx] = packed.packedClaims;
         disclosures.push(...packed.disclosures);
       }
@@ -218,9 +221,9 @@ export const pack = async <T extends object>(
         : claims[i];
       // @ts-ignore
       if (sd.includes(i)) {
-        const salt = generateSalt(16);
+        const salt = saltGenerator(16);
         const disclosure = new Disclosure([salt, claim]);
-        const digest = await disclosure.digest(hash);
+        const digest = await disclosure.digest(hasher);
         packedClaims.push({ '...': digest });
         disclosures.push(disclosure);
       } else {
@@ -228,7 +231,7 @@ export const pack = async <T extends object>(
       }
     }
     for (let j = 0; j < decoyCount; j++) {
-      const decoyDigest = createDecoy();
+      const decoyDigest = await createDecoy(hasher, saltGenerator);
       packedClaims.push({ '...': decoyDigest });
     }
     return { packedClaims, disclosures };
@@ -243,6 +246,7 @@ export const pack = async <T extends object>(
         // @ts-ignore
         claims[key],
         disclosureFrame[key],
+        hasher,
       );
       recursivelyPackedClaims[key] = packed.packedClaims;
       disclosures.push(...packed.disclosures);
@@ -257,9 +261,9 @@ export const pack = async <T extends object>(
       : claims[key];
     // @ts-ignore
     if (sd.includes(key)) {
-      const salt = generateSalt(16);
+      const salt = saltGenerator(16);
       const disclosure = new Disclosure([salt, key, claim]);
-      const digest = await disclosure.digest(hash);
+      const digest = await disclosure.digest(hasher);
 
       _sd.push(digest);
       disclosures.push(disclosure);
@@ -269,7 +273,7 @@ export const pack = async <T extends object>(
   }
 
   for (let j = 0; j < decoyCount; j++) {
-    const decoyDigest = await createDecoy();
+    const decoyDigest = await createDecoy(hasher, saltGenerator);
     _sd.push(decoyDigest);
   }
 
@@ -393,8 +397,9 @@ export const unpack = async (
   sdjwtPayload: any,
   disclosures: Array<Disclosure<any>>,
 ) => {
-  const map = await createHashMapping(disclosures);
-
   const { _sd_alg, ...payload } = sdjwtPayload;
+  const hasher = getHasher(_sd_alg);
+  const map = await createHashMapping(disclosures, hasher);
+
   return unpackObj(payload, map);
 };

@@ -10,7 +10,6 @@ export const KB_JWT_TYP = 'kb+jwt';
 export type SDJWTCompact = string;
 
 export type SDJWTConfig = {
-  omitDecoy?: boolean;
   omitTyp?: boolean;
   hasher?: Hasher;
   saltGenerator?: SaltGenerator;

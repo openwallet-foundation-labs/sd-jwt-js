@@ -21,7 +21,6 @@ export * from './decoy';
 export * from './disclosure';
 
 export const defaultConfig: Required<SDJWTConfig> = {
-  omitDecoy: false,
   omitTyp: false,
   hasher: digest,
   saltGenerator: generateSalt,
@@ -73,7 +72,12 @@ export class SDJwtInstance {
       };
     },
   ): Promise<string> {
-    const { packedClaims, disclosures } = await pack(payload, disclosureFrame);
+    const { packedClaims, disclosures } = await pack(
+      payload,
+      disclosureFrame,
+      this.userConfig.hasher ?? defaultConfig.hasher,
+      this.userConfig.saltGenerator ?? defaultConfig.saltGenerator,
+    );
     const alg = options?.sign_alg ?? SDJwtInstance.DEFAULT_ALG;
     const header = this.userConfig.omitTyp ? { alg } : { alg, typ: SD_JWT_TYP };
     const jwt = new Jwt({
