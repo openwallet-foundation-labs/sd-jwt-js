@@ -1,6 +1,5 @@
-import sdjwt from './index';
+import sdjwt, { DisclosureFrame } from 'sd-jwt-js';
 import Crypto from 'node:crypto';
-import { DisclosureFrame } from './type';
 
 export const createKeyPair = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -47,8 +46,8 @@ export const createKeyPair = () => {
   console.log(validated);
 
   const decoded = sdjwt.decode(encodedSdjwt);
-  console.log({ keys: await decoded.keys() }); // wip
-  const payloads = await decoded.getClaims(); // wip
+  console.log({ keys: await decoded.keys() });
+  const payloads = await decoded.getClaims();
   const keys = await decoded.presentableKeys();
   console.log({
     payloads: JSON.stringify(payloads, null, 2),
