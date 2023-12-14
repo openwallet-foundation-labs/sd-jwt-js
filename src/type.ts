@@ -39,19 +39,19 @@ type NonNever<T> = {
 export type SD<Payload> = { [SD_DIGEST]?: Array<keyof Payload> };
 export type DECOY = { [SD_DECOY]?: number };
 
-type BaseFrame<Payload> = Payload extends Array<infer U>
+type Frame<Payload> = Payload extends Array<infer U>
   ? U extends object
-    ? Record<number, BaseFrame<U>> & SD<Payload> & DECOY
+    ? Record<number, Frame<U>> & SD<Payload> & DECOY
     : SD<Payload> & DECOY
   : Payload extends Record<string, unknown>
   ? NonNever<
       {
         [K in keyof Payload]?: Payload[K] extends object
-          ? BaseFrame<Payload[K]>
+          ? Frame<Payload[K]>
           : never;
       } & SD<Payload> &
         DECOY
     >
   : SD<Payload> & DECOY;
 
-export type DisclosureFrame<T> = BaseFrame<T>;
+export type DisclosureFrame<T> = Frame<T>;

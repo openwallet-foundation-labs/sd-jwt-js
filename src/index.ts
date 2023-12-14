@@ -5,6 +5,7 @@ import { SDJwt, pack } from './sdjwt';
 import {
   DisclosureFrame,
   KB_JWT_TYP,
+  SDJWTCompact,
   SDJWTConfig,
   SD_JWT_TYP,
   kbPayload,
@@ -71,7 +72,7 @@ export class SDJwtInstance {
         privateKey: Uint8Array | KeyLike;
       };
     },
-  ): Promise<string> {
+  ): Promise<SDJWTCompact> {
     const { packedClaims, disclosures } = await pack(
       payload,
       disclosureFrame,
@@ -109,7 +110,7 @@ export class SDJwtInstance {
   public async present(
     encodedSDJwt: string,
     presentationKeys?: string[],
-  ): Promise<string> {
+  ): Promise<SDJWTCompact> {
     if (!presentationKeys) return encodedSDJwt;
     const sdjwt = SDJwt.fromEncode(encodedSDJwt);
     return sdjwt.present(presentationKeys.sort());
@@ -172,25 +173,25 @@ export class SDJwtInstance {
     this.userConfig = { ...this.userConfig, ...newConfig };
   }
 
-  public encode(sdJwt: SDJwt) {
+  public encode(sdJwt: SDJwt): SDJWTCompact {
     return sdJwt.encodeSDJwt();
   }
 
-  public decode(endcodedSDJwt: string) {
+  public decode(endcodedSDJwt: SDJWTCompact) {
     return SDJwt.fromEncode(endcodedSDJwt);
   }
 
-  public keys(endcodedSDJwt: string) {
+  public keys(endcodedSDJwt: SDJWTCompact) {
     const sdjwt = SDJwt.fromEncode(endcodedSDJwt);
     return sdjwt.keys();
   }
 
-  public presentableKeys(endcodedSDJwt: string) {
+  public presentableKeys(endcodedSDJwt: SDJWTCompact) {
     const sdjwt = SDJwt.fromEncode(endcodedSDJwt);
     return sdjwt.presentableKeys();
   }
 
-  public getClaims(endcodedSDJwt: string) {
+  public getClaims(endcodedSDJwt: SDJWTCompact) {
     const sdjwt = SDJwt.fromEncode(endcodedSDJwt);
     return sdjwt.getClaims();
   }

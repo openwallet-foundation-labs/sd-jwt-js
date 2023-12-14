@@ -7,6 +7,7 @@ import { KBJwt } from './kbjwt';
 import {
   DisclosureFrame,
   Hasher,
+  SDJWTCompact,
   SD_DECOY,
   SD_DIGEST,
   SD_LIST_KEY,
@@ -49,7 +50,7 @@ export class SDJwt<
     KBHeader extends kbHeader = kbHeader,
     KBPayload extends kbPayload = kbPayload,
   >(
-    sdjwt: string,
+    sdjwt: SDJWTCompact,
   ): {
     jwt: Jwt<Header, Payload>;
     disclosures: Array<Disclosure<any>>;
@@ -83,7 +84,7 @@ export class SDJwt<
     Payload extends Record<string, any> = Record<string, any>,
     KBHeader extends kbHeader = kbHeader,
     KBPayload extends kbPayload = kbPayload,
-  >(encodedSdJwt: string): SDJwt<Header, Payload> {
+  >(encodedSdJwt: SDJWTCompact): SDJwt<Header, Payload> {
     const { jwt, disclosures, kbJwt } = SDJwt.decodeSDJwt<
       Header,
       Payload,
@@ -98,7 +99,7 @@ export class SDJwt<
     });
   }
 
-  public async present(keys: string[]): Promise<string> {
+  public async present(keys: string[]): Promise<SDJWTCompact> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
@@ -125,7 +126,7 @@ export class SDJwt<
     return presentSDJwt.encodeSDJwt();
   }
 
-  public encodeSDJwt() {
+  public encodeSDJwt(): SDJWTCompact {
     const data: string[] = [];
 
     if (!this.jwt) {
