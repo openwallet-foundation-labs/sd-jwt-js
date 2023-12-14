@@ -172,7 +172,7 @@ export class SDJwt<
 export const listKeys = (obj: any, prefix: string = '') => {
   const keys: string[] = [];
   for (let key in obj) {
-    if (obj[key] == null) continue;
+    if (obj[key] === undefined) continue;
     const newKey = prefix ? `${prefix}.${key}` : key;
     keys.push(newKey);
 
