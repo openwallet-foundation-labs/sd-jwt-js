@@ -157,6 +157,7 @@ export class SDJwt<
       this.jwt?.payload,
       this.disclosures,
     );
+    console.log(disclosureKeymap);
     return Object.keys(disclosureKeymap).sort();
   }
 
@@ -304,10 +305,11 @@ export const unpackArray = (
           Object.assign(keys, disclosureKeys);
         }
       } else {
+        const newKey = prefix ? `${prefix}.${idx}` : `${idx}`;
         const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
           item,
           map,
-          prefix,
+          newKey,
         );
         unpackedArray.push(unpackedObj);
         Object.assign(keys, disclosureKeys);
