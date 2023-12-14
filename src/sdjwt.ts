@@ -157,7 +157,6 @@ export class SDJwt<
       this.jwt?.payload,
       this.disclosures,
     );
-    console.log(disclosureKeymap);
     return Object.keys(disclosureKeymap).sort();
   }
 
