@@ -13,32 +13,9 @@ export const createKeyPair = () => {
     lastname: 'Doe',
     ssn: '123-45-6789',
     id: '1234',
-    data: {
-      firstname: 'John',
-      lastname: 'Doe',
-      ssn: '123-45-6789',
-      list: [{ r: '1' }, 'b', 'c'],
-    },
-    data2: {
-      hi: 'bye',
-    },
   };
   const disclosureFrame: DisclosureFrame<typeof claims> = {
-    _sd: ['firstname', 'id', 'data2'],
-    data: {
-      _sd: ['list'],
-      _sd_decoy: 2,
-      list: {
-        _sd: [0, 2],
-        _sd_decoy: 1,
-        0: {
-          _sd: ['r'],
-        },
-      },
-    },
-    data2: {
-      _sd: ['hi'],
-    },
+    _sd: ['firstname', 'id'],
   };
   const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame);
   console.log('encodedJwt:', encodedSdjwt);
@@ -64,7 +41,7 @@ export const createKeyPair = () => {
   const presentedSDJwt = await sdjwt.present(encodedSdjwt, presentationFrame);
   console.log('presentedSDJwt:', presentedSDJwt);
 
-  const requiredClaimKeys = ['firstname', 'id', 'data.ssn'];
+  const requiredClaimKeys = ['firstname', 'id'];
   const verified = await sdjwt.verify(
     encodedSdjwt,
     publicKey,

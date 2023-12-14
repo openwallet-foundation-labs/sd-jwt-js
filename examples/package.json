@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "complex": "ts-node complex.ts"
+    "complex": "ts-node complex.ts",
+    "issue": "ts-node issue.ts",
+    "present": "ts-node present.ts",
+    "validate": "ts-node validate.ts",
+    "verify": "ts-node verify.ts",
+    "custom": "ts-node custom.ts"
   },
   "keywords": [],
   "author": "",

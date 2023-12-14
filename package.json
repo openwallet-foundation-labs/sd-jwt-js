@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "example": "ts-node src/example.ts",
     "test": "jest ./src/test/*.spec.ts",
     "test:e2e": "jest ./test/*.spec.ts"
   },
