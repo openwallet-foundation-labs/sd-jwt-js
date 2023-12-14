@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "cd ../ && pnpm install && pnpm build",
     "complex": "ts-node complex.ts",
     "issue": "ts-node issue.ts",
     "present": "ts-node present.ts",
