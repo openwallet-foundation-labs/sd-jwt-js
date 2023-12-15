@@ -201,9 +201,9 @@ export class SDJwtInstance {
     return sdjwt.getClaims();
   }
 
-  public getKBJwt(endcodedSDJwt: SDJWTCompact) {
+  public getKeyBinding(endcodedSDJwt: SDJWTCompact) {
     const sdjwt = SDJwt.fromEncode(endcodedSDJwt);
-    return sdjwt.kbJwt;
+    return sdjwt.kbJwt?.payload;
   }
 }
 
