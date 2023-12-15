@@ -1,5 +1,5 @@
 {
-  "name": "@hopae/sd-jwt",
+  "name": "@zhzlabs/sd-jwt",
   "version": "1.0.0",
   "description": "sd-jwt draft 6 implementation in typescript",
   "main": "dist/index.js",
