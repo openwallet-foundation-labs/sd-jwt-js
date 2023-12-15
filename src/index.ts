@@ -1,4 +1,4 @@
-import { generateSalt, digest } from './crypto';
+import { generateSalt, digest, getHasher } from './crypto';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
@@ -73,10 +73,15 @@ export class SDJwtInstance {
       };
     },
   ): Promise<SDJWTCompact> {
+    const haser =
+      this.userConfig.hasher ?? options?.hash_alg
+        ? getHasher(options?.hash_alg)
+        : defaultConfig.hasher;
+
     const { packedClaims, disclosures } = await pack(
       payload,
       disclosureFrame,
-      this.userConfig.hasher ?? defaultConfig.hasher,
+      haser,
       this.userConfig.saltGenerator ?? defaultConfig.saltGenerator,
     );
     const alg = options?.sign_alg ?? SDJwtInstance.DEFAULT_ALG;
