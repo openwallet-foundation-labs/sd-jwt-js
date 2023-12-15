@@ -37,7 +37,7 @@ By adhering to these design principles, "Selective Disclosure for JWT" aims to s
 To install this project, run the following command:
 
 ```bash
-npm install @hopae/sd-jwt
+npm install @zhzlabs/sdjwt
 ```
 
 Ensure you have Node.js installed as a prerequisite.
@@ -47,7 +47,7 @@ Ensure you have Node.js installed as a prerequisite.
 Here's a basic example of how to use this library:
 
 ```jsx
-const sdJWT = require('@hopae/sd-jwt');
+import sdjwt from '@zhzlabs/sdjwt';
 
 const claims = {
   firstname: 'John',
@@ -55,12 +55,12 @@ const claims = {
   ssn: '123-45-6789',
   id: '1234',
 };
-const credential = await sdJWT.issue(claims, privateKey, disclosureFrame);
+const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
 
 const presentationFrame = ['firstname', 'id'];
 const presentation = await sdjwt.present(encodedSdjwt, presentationFrame);
 
-const verified = sdJWT.verify(presentation, publicKey, ['firstname', 'id']);
+const verified = sdjwt.verify(presentation, publicKey, ['firstname', 'id']);
 ```
 
 Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki)
