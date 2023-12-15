@@ -1,4 +1,4 @@
-import sdjwt, { DisclosureFrame } from 'sd-jwt-js';
+import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
 import Crypto from 'node:crypto';
 
 export const createKeyPair = () => {
