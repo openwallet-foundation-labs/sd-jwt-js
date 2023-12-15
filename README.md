@@ -61,6 +61,10 @@ const result: boolean = sdJWT.verify(presentation);
 
 Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki)
 
+## Dependencies
+
+- [jose](https://github.com/panva/jose)
+
 ## Build
 
 To build this projects
