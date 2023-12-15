@@ -7,7 +7,7 @@
     "build": "rm -rf dist && tsc",
     "test": "jest ./src/test/*.spec.ts",
     "test:e2e": "jest ./test/*.spec.ts",
-    "test:cov": "jest ./src/test/*.spec.ts --coverage"
+    "test:cov": "jest ./src/test/*.spec.ts ./test/*.spec.ts --coverage"
   },
   "keywords": [],
   "author": "",
