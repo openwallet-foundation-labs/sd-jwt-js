@@ -1,5 +1,6 @@
+import { SDJWTException } from '../error';
 import { KBJwt } from '../kbjwt';
-import { KB_JWT_TYP } from '../type';
+import { KB_JWT_TYP, SDJWTCompact } from '../type';
 import Crypto from 'node:crypto';
 
 describe('KB JWT', () => {
@@ -75,5 +76,29 @@ describe('KB JWT', () => {
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
     const verified = await decoded.verify(publicKey);
     expect(verified).toBe(true);
+  });
+
+  test('verify failed', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const kbJwt = new KBJwt({
+      header: {
+        typ: KB_JWT_TYP,
+        alg: 'EdDSA',
+      },
+      payload: {
+        iat: 1,
+        aud: 'aud',
+        nonce: 'nonce',
+        _sd_hash: '',
+      },
+    });
+    const encodedKbJwt = await kbJwt.sign(privateKey);
+    const decoded = KBJwt.fromKBEncode(encodedKbJwt);
+    try {
+      await decoded.verify(publicKey);
+    } catch (e: unknown) {
+      const error = e as SDJWTException;
+      expect(error.message).toBe('Invalid Key Binding Jwt');
+    }
   });
 });
