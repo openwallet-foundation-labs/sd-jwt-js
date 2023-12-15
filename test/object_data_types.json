@@ -1,0 +1,60 @@
+{
+  "claims": {
+    "value_Data_types": {
+      "test_null": null,
+      "test_int": 42,
+      "test_float": 3.14,
+      "test_str": "foo",
+      "test_bool": true,
+      "test_arr": ["Test"],
+      "test_object": {
+        "foo": "bar"
+      }
+    }
+  },
+  "disclosureFrame": {
+    "value_Data_types": {
+      "_sd": [
+        "test_null",
+        "test_int",
+        "test_float",
+        "test_str",
+        "test_bool",
+        "test_arr",
+        "test_object"
+      ]
+    }
+  },
+  "presentationKeys": [
+    "value_Data_types.test_null",
+    "value_Data_types.test_int",
+    "value_Data_types.test_float",
+    "value_Data_types.test_str",
+    "value_Data_types.test_bool",
+    "value_Data_types.test_arr",
+    "value_Data_types.test_object"
+  ],
+  "presenatedClaims": {
+    "value_Data_types": {
+      "test_null": null,
+      "test_int": 42,
+      "test_float": 3.14,
+      "test_str": "foo",
+      "test_bool": true,
+      "test_arr": ["Test"],
+      "test_object": {
+        "foo": "bar"
+      }
+    }
+  },
+  "requiredClaimKeys": [
+    "value_Data_types.test_null",
+    "value_Data_types.test_int",
+    "value_Data_types.test_float",
+    "value_Data_types.test_str",
+    "value_Data_types.test_bool",
+    "value_Data_types.test_arr",
+    "value_Data_types.test_object",
+    "value_Data_types.test_object.foo"
+  ]
+}

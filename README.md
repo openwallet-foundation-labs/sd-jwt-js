@@ -26,11 +26,11 @@ The design of "Selective Disclosure for JWT" is centered around flexibility, eff
 
 By adhering to these design principles, "Selective Disclosure for JWT" aims to set a new standard in the secure and efficient handling of JWTs across diverse JavaScript environments.
 
-# Architecture (diagram)
+# Architecture
 
 ![Architecture diagram](images/diagram.png)
 
-# How to use (interface code)
+# How to use
 
 ## Installation
 
@@ -49,42 +49,64 @@ Here's a basic example of how to use this library:
 ```jsx
 const sdJWT = require('@hopae/sd-jwt');
 
-const credential: JWT = sdJWT.issue(payload, signer);
+const claims = {
+  firstname: 'John',
+  lastname: 'Doe',
+  ssn: '123-45-6789',
+  id: '1234',
+};
+const credential = await sdJWT.issue(claims, privateKey, disclosureFrame);
 
-const presentation: JWT = sdJWT.present(credential, {
-  presentationFrame: { _sd: ['name', 'address'] },
-  holder: holdersKey,
-});
+const presentationFrame = ['firstname', 'id'];
+const presentation = await sdjwt.present(encodedSdjwt, presentationFrame);
 
-const result: boolean = sdJWT.verify(presentation);
+const verified = sdJWT.verify(presentation, publicKey, ['firstname', 'id']);
 ```
 
 Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki)
+
+## Dependencies
+
+- [jose](https://github.com/panva/jose)
+
+## Build
+
+To build this projects
+
+```bash
+pnpm install
+
+pnpm run build
+```
 
 ## Testing
 
 To run the test suite, execute:
 
 ```bash
-npm test
+# Unit tests
+pnpm test
+
+# E2E tests
+pnpm test:e2e
 ```
 
 We use [Jest](https://jestjs.io/) for our testing framework. Ensure you have written tests for all new features.
 
 ## Security
 
-- [ ] [Mandatory Signing of the Issuer-signed JWT](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-mandatory-signing-of-the-is)
-- [ ] [Manipulation of Disclosures](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-manipulation-of-disclosures)
-- [ ] [Entropy of the salt](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-entropy-of-the-salt)
-- [ ] [Minimum length of the salt](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-minimum-length-of-the-salt)
-- [ ] [Choice of a Hash Algorithm](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-choice-of-a-hash-algorithm)
-- [ ] [Key Binding](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-key-binding)
-- [ ] [Blinding Claim Names](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-blinding-claim-names)
-- [ ] [Selectively-Disclosable Validity Claims](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-selectively-disclosable-val)
-- [ ] [Issuer Signature Key Distribution and Rotation](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-issuer-signature-key-distri)
-- [ ] [Forwarding Credentials](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-forwarding-credentials)
-- [ ] [Integrity of Presentation](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-integrity-of-presentation)
-- [ ] [Explicit Typing](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-explicit-typing)
+- [x] [Mandatory Signing of the Issuer-signed JWT](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-mandatory-signing-of-the-is)
+- [x] [Manipulation of Disclosures](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-manipulation-of-disclosures)
+- [x] [Entropy of the salt](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-entropy-of-the-salt)
+- [x] [Minimum length of the salt](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-minimum-length-of-the-salt)
+- [x] [Choice of a Hash Algorithm](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-choice-of-a-hash-algorithm)
+- [x] [Key Binding](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-key-binding)
+- [x] [Blinding Claim Names](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-blinding-claim-names)
+- [x] [Selectively-Disclosable Validity Claims](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-selectively-disclosable-val)
+- [x] [Issuer Signature Key Distribution and Rotation](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-issuer-signature-key-distri)
+- [x] [Forwarding Credentials](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-forwarding-credentials)
+- [x] [Integrity of Presentation](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-integrity-of-presentation)
+- [x] [Explicit Typing](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-explicit-typing)
 
 ## Contributing
 

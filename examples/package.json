@@ -1,0 +1,27 @@
+{
+  "name": "sdjwt-examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "cd ../ && pnpm install && pnpm build",
+    "all": "ts-node all.ts",
+    "issue": "ts-node issue.ts",
+    "present": "ts-node present.ts",
+    "validate": "ts-node validate.ts",
+    "verify": "ts-node verify.ts",
+    "custom": "ts-node custom.ts",
+    "decoy": "ts-node decoy.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@hopae/sd-jwt": "link:.."
+  }
+}
