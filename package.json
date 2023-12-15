@@ -1,5 +1,5 @@
 {
-  "name": "@hopae/sd-jwt",
+  "name": "@zhzlabs/sd-jwt",
   "version": "1.0.0",
   "description": "sd-jwt draft 6 implementation in typescript",
   "main": "dist/index.js",
@@ -8,9 +8,15 @@
     "test": "jest ./src/test/*.spec.ts",
     "test:e2e": "jest ./test/*.spec.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "verifiable-credentials",
+    "digital-wallet",
+    "sd-jwt",
+    "sdjwt",
+    "sd-jwt-vc"
+  ],
+  "author": "Lukas.J.Han <lukas.j.han@gmail.com>",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.2",
