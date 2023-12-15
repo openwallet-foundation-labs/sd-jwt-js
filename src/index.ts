@@ -200,6 +200,11 @@ export class SDJwtInstance {
     const sdjwt = SDJwt.fromEncode(endcodedSDJwt);
     return sdjwt.getClaims();
   }
+
+  public getKBJwt(endcodedSDJwt: SDJWTCompact) {
+    const sdjwt = SDJwt.fromEncode(endcodedSDJwt);
+    return sdjwt.kbJwt;
+  }
 }
 
 const defaultInstance = new SDJwtInstance();
