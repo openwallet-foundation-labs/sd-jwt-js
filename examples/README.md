@@ -14,12 +14,12 @@ pnpm install
 pnpm run {example_file_name}
 
 #example
-pnpm run complex
+pnpm run all
 ```
 
 ### Example lists
 
-- complex : Example of issue, present and verify the complex data.
+- all : Example of issue, present and verify the comprehensive data.
 - issue: Example of issue sd-jwt
 - present: Example of present sd-jwt
 - verify: Example of verify sd-jwt
