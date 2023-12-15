@@ -10,7 +10,8 @@
     "present": "ts-node present.ts",
     "validate": "ts-node validate.ts",
     "verify": "ts-node verify.ts",
-    "custom": "ts-node custom.ts"
+    "custom": "ts-node custom.ts",
+    "decoy": "ts-node decoy.ts"
   },
   "keywords": [],
   "author": "",

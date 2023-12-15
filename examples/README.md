@@ -20,11 +20,12 @@ pnpm run all
 ### Example lists
 
 - all : Example of issue, present and verify the comprehensive data.
-- issue: Example of issue sd-jwt
-- present: Example of present sd-jwt
-- verify: Example of verify sd-jwt
-- validate: Example of validate sd-jwt
-- custom: Example of using custom hasher and salt generator for sd-jwt
+- issue: Example of issue SD JWT
+- present: Example of present SD JWT
+- verify: Example of verify SD JWT
+- validate: Example of validate SD JWT
+- custom: Example of using custom hasher and salt generator for SD JWT
+- decoy: Example of adding decoy digest in SD JWT
 
 ## More examples from tests
 
