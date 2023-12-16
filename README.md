@@ -1,6 +1,3 @@
-![Coverage](https://img.shields.io/badge/coverage-91%-green)
-![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
-
 # SD-JWT Implementation in JavaScript
 
 This is the reference implmentation of [IETF SD-JWT specification](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/) written in Javascript. It aims to provide a production-ready, robust and secure way to handle JWTs with selective disclosure capabilities.
