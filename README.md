@@ -1,4 +1,4 @@
-![Coverage](https://img.shields.io/badge/coverage-91%-green)
+![Coverage](https://img.shields.io/badge/coverage-91%25-green)
 ![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
 
 # SD-JWT Implementation in JavaScript
