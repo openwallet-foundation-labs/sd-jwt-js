@@ -4,6 +4,9 @@ describe('Crypto', () => {
   test('Salt', () => {
     expect(generateSalt(16).length).toBe(32);
   });
+  test('Salt Error', () => {
+    expect(() => generateSalt(0)).toThrow();
+  });
   test('Hash SHA-256', async () => {
     expect(await digest('df9sf67d0fsdf8')).toBe(
       '0d3363fd83fa29a955ac77a4cfb80ac99b05c5e59d4c90fcfd2e4696eaba0e22',
