@@ -1,4 +1,4 @@
-name: Run test on PR
+name: 'Check: unit and e2e tests'
 
 on:
   pull_request:
