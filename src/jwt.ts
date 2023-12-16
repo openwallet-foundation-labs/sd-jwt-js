@@ -1,6 +1,7 @@
 import { Base64Url } from './base64url';
 import { SDJWTException } from './error';
 import * as jose from 'jose';
+import { Base64urlString } from './type';
 
 export type JwtData<
   Header extends Record<string, any>,
@@ -8,7 +9,7 @@ export type JwtData<
 > = {
   header?: Header;
   payload?: Payload;
-  signature?: Uint8Array;
+  signature?: Base64urlString;
 };
 
 export class Jwt<
@@ -17,7 +18,7 @@ export class Jwt<
 > {
   public header?: Header;
   public payload?: Payload;
-  public signature?: Uint8Array;
+  public signature?: Base64urlString;
 
   constructor(data?: JwtData<Header, Payload>) {
     this.header = data?.header;
@@ -28,7 +29,9 @@ export class Jwt<
   public static decodeJWT<
     Header extends Record<string, any> = Record<string, any>,
     Payload extends Record<string, any> = Record<string, any>,
-  >(jwt: string): { header: Header; payload: Payload; signature: Uint8Array } {
+  >(
+    jwt: string,
+  ): { header: Header; payload: Payload; signature: Base64urlString } {
     const { 0: header, 1: payload, 2: signature, length } = jwt.split('.');
     if (length !== 3) {
       throw new SDJWTException('Invalid JWT as input');
@@ -37,7 +40,7 @@ export class Jwt<
     return {
       header: JSON.parse(Base64Url.decode(header)),
       payload: JSON.parse(Base64Url.decode(payload)),
-      signature: Uint8Array.from(Buffer.from(signature, 'base64url')),
+      signature: signature,
     };
   }
 
@@ -90,7 +93,7 @@ export class Jwt<
 
     const header = Base64Url.encode(JSON.stringify(this.header));
     const payload = Base64Url.encode(JSON.stringify(this.payload));
-    const signature = Buffer.from(this.signature).toString('base64url');
+    const signature = this.signature;
     const compact = `${header}.${payload}.${signature}`;
 
     return compact;
