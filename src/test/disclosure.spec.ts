@@ -1,5 +1,6 @@
 import { generateSalt, digest as hash } from '../crypto';
 import { Disclosure } from '../disclosure';
+import { SDJWTException } from '../error';
 
 describe('Disclosure', () => {
   test('create object disclosure', async () => {
@@ -18,6 +19,19 @@ describe('Disclosure', () => {
     expect(disclosure.key).toBe(undefined);
     expect(disclosure.value).toBe('US');
     expect(disclosure.salt).toBe(salt);
+  });
+
+  test('create disclosure error', async () => {
+    const salt = generateSalt(16);
+    const data: [string, string, string] = [salt, 'name', 'James'];
+    data.push('any');
+    expect(() => new Disclosure(data)).toThrow();
+    try {
+      new Disclosure(data);
+    } catch (e: unknown) {
+      const error = e as SDJWTException;
+      expect(typeof error.getFullMessage()).toBe('string');
+    }
   });
 
   test('encode disclosure', async () => {
