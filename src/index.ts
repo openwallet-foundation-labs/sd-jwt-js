@@ -135,7 +135,7 @@ export class SDJwtInstance {
     if (!sdjwt.jwt) {
       return false;
     }
-    const validated = this.validate(encodedSDJwt, publicKey);
+    const validated = await this.validate(encodedSDJwt, publicKey);
     if (!validated) {
       return false;
     }
