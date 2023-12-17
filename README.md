@@ -40,7 +40,7 @@ By adhering to these design principles, "Selective Disclosure for JWT" aims to s
 To install this project, run the following command:
 
 ```bash
-npm install @zhzlabs/sd-jwt
+npm install @hopae/sd-jwt
 ```
 
 Ensure you have Node.js installed as a prerequisite.
@@ -50,7 +50,7 @@ Ensure you have Node.js installed as a prerequisite.
 Here's a basic example of how to use this library:
 
 ```jsx
-import sdjwt from '@zhzlabs/sd-jwt';
+import sdjwt from '@hopae/sd-jwt';
 
 const claims = {
   firstname: 'John',
