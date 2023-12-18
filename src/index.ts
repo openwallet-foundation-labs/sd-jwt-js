@@ -64,6 +64,7 @@ export class SDJwtInstance {
     privateKey: Uint8Array | KeyLike,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
+      header?: object;
       sign_alg?: string;
       hash_alg?: string;
       kb?: {
@@ -85,7 +86,11 @@ export class SDJwtInstance {
       this.userConfig.saltGenerator ?? defaultConfig.saltGenerator,
     );
     const alg = options?.sign_alg ?? SDJwtInstance.DEFAULT_ALG;
-    const header = this.userConfig.omitTyp ? { alg } : { alg, typ: SD_JWT_TYP };
+    const OptionHeader = options?.header ?? {};
+    const CustomHeader = this.userConfig.omitTyp
+      ? OptionHeader
+      : { typ: SD_JWT_TYP, ...OptionHeader };
+    const header = { ...CustomHeader, alg };
     const jwt = new Jwt({
       header,
       payload: {
