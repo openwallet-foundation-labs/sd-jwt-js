@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "sd-jwt draft 6 implementation in typescript",
   "main": "dist/index.js",
+  "browser": {
+    "./dist/crypto.js": "./dist/crypto-browser.js"
+  },
   "scripts": {
     "build": "rm -rf dist && tsc",
     "test": "jest ./src/test/*.spec.ts",

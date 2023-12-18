@@ -8,6 +8,7 @@ export const SD_DECOY = '_sd_decoy';
 export const KB_JWT_TYP = 'kb+jwt';
 
 export type SDJWTCompact = string;
+export type Base64urlString = string;
 
 export type SDJWTConfig = {
   omitTyp?: boolean;
