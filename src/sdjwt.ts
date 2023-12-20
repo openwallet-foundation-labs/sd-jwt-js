@@ -122,6 +122,7 @@ export class SDJwt<
     const presentSDJwt = new SDJwt({
       jwt: this.jwt,
       disclosures,
+      kbJwt: this.kbJwt,
     });
     return presentSDJwt.encodeSDJwt();
   }
