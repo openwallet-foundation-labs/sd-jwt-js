@@ -27,12 +27,6 @@ pnpm run all
 - decoy: Example of adding decoy digest in SD JWT
 - kb: key binding example in SD JWT
 
-## More examples from tests
-
-You can find more examples from [tests](../test).
-
-## Contributing
-
 ### Variables In Examples
 
 - claims: the user's information
@@ -45,3 +39,7 @@ You can find more examples from [tests](../test).
 - verified: result of verification
 - sdJwtToken: SD JWT Token Object
 - SDJwtInstance: SD JWT Instance
+
+## More examples from tests
+
+You can find more examples from [tests](../test).
