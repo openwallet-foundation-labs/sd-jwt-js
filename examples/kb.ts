@@ -1,4 +1,4 @@
-import sdjwt, { DisclosureFrame, kbPayload } from '@hopae/sd-jwt';
+import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
 import Crypto from 'node:crypto';
 
 export const createKeyPair = () => {
@@ -37,10 +37,17 @@ export const createKeyPair = () => {
   const sdjwttoken = sdjwt.decode(encodedSdjwt);
   console.log(sdjwttoken);
 
-  const verified = await sdjwt.verify(encodedSdjwt, publicKey, ['id', 'ssn'], {
-    kb: {
-      publicKey,
+  const presentedSdJwt = await sdjwt.present(encodedSdjwt, ['id']);
+
+  const verified = await sdjwt.verify(
+    presentedSdJwt,
+    publicKey,
+    ['id', 'ssn'],
+    {
+      kb: {
+        publicKey,
+      },
     },
-  });
+  );
   console.log(verified);
 })();
