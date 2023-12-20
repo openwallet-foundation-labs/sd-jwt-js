@@ -90,7 +90,7 @@ const requiredClaims = ['firstname', 'ssn', 'id'];
 const verified = await sdjwt.verify(presentation, publicKey, requiredClaims);
 ```
 
-Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki)
+Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki) or [examples](./examples/)
 
 ## Dependencies
 
