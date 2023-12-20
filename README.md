@@ -50,7 +50,7 @@ Ensure you have Node.js installed as a prerequisite.
 Here's a basic example of how to use this library:
 
 ```jsx
-import sdjwt from '@hopae/sd-jwt';
+import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
 
 // Define the claims object with the user's information
 const claims = {
@@ -61,7 +61,7 @@ const claims = {
 };
 
 // Define the disclosure frame to specify which claims should be disclosed
-const disclosureFrame = {
+const disclosureFrame: DisclosureFrame<typeof claims> = {
   _sd: ['firstname', 'lastname', 'ssn'],
 };
 
@@ -70,18 +70,18 @@ const disclosureFrame = {
 const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
 
 // Define the presentation frame to specify which claims should be presented
-const presentationFrame = ['firstname', 'id'];
+const presentationFrame = ['firstname', 'ssn'];
 
 // Create a presentation using the issued credential and the presentation frame
 // return a Encoded SD JWT.
 const presentation = await sdjwt.present(credential, presentationFrame);
 
 // Define the required claims that need to be verified in the presentation
-const requiredClaims = ['firstname', 'id'];
+const requiredClaims = ['firstname', 'ssn', 'id'];
 
 // Verify the presentation using the public key and the required claims
 // return a boolean result
-const verified = sdjwt.verify(presentation, publicKey, requiredClaims);
+const verified = await sdjwt.verify(presentation, publicKey, requiredClaims);
 ```
 
 Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki)

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepare": "cd ../ && pnpm install && pnpm build",
+    "basic": "ts-node basic.ts",
     "all": "ts-node all.ts",
     "issue": "ts-node issue.ts",
     "present": "ts-node present.ts",
