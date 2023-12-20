@@ -17,6 +17,6 @@ export const createKeyPair = () => {
     _sd: ['id'],
     _sd_decoy: 1,
   };
-  const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame);
-  console.log('encodedSdjwt:', encodedSdjwt);
+  const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
+  console.log('encodedSdjwt:', credential);
 })();

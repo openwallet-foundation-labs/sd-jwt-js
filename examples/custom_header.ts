@@ -18,10 +18,10 @@ export const createKeyPair = () => {
     _sd: ['firstname', 'id'],
   };
 
-  const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame, {
+  const credential = await sdjwt.issue(claims, privateKey, disclosureFrame, {
     header: { typ: 'vc+sd-jwt', custom: 'data' },
   });
-  console.log('encodedSdjwt:', encodedSdjwt);
-  const sdjwttoken = sdjwt.decode(encodedSdjwt);
-  console.log(sdjwttoken);
+  console.log('encodedSdjwt:', credential);
+  const sdJwtToken = sdjwt.decode(credential);
+  console.log(sdJwtToken);
 })();

@@ -34,16 +34,16 @@ export const createKeyPair = () => {
   const disclosureFrame: DisclosureFrame<typeof claims> = {
     _sd: ['firstname', 'id'],
   };
-  const encodedSdjwt = await SDJwtInstance.issue(
+  const credential = await SDJwtInstance.issue(
     claims,
     privateKey,
     disclosureFrame,
   );
-  console.log('encodedJwt:', encodedSdjwt);
-  const validated = await SDJwtInstance.validate(encodedSdjwt, publicKey);
+  console.log('encodedJwt:', credential);
+  const validated = await SDJwtInstance.validate(credential, publicKey);
   console.log('validated:', validated);
 
-  const decoded = SDJwtInstance.decode(encodedSdjwt);
+  const decoded = SDJwtInstance.decode(credential);
   console.log({ keys: await decoded.keys() });
   const payloads = await decoded.getClaims();
   const keys = await decoded.presentableKeys();
@@ -59,17 +59,17 @@ export const createKeyPair = () => {
   );
 
   const presentationFrame = ['firstname', 'id'];
-  const presentedSDJwt = await SDJwtInstance.present(
-    encodedSdjwt,
+  const presentation = await SDJwtInstance.present(
+    credential,
     presentationFrame,
   );
-  console.log('presentedSDJwt:', presentedSDJwt);
+  console.log('presentedSDJwt:', presentation);
 
-  const requiredClaimKeys = ['firstname', 'id'];
+  const requiredClaims = ['firstname', 'id'];
   const verified = await SDJwtInstance.verify(
-    encodedSdjwt,
+    presentation,
     publicKey,
-    requiredClaimKeys,
+    requiredClaims,
   );
   console.log('verified:', verified);
 })();

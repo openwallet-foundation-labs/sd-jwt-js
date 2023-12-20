@@ -17,7 +17,9 @@ export const createKeyPair = () => {
   const disclosureFrame: DisclosureFrame<typeof claims> = {
     _sd: ['firstname', 'id'],
   };
-  const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame);
-  const validated = await sdjwt.validate(encodedSdjwt, publicKey);
-  console.log('valiated:', validated);
+
+  const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
+  console.log('encodedSdjwt:', credential);
+  const sdJwtToken = sdjwt.decode(credential);
+  console.log(sdJwtToken);
 })();
