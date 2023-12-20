@@ -26,8 +26,7 @@
   "author": "Lukas.J.Han <lukas.j.han@gmail.com>",
   "homepage": "https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki",
   "bugs": {
-    "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js/issues",
-    "email": "lukas.j.han@gmail.com"
+    "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js/issues"
   },
   "license": "Apache-2.0",
   "devDependencies": {
