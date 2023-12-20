@@ -1,11 +1,11 @@
 ![Coverage](https://img.shields.io/badge/coverage-91%25-green)
 ![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
 
-# SD-JWT Implementation in JavaScript
+# SD-JWT Implementation in JavaScript(TypeScript)
 
-This is the reference implmentation of [IETF SD-JWT specification](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/) written in Javascript. It aims to provide a production-ready, robust and secure way to handle JWTs with selective disclosure capabilities.
+This is the reference implmentation of [IETF SD-JWT specification](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/) written in Typesript. It aims to provide a production-ready, robust and secure way to handle JWTs with selective disclosure capabilities.
 
-Hopae, a founding member of OpenWallet Foundation, is building wallet module in Javascript and need this project as a core component.
+Hopae, a founding member of OpenWallet Foundation, is building wallet module in Typesript and need this project as a core component.
 
 Currently compliant with: **draft-ietf-oauth-selective-disclosure-jwt-06**
 
