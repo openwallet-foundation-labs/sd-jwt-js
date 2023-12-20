@@ -40,12 +40,12 @@ export const createKeyPair = () => {
       _sd: ['hi'],
     },
   };
-  const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame);
-  console.log('encodedJwt:', encodedSdjwt);
-  const validated = await sdjwt.validate(encodedSdjwt, publicKey);
+  const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
+  console.log('encodedJwt:', credential);
+  const validated = await sdjwt.validate(credential, publicKey);
   console.log('validated:', validated);
 
-  const decoded = sdjwt.decode(encodedSdjwt);
+  const decoded = sdjwt.decode(credential);
   console.log({ keys: await decoded.keys() });
   const payloads = await decoded.getClaims();
   const keys = await decoded.presentableKeys();
@@ -61,14 +61,10 @@ export const createKeyPair = () => {
   );
 
   const presentationFrame = ['firstname', 'id'];
-  const presentedSDJwt = await sdjwt.present(encodedSdjwt, presentationFrame);
-  console.log('presentedSDJwt:', presentedSDJwt);
+  const presentation = await sdjwt.present(credential, presentationFrame);
+  console.log('presentedSDJwt:', presentation);
 
-  const requiredClaimKeys = ['firstname', 'id', 'data.ssn'];
-  const verified = await sdjwt.verify(
-    encodedSdjwt,
-    publicKey,
-    requiredClaimKeys,
-  );
+  const requiredClaims = ['firstname', 'id', 'data.ssn'];
+  const verified = await sdjwt.verify(credential, publicKey, requiredClaims);
   console.log('verified:', verified);
 })();
