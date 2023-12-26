@@ -43,7 +43,7 @@ By adhering to these design principles, "Selective Disclosure for JWT" aims to s
 To install this project, run the following command:
 
 ```bash
-dnpm install @hopae/sd-jwt
+npm install @hopae/sd-jwt
 ```
 
 Ensure you have Node.js installed as a prerequisite.
