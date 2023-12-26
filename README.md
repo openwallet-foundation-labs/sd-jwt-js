@@ -4,9 +4,9 @@
 ![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
 ![Stars](https://img.shields.io/github/stars/openwallet-foundation-labs/sd-jwt-js)
 
-# SD-JWT Implementation in JavaScript(TypeScript)
+# SD-JWT Implementation in JavaScript (TypeScript)
 
-This is the reference implmentation of [IETF SD-JWT specification](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/) written in Typesript. It aims to provide a production-ready, robust and secure way to handle JWTs with selective disclosure capabilities.
+This is the reference implmentation of [IETF SD-JWT specification](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/) written in TypeScript. It aims to provide a production-ready, robust and secure way to handle JWTs with selective disclosure capabilities.
 
 Hopae, a founding member of OpenWallet Foundation, is building wallet module in Typesript and need this project as a core component.
 
@@ -24,10 +24,10 @@ Another key aspect of this project is its capability to encode JWTs into QR code
 
 The design of "Selective Disclosure for JWT" is centered around flexibility, efficiency, and security. Here are the key design concepts:
 
-1. **Framework Agnosticism:** The implementation is designed to be universally compatible with various JavaScript frameworks. It can be easily plugged into applications built with React, React Native, and other frameworks without necessitating significant alterations in the existing codebase.
+1. **Framework Agnostic:** The implementation is designed to be universally compatible with various JavaScript frameworks. It can be easily plugged into applications built with React, React Native, and other frameworks without necessitating significant alterations in the existing codebase.
 2. **Data Minimization and Efficiency:** One of the core objectives is to minimize the payload size of JWTs. This is crucial for QR code generation, ensuring that the encoded data is concise enough to be efficiently transformed into a QR code, which remains easily scannable.
 3. **Modular Design:** The architecture is modular, allowing developers to integrate selective disclosure capabilities as needed. This modular approach also facilitates easy updates and maintenance.
-4. **Security-Centric Approach:** Security is a paramount concern, especially when handling JWTs. The implementation follows best practices in security and data integrity, ensuring that the selective disclosure process does not compromise the token's security.
+4. **Security-First:** Security is a paramount concern, especially when handling JWTs. The implementation follows best practices in security and data integrity, ensuring that the selective disclosure process does not compromise the token's security.
 5. **Scalability and Performance:** Designed to handle various loads, the implementation remains efficient and performant even under high demand, making it suitable for both small-scale and large-scale applications.
 
 By adhering to these design principles, "Selective Disclosure for JWT" aims to set a new standard in the secure and efficient handling of JWTs across diverse JavaScript environments.
@@ -55,7 +55,7 @@ Here's a basic example of how to use this library:
 ```jsx
 import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
 
-// Issuer Define the claims object with the user's information
+// Issuer defines the claims object with the user's information
 const claims = {
   firstname: 'John',
   lastname: 'Doe',
@@ -63,34 +63,28 @@ const claims = {
   id: '1234',
 };
 
-// Issuer Define the disclosure frame to specify which claims can be disclosed
+// Issuer defines the disclosure frame to specify which claims can be disclosed/undisclosed
 const disclosureFrame: DisclosureFrame<typeof claims> = {
   _sd: ['firstname', 'lastname', 'ssn'],
 };
 
-// Issue a signed JWT credential with the specified claims and disclosure frame
-// Return a Encoded SD JWT. Send the credential to the holder
+// Issuer issues a signed JWT credential with the specified claims and disclosure frame
+// returns an encoded JWT
 const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
 
-// Holder Receive the credential from the issuer and validate it
-// Return a boolean result
+// Holder may validate the credential from the issuer
 const valid = await sdjwt.validate(credential, publicKey);
 
-// Holder Define the presentation frame to specify which claims should be presented
+// Holder defines the presentation frame to specify which claims should be presented
 // The list of presented claims must be a subset of the disclosed claims
-// the presentation frame is determined by the verifier or the protocol that was agreed upon between the holder and the verifier
 const presentationFrame = ['firstname', 'ssn'];
 
-// Create a presentation using the issued credential and the presentation frame
-// return a Encoded SD JWT. Send the presentation to the verifier
+// Holder creates a presentation using the issued credential and the presentation frame
+// returns an encoded SD JWT.
 const presentation = await sdjwt.present(credential, presentationFrame);
 
-// Verifier Define the required claims that need to be verified in the presentation
-const requiredClaims = ['firstname', 'ssn', 'id'];
-
-// Verify the presentation using the public key and the required claims
-// return a boolean result
-const verified = await sdjwt.verify(presentation, publicKey, requiredClaims);
+// Verifier can verify the presentation using the Issuer's public key
+const verified = await sdjwt.verify(presentation, publicKey);
 ```
 
 Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki) or [examples](./examples/)
