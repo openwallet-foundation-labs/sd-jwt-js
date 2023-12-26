@@ -1,5 +1,8 @@
-![Coverage](https://img.shields.io/badge/coverage-91%25-green)
+![Coverage](https://img.shields.io/badge/coverage-93%25-green)
 ![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
+![NPM](https://img.shields.io/npm/v/%40hopae%2Fsd-jwt)
+![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
+![Stars](https://img.shields.io/github/stars/openwallet-foundation-labs/sd-jwt-js)
 
 # SD-JWT Implementation in JavaScript(TypeScript)
 

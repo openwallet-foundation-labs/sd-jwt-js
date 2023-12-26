@@ -10,7 +10,8 @@
     "sdjwtobject": "ts-node sdjwtobject.ts",
     "custom": "ts-node custom.ts",
     "decoy": "ts-node decoy.ts",
-    "custom_header": "ts-node custom_header.ts"
+    "custom_header": "ts-node custom_header.ts",
+    "kb": "ts-node kb.ts"
   },
   "keywords": [],
   "author": "",
