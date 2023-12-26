@@ -4,11 +4,11 @@
 ![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
 ![Stars](https://img.shields.io/github/stars/openwallet-foundation-labs/sd-jwt-js)
 
-# SD-JWT Implementation in JavaScript
+# SD-JWT Implementation in JavaScript(TypeScript)
 
-This is the reference implmentation of [IETF SD-JWT specification](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/) written in Javascript. It aims to provide a production-ready, robust and secure way to handle JWTs with selective disclosure capabilities.
+This is the reference implmentation of [IETF SD-JWT specification](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/) written in Typesript. It aims to provide a production-ready, robust and secure way to handle JWTs with selective disclosure capabilities.
 
-Hopae, a founding member of OpenWallet Foundation, is building wallet module in Javascript and need this project as a core component.
+Hopae, a founding member of OpenWallet Foundation, is building wallet module in Typesript and need this project as a core component.
 
 Currently compliant with: **draft-ietf-oauth-selective-disclosure-jwt-06**
 
@@ -53,23 +53,47 @@ Ensure you have Node.js installed as a prerequisite.
 Here's a basic example of how to use this library:
 
 ```jsx
-import sdjwt from '@hopae/sd-jwt';
+import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
 
+// Issuer Define the claims object with the user's information
 const claims = {
   firstname: 'John',
   lastname: 'Doe',
   ssn: '123-45-6789',
   id: '1234',
 };
+
+// Issuer Define the disclosure frame to specify which claims can be disclosed
+const disclosureFrame: DisclosureFrame<typeof claims> = {
+  _sd: ['firstname', 'lastname', 'ssn'],
+};
+
+// Issue a signed JWT credential with the specified claims and disclosure frame
+// Return a Encoded SD JWT. Send the credential to the holder
 const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
 
-const presentationFrame = ['firstname', 'id'];
-const presentation = await sdjwt.present(encodedSdjwt, presentationFrame);
+// Holder Receive the credential from the issuer and validate it
+// Return a boolean result
+const valid = await sdjwt.validate(credential, publicKey);
 
-const verified = sdjwt.verify(presentation, publicKey, ['firstname', 'id']);
+// Holder Define the presentation frame to specify which claims should be presented
+// The list of presented claims must be a subset of the disclosed claims
+// the presentation frame is determined by the verifier or the protocol that was agreed upon between the holder and the verifier
+const presentationFrame = ['firstname', 'ssn'];
+
+// Create a presentation using the issued credential and the presentation frame
+// return a Encoded SD JWT. Send the presentation to the verifier
+const presentation = await sdjwt.present(credential, presentationFrame);
+
+// Verifier Define the required claims that need to be verified in the presentation
+const requiredClaims = ['firstname', 'ssn', 'id'];
+
+// Verify the presentation using the public key and the required claims
+// return a boolean result
+const verified = await sdjwt.verify(presentation, publicKey, requiredClaims);
 ```
 
-Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki)
+Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki) or [examples](./examples/)
 
 ## Dependencies
 

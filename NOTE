@@ -1,5 +1,0 @@
-decoy: 1~5 random by default -> number of decoy is increased, size of sd-jwt is increased
-random number of hashing salt is better. decoy value: hash(hash(hash(salt)))
-salt default length is 128
-
-kb-jwt and all needed disclosure checking logic in verifier is required

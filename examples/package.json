@@ -5,11 +5,9 @@
   "main": "index.js",
   "scripts": {
     "prepare": "cd ../ && pnpm install && pnpm build",
+    "basic": "ts-node basic.ts",
     "all": "ts-node all.ts",
-    "issue": "ts-node issue.ts",
-    "present": "ts-node present.ts",
-    "validate": "ts-node validate.ts",
-    "verify": "ts-node verify.ts",
+    "sdjwtobject": "ts-node sdjwtobject.ts",
     "custom": "ts-node custom.ts",
     "decoy": "ts-node decoy.ts",
     "custom_header": "ts-node custom_header.ts",
