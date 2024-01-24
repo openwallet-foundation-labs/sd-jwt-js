@@ -399,8 +399,10 @@ export const unpack = async (
   sdjwtPayload: any,
   disclosures: Array<Disclosure<any>>,
 ) => {
-  const { _sd_alg, ...payload } = sdjwtPayload;
-  const hasher = getHasher(_sd_alg);
+  const { _sd_alg, sd_alg, ...payload } = sdjwtPayload;
+  // this is for backward compatibility version sd jwt 06
+  const alg = sd_alg ?? _sd_alg;
+  const hasher = getHasher(alg);
   const map = await createHashMapping(disclosures, hasher);
 
   return unpackObj(payload, map);
