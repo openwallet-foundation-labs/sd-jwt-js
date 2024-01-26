@@ -25,6 +25,8 @@ export const defaultConfig: Required<SDJWTConfig> = {
   omitTyp: false,
   hasher: digest,
   saltGenerator: generateSalt,
+  signer: null,
+  verifier: null,
 };
 
 export class SDJwtInstance {

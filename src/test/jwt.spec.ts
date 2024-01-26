@@ -1,6 +1,7 @@
 import { SDJWTException } from '../error';
 import { Jwt } from '../jwt';
 import Crypto from 'node:crypto';
+import { Signer, Verifier } from '../type';
 
 describe('JWT', () => {
   test('create', async () => {
@@ -103,5 +104,45 @@ describe('JWT', () => {
     } catch (e: unknown) {
       expect(e).toBeInstanceOf(SDJWTException);
     }
+  });
+
+  test('custom signer', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+    });
+
+    const encodedJwt = await jwt.signWithSigner(testSigner);
+    const newJwt = Jwt.fromEncode(encodedJwt);
+    const verified = await newJwt.verify(publicKey);
+    expect(verified).toBe(true);
+  });
+
+  test('custom verifier', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+    });
+
+    const encodedJwt = await jwt.sign(privateKey);
+    const newJwt = Jwt.fromEncode(encodedJwt);
+    const verified = await newJwt.verifyWithVerifier(testVerifier);
+    expect(verified).toBe(true);
   });
 });

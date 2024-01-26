@@ -1,7 +1,7 @@
 import { Base64Url } from './base64url';
 import { SDJWTException } from './error';
 import * as jose from 'jose';
-import { Base64urlString } from './type';
+import { Base64urlString, Signer, Verifier } from './type';
 
 export type JwtData<
   Header extends Record<string, any>,
@@ -86,6 +86,19 @@ export class Jwt<
     return encodedJwt;
   }
 
+  public async signWithSigner(signer: Signer) {
+    if (!this.header || !this.payload) {
+      throw new SDJWTException('Sign Error: Invalid JWT');
+    }
+
+    const header = Base64Url.encode(JSON.stringify(this.header));
+    const payload = Base64Url.encode(JSON.stringify(this.payload));
+    const data = `${header}.${payload}`;
+    this.signature = await signer(data);
+
+    return this.encodeJwt();
+  }
+
   public encodeJwt(): string {
     if (!this.header || !this.payload || !this.signature) {
       throw new SDJWTException('Serialize Error: Invalid JWT');
@@ -111,5 +124,17 @@ export class Jwt<
       return false;
     }
     return true;
+  }
+
+  public async verifyWithVerifier(verifier: Verifier) {
+    if (!this.header || !this.payload || !this.signature) {
+      throw new SDJWTException('Verify Error: Invalid JWT');
+    }
+
+    const header = Base64Url.encode(JSON.stringify(this.header));
+    const payload = Base64Url.encode(JSON.stringify(this.payload));
+    const data = `${header}.${payload}`;
+
+    return verifier(data, this.signature);
   }
 }

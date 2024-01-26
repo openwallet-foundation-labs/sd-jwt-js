@@ -14,6 +14,8 @@ export type SDJWTConfig = {
   omitTyp?: boolean;
   hasher?: Hasher;
   saltGenerator?: SaltGenerator;
+  signer?: Signer | null;
+  verifier?: Verifier | null;
 };
 
 export type kbHeader = { typ: 'kb+jwt'; alg: string };
@@ -28,8 +30,8 @@ export type KeyBinding = Jwt<kbHeader, kbPayload>;
 
 export type OrPromise<T> = T | Promise<T>;
 
-export type Signer = (data: string) => OrPromise<Uint8Array>;
-export type Verifier = (data: string, sig: Uint8Array) => OrPromise<boolean>;
+export type Signer = (data: string) => OrPromise<string>;
+export type Verifier = (data: string, sig: string) => OrPromise<boolean>;
 export type Hasher = (data: string) => Promise<string>;
 export type SaltGenerator = (length: number) => string;
 
