@@ -121,9 +121,9 @@ export class Jwt<
     try {
       await jose.jwtVerify(jwt, publicKey);
     } catch (e) {
-      return false;
+      throw new SDJWTException('Verify Error: Invalid JWT Signature');
     }
-    return true;
+    return { payload: this.payload, header: this.header };
   }
 
   public async verifyWithVerifier(verifier: Verifier) {
@@ -135,6 +135,10 @@ export class Jwt<
     const payload = Base64Url.encode(JSON.stringify(this.payload));
     const data = `${header}.${payload}`;
 
-    return verifier(data, this.signature);
+    const verified = verifier(data, this.signature);
+    if (!verified) {
+      throw new SDJWTException('Verify Error: Invalid JWT Signature');
+    }
+    return { payload: this.payload, header: this.header };
   }
 }

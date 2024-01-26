@@ -1,4 +1,5 @@
 import { generateSalt, digest, getHasher } from './crypto';
+import { SDJWTException } from './error';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
@@ -137,48 +138,43 @@ export class SDJwtInstance {
         publicKey: Uint8Array | KeyLike;
       };
     },
-  ): Promise<boolean> {
+  ) {
     const sdjwt = SDJwt.fromEncode(encodedSDJwt);
     if (!sdjwt.jwt) {
-      return false;
+      throw new SDJWTException('Invalid SD JWT');
     }
-    const validated = await this.validate(encodedSDJwt, publicKey);
-    if (!validated) {
-      return false;
-    }
+    const { payload, header } = await this.validate(encodedSDJwt, publicKey);
 
     if (requiredClaimKeys) {
       const keys = await sdjwt.keys();
       const missingKeys = requiredClaimKeys.filter((k) => !keys.includes(k));
       if (missingKeys.length > 0) {
-        return false;
+        throw new SDJWTException(
+          'Missing required claim keys: ' + missingKeys.join(', '),
+        );
       }
     }
 
     if (options?.kb) {
       if (!sdjwt.kbJwt) {
-        return false;
+        throw new SDJWTException('Key Binding JWT not exist');
       }
-      const kbVerified = await sdjwt.kbJwt.verify(options.kb.publicKey);
-      if (!kbVerified) {
-        return false;
-      }
+      const kb = await sdjwt.kbJwt.verify(options.kb.publicKey);
+      return { payload, header, kb };
     }
 
-    return true;
+    return { payload, header };
   }
 
-  public async validate(
-    encodedSDJwt: string,
-    publicKey: Uint8Array | KeyLike,
-  ): Promise<boolean> {
+  public async validate(encodedSDJwt: string, publicKey: Uint8Array | KeyLike) {
     const sdjwt = SDJwt.fromEncode(encodedSDJwt);
     if (!sdjwt.jwt) {
-      return false;
+      throw new SDJWTException('Invalid SD JWT');
     }
 
-    const verified = await sdjwt.jwt.verify(publicKey);
-    return verified;
+    const verifiedPayloads = await sdjwt.jwt.verify(publicKey);
+    const claims = await sdjwt.getClaims();
+    return { payload: claims, header: verifiedPayloads.header };
   }
 
   public config(newConfig: SDJWTConfig) {

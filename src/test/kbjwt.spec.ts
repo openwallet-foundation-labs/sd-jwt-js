@@ -75,7 +75,18 @@ describe('KB JWT', () => {
     const encodedKbJwt = await kbJwt.sign(privateKey);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
     const verified = await decoded.verify(publicKey);
-    expect(verified).toBe(true);
+    expect(verified).toStrictEqual({
+      header: {
+        typ: KB_JWT_TYP,
+        alg: 'EdDSA',
+      },
+      payload: {
+        iat: 1,
+        aud: 'aud',
+        nonce: 'nonce',
+        _sd_hash: 'hash',
+      },
+    });
   });
 
   test('verify failed', async () => {
@@ -129,7 +140,18 @@ describe('KB JWT', () => {
     const encodedKbJwt = await kbJwt.sign(privateKey);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
     const verified = await decoded.verifyWithVerifier(testVerifier);
-    expect(verified).toBe(true);
+    expect(verified).toStrictEqual({
+      header: {
+        typ: KB_JWT_TYP,
+        alg: 'EdDSA',
+      },
+      payload: {
+        iat: 1,
+        aud: 'aud',
+        nonce: 'nonce',
+        _sd_hash: 'hash',
+      },
+    });
   });
 
   test('verify failed with custom Verifier', async () => {

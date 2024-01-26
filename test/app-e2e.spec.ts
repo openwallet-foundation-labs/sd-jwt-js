@@ -47,7 +47,7 @@ describe('App', () => {
     const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame);
     expect(encodedSdjwt).toBeDefined();
     const validated = await sdjwt.validate(encodedSdjwt, publicKey);
-    expect(validated).toEqual(true);
+    expect(validated).toBeDefined();
 
     const decoded = sdjwt.decode(encodedSdjwt);
     const keys = await decoded.keys();
@@ -102,7 +102,7 @@ describe('App', () => {
       publicKey,
       requiredClaimKeys,
     );
-    expect(verified).toEqual(true);
+    expect(verified).toBeDefined();
   });
 
   test('From JSON (complex)', async () => {
@@ -184,7 +184,11 @@ async function JSONtest(filename: string) {
 
   const validated = await sdjwt.validate(encodedSdjwt, publicKey);
 
-  expect(validated).toEqual(true);
+  expect(validated).toBeDefined();
+  expect(validated).toStrictEqual({
+    header: { alg: 'EdDSA', typ: 'sd-jwt' },
+    payload: test.claims,
+  });
 
   const presentedSDJwt = await sdjwt.present(
     encodedSdjwt,
@@ -203,7 +207,11 @@ async function JSONtest(filename: string) {
     test.requiredClaimKeys,
   );
 
-  expect(verified).toEqual(true);
+  expect(verified).toBeDefined();
+  expect(verified).toStrictEqual({
+    header: { alg: 'EdDSA', typ: 'sd-jwt' },
+    payload: test.claims,
+  });
 }
 
 type TestJson = {

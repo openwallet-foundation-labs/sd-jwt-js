@@ -44,11 +44,15 @@ describe('JWT', () => {
     const encodedJwt = await jwt.sign(privateKey);
     const newJwt = Jwt.fromEncode(encodedJwt);
     const verified = await newJwt.verify(publicKey);
-    expect(verified).toBe(true);
-    const notVerified = await newJwt.verify(
-      Crypto.generateKeyPairSync('ed25519').privateKey,
-    );
-    expect(notVerified).toBe(false);
+    expect(verified).toStrictEqual({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+    });
+    try {
+      await newJwt.verify(Crypto.generateKeyPairSync('ed25519').privateKey);
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(SDJWTException);
+    }
   });
 
   test('encode', async () => {
@@ -119,9 +123,15 @@ describe('JWT', () => {
     });
 
     const encodedJwt = await jwt.signWithSigner(testSigner);
+    const encodedJwt2 = await jwt.sign(privateKey);
+    expect(encodedJwt).toEqual(encodedJwt2);
+
     const newJwt = Jwt.fromEncode(encodedJwt);
     const verified = await newJwt.verify(publicKey);
-    expect(verified).toBe(true);
+    expect(verified).toStrictEqual({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+    });
   });
 
   test('custom verifier', async () => {
@@ -143,6 +153,9 @@ describe('JWT', () => {
     const encodedJwt = await jwt.sign(privateKey);
     const newJwt = Jwt.fromEncode(encodedJwt);
     const verified = await newJwt.verifyWithVerifier(testVerifier);
-    expect(verified).toBe(true);
+    expect(verified).toStrictEqual({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+    });
   });
 });
