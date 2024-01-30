@@ -98,7 +98,7 @@ export class SDJwtInstance {
       header,
       payload: {
         ...packedClaims,
-        sd_alg: options?.hash_alg ?? SDJwtInstance.DEFAULT_HASH_ALG,
+        _sd_alg: options?.hash_alg ?? SDJwtInstance.DEFAULT_HASH_ALG,
       },
     });
     await jwt.sign(privateKey);
