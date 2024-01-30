@@ -23,7 +23,7 @@ export type kbPayload = {
   iat: number;
   aud: string;
   nonce: string;
-  _sd_hash: string;
+  sd_hash: string;
 };
 
 export type KeyBinding = Jwt<kbHeader, kbPayload>;

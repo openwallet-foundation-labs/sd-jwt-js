@@ -14,7 +14,8 @@ export class KBJwt<
       !this.payload?.iat ||
       !this.payload?.aud ||
       !this.payload?.nonce ||
-      !this.payload?._sd_hash
+      // this is for backward compatibility with version 06
+      !(this.payload?.sd_hash || (this.payload as any)?._sd_hash)
     ) {
       throw new SDJWTException('Invalid Key Binding Jwt');
     }
@@ -28,7 +29,8 @@ export class KBJwt<
       !this.payload?.iat ||
       !this.payload?.aud ||
       !this.payload?.nonce ||
-      !this.payload?._sd_hash
+      // this is for backward compatibility with version 06
+      !(this.payload?.sd_hash || (this.payload as any)?._sd_hash)
     ) {
       throw new SDJWTException('Invalid Key Binding Jwt');
     }

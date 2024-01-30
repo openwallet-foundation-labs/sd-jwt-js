@@ -23,7 +23,7 @@ describe('index', () => {
         kb: {
           alg: 'EdDSA',
           payload: {
-            _sd_hash: 'sha-256',
+            sd_hash: 'sha-256',
             aud: '1',
             iat: 1,
             nonce: '342',
@@ -50,7 +50,7 @@ describe('index', () => {
         kb: {
           alg: 'EdDSA',
           payload: {
-            _sd_hash: 'sha-256',
+            sd_hash: 'sha-256',
             aud: '1',
             iat: 1,
             nonce: '342',
