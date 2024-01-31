@@ -15,7 +15,8 @@ export const digest = async (
   algorithm: string = 'SHA-256',
 ): Promise<string> => {
   const Crypto = require('node:crypto');
-  const hash = Crypto.createHash(algorithm);
+  const nodeAlg = toNodeCryptoAlg(algorithm);
+  const hash = Crypto.createHash(nodeAlg);
   hash.update(data);
   return hash.digest('hex');
 };
@@ -23,3 +24,6 @@ export const digest = async (
 export const getHasher = (algorithm: string = 'SHA-256') => {
   return (data: string) => digest(data, algorithm);
 };
+
+const toNodeCryptoAlg = (hashAlg: string): string =>
+  hashAlg.replace('-', '').toLowerCase();
