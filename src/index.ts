@@ -5,10 +5,13 @@ import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
 import {
   DisclosureFrame,
+  KBOptionWithSigner,
+  KBOptions,
   KB_JWT_TYP,
   SDJWTCompact,
   SDJWTConfig,
   SD_JWT_TYP,
+  Signer,
   kbPayload,
 } from './type';
 import { KeyLike } from 'jose';
@@ -46,11 +49,17 @@ export class SDJwtInstance {
     return new SDJwtInstance(userConfig);
   }
 
-  private async createKBJwt(
-    payload: kbPayload,
-    privateKey: Uint8Array | KeyLike,
-    alg: string,
-  ): Promise<KBJwt> {
+  private isKBOptionsWithSigner(
+    options: KBOptions,
+  ): options is KBOptionWithSigner {
+    if ((options as KBOptionWithSigner).signer) {
+      return true;
+    }
+    return false;
+  }
+
+  private async createKBJwt(options: KBOptions): Promise<KBJwt> {
+    const { alg, payload } = options;
     const kbJwt = new KBJwt({
       header: {
         typ: KB_JWT_TYP,
@@ -58,7 +67,15 @@ export class SDJwtInstance {
       },
       payload,
     });
-    await kbJwt.sign(privateKey);
+
+    if (this.isKBOptionsWithSigner(options)) {
+      const { signer } = options;
+      await kbJwt.signWithSigner(signer);
+    } else {
+      const { privateKey } = options;
+      await kbJwt.sign(privateKey);
+    }
+
     return kbJwt;
   }
 
@@ -70,11 +87,6 @@ export class SDJwtInstance {
       header?: object;
       sign_alg?: string;
       hash_alg?: string;
-      kb?: {
-        alg: string;
-        payload: kbPayload;
-        privateKey: Uint8Array | KeyLike;
-      };
     },
   ): Promise<SDJWTCompact> {
     const haser =
@@ -103,18 +115,9 @@ export class SDJwtInstance {
     });
     await jwt.sign(privateKey);
 
-    const kbJwt = options?.kb
-      ? await this.createKBJwt(
-          options.kb.payload,
-          options.kb.privateKey,
-          options.kb.alg,
-        )
-      : undefined;
-
     const sdJwt = new SDJwt({
       jwt,
       disclosures,
-      kbJwt,
     });
 
     return sdJwt.encodeSDJwt();
@@ -123,9 +126,17 @@ export class SDJwtInstance {
   public async present(
     encodedSDJwt: string,
     presentationKeys?: string[],
+    options?: {
+      kb?: KBOptions;
+    },
   ): Promise<SDJWTCompact> {
     if (!presentationKeys) return encodedSDJwt;
     const sdjwt = SDJwt.fromEncode(encodedSDJwt);
+
+    const kbJwt = options?.kb ? await this.createKBJwt(options.kb) : undefined;
+
+    sdjwt.kbJwt = kbJwt;
+
     return sdjwt.present(presentationKeys.sort());
   }
 
