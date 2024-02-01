@@ -26,18 +26,18 @@ export const createKeyPair = () => {
     sd_hash: '1234',
   };
 
-  const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame, {
+  const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame);
+  console.log('encodedSdjwt:', encodedSdjwt);
+  const sdjwttoken = sdjwt.decode(encodedSdjwt);
+  console.log(sdjwttoken);
+
+  const presentedSdJwt = await sdjwt.present(encodedSdjwt, ['id'], {
     kb: {
       alg: 'EdDSA',
       payload: kbPayload,
       privateKey,
     },
   });
-  console.log('encodedSdjwt:', encodedSdjwt);
-  const sdjwttoken = sdjwt.decode(encodedSdjwt);
-  console.log(sdjwttoken);
-
-  const presentedSdJwt = await sdjwt.present(encodedSdjwt, ['id']);
 
   const verified = await sdjwt.verify(
     presentedSdJwt,
