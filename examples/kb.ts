@@ -23,7 +23,7 @@ export const createKeyPair = () => {
     aud: 'https://example.com',
     nonce: '1234',
     custom: 'data',
-    _sd_hash: '1234',
+    sd_hash: '1234',
   };
 
   const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame, {

@@ -1,7 +1,7 @@
 import { KeyLike } from 'jose';
 import { SDJWTException } from './error';
 import { Jwt } from './jwt';
-import { kbHeader, kbPayload } from './type';
+import { Verifier, kbHeader, kbPayload } from './type';
 
 export class KBJwt<
   Header extends kbHeader = kbHeader,
@@ -14,11 +14,27 @@ export class KBJwt<
       !this.payload?.iat ||
       !this.payload?.aud ||
       !this.payload?.nonce ||
-      !this.payload?._sd_hash
+      // this is for backward compatibility with version 06
+      !(this.payload?.sd_hash || (this.payload as any)?._sd_hash)
     ) {
       throw new SDJWTException('Invalid Key Binding Jwt');
     }
     return await super.verify(publicKey);
+  }
+
+  public async verifyWithVerifier(verifier: Verifier) {
+    if (
+      !this.header?.alg ||
+      !this.header.typ ||
+      !this.payload?.iat ||
+      !this.payload?.aud ||
+      !this.payload?.nonce ||
+      // this is for backward compatibility with version 06
+      !(this.payload?.sd_hash || (this.payload as any)?._sd_hash)
+    ) {
+      throw new SDJWTException('Invalid Key Binding Jwt');
+    }
+    return await super.verifyWithVerifier(verifier);
   }
 
   public static fromKBEncode<

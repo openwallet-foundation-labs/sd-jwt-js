@@ -10,7 +10,7 @@ This is the reference implmentation of [IETF SD-JWT specification](https://data
 
 Hopae, a founding member of OpenWallet Foundation, is building wallet module in Typesript and need this project as a core component.
 
-Currently compliant with: **draft-ietf-oauth-selective-disclosure-jwt-06**
+Currently compliant with: **draft-ietf-oauth-selective-disclosure-jwt-07**
 
 ## **Background**
 
