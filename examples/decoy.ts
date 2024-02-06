@@ -20,7 +20,7 @@ export const createKeyPair = () => {
     _sd: ['id'],
     _sd_decoy: 1, // 1 decoy digest will be added in SD JWT
   };
-  const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
+  const credential = await sdjwt.issue(claims, { privateKey }, disclosureFrame);
   console.log('encodedSdjwt:', credential);
 
   // You can check the decoy digest in the SD JWT by decoding it

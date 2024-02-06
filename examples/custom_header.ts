@@ -23,9 +23,14 @@ export const createKeyPair = () => {
 
   // Issue a signed JWT credential with the specified claims and disclosures
   // Return a Encoded SD JWT. Issuer send the credential to the holder
-  const credential = await sdjwt.issue(claims, privateKey, disclosureFrame, {
-    header: { typ: 'vc+sd-jwt', custom: 'data' }, // You can add custom header data to the SD JWT
-  });
+  const credential = await sdjwt.issue(
+    claims,
+    { privateKey },
+    disclosureFrame,
+    {
+      header: { typ: 'vc+sd-jwt', custom: 'data' }, // You can add custom header data to the SD JWT
+    },
+  );
   console.log('encodedSdjwt:', credential);
 
   // You can check the custom header data by decoding the SD JWT
