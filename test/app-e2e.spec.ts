@@ -50,7 +50,7 @@ describe('App', () => {
       disclosureFrame,
     );
     expect(encodedSdjwt).toBeDefined();
-    const validated = await sdjwt.validate(encodedSdjwt, publicKey);
+    const validated = await sdjwt.validate(encodedSdjwt, { publicKey });
     expect(validated).toBeDefined();
 
     const decoded = sdjwt.decode(encodedSdjwt);
@@ -103,7 +103,7 @@ describe('App', () => {
     const requiredClaimKeys = ['firstname', 'id', 'data.ssn'];
     const verified = await sdjwt.verify(
       encodedSdjwt,
-      publicKey,
+      { publicKey },
       requiredClaimKeys,
     );
     expect(verified).toBeDefined();
@@ -186,7 +186,7 @@ async function JSONtest(filename: string) {
 
   expect(encodedSdjwt).toBeDefined();
 
-  const validated = await sdjwt.validate(encodedSdjwt, publicKey);
+  const validated = await sdjwt.validate(encodedSdjwt, { publicKey });
 
   expect(validated).toBeDefined();
   expect(validated).toStrictEqual({
@@ -207,7 +207,7 @@ async function JSONtest(filename: string) {
 
   const verified = await sdjwt.verify(
     encodedSdjwt,
-    publicKey,
+    { publicKey },
     test.requiredClaimKeys,
   );
 

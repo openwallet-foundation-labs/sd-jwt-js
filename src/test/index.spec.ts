@@ -1,4 +1,4 @@
-import sdjwt, { Signer } from '../index';
+import sdjwt, { Signer, Verifier } from '../index';
 import Crypto from 'node:crypto';
 
 describe('index', () => {
@@ -127,10 +127,9 @@ describe('index', () => {
     );
 
     try {
-      await sdjwt.verify(
-        credential,
-        Crypto.generateKeyPairSync('ed25519').privateKey,
-      );
+      await sdjwt.verify(credential, {
+        publicKey: Crypto.generateKeyPairSync('ed25519').privateKey,
+      });
     } catch (e) {
       expect(e).toBeDefined();
     }
@@ -162,9 +161,58 @@ describe('index', () => {
     });
 
     try {
-      await sdjwt.verify(presentation, publicKey);
+      await sdjwt.verify(presentation, { publicKey });
     } catch (e) {
       expect(e).toBeDefined();
     }
+  });
+
+  test('custom verifier', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
+    const credential = await sdjwt.issue({ foo: 'bar' }, { privateKey });
+
+    const verified = await sdjwt.verify(credential, { verifier: testVerifier });
+
+    expect(verified).toStrictEqual({
+      header: { alg: 'EdDSA', typ: 'sd-jwt' },
+      payload: { foo: 'bar' },
+    });
+  });
+
+  test('custom verifier in config', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
+    const SDJwtInstance = sdjwt.create({
+      verifier: testVerifier,
+    });
+
+    const credential = await SDJwtInstance.issue(
+      { foo: 'bar' },
+      { privateKey },
+    );
+
+    const verified = await SDJwtInstance.verify(credential);
+
+    expect(verified).toStrictEqual({
+      header: { alg: 'EdDSA', typ: 'sd-jwt' },
+      payload: { foo: 'bar' },
+    });
   });
 });
