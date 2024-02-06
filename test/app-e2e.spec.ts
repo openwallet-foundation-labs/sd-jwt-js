@@ -44,7 +44,11 @@ describe('App', () => {
         _sd: ['hi'],
       },
     };
-    const encodedSdjwt = await sdjwt.issue(claims, privateKey, disclosureFrame);
+    const encodedSdjwt = await sdjwt.issue(
+      claims,
+      { privateKey },
+      disclosureFrame,
+    );
     expect(encodedSdjwt).toBeDefined();
     const validated = await sdjwt.validate(encodedSdjwt, publicKey);
     expect(validated).toBeDefined();
@@ -176,7 +180,7 @@ async function JSONtest(filename: string) {
 
   const encodedSdjwt = await sdjwt.issue(
     test.claims,
-    privateKey,
+    { privateKey },
     test.disclosureFrame,
   );
 

@@ -11,6 +11,7 @@ import {
   SDJWTCompact,
   SDJWTConfig,
   SD_JWT_TYP,
+  SignOptions,
   Signer,
   kbPayload,
 } from './type';
@@ -79,9 +80,27 @@ export class SDJwtInstance {
     return kbJwt;
   }
 
+  private async SignJwt(jwt: Jwt, signOption?: SignOptions) {
+    if (!signOption) {
+      const { signer } = this.userConfig;
+      if (signer) {
+        await jwt.signWithSigner(signer);
+      }
+      return jwt;
+    }
+
+    if ('signer' in signOption) {
+      await jwt.signWithSigner(signOption.signer);
+    } else {
+      await jwt.sign(signOption.privateKey);
+    }
+
+    return jwt;
+  }
+
   public async issue<Payload extends object>(
     payload: Payload,
-    privateKey: Uint8Array | KeyLike,
+    signOption?: SignOptions,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
       header?: object;
@@ -113,7 +132,7 @@ export class SDJwtInstance {
         _sd_alg: options?.hash_alg ?? SDJwtInstance.DEFAULT_HASH_ALG,
       },
     });
-    await jwt.sign(privateKey);
+    await this.SignJwt(jwt, signOption);
 
     const sdJwt = new SDJwt({
       jwt,
