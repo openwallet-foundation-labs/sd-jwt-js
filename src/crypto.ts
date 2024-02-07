@@ -1,4 +1,5 @@
 import { SDJWTException } from './error';
+import { Base64Url } from './base64url';
 
 export const generateSalt = (length: number): string => {
   if (length <= 0) {
@@ -24,6 +25,11 @@ export const digest = async (
 export const getHasher = (algorithm: string = 'SHA-256') => {
   return (data: string) => digest(data, algorithm);
 };
+
+export const hexToB64Url = (hexString: string) => {
+  const theBytes = Buffer.from(hexString,'hex')
+  return Base64Url.encode(theBytes)
+}
 
 const toNodeCryptoAlg = (hashAlg: string): string =>
   hashAlg.replace('-', '').toLowerCase();
