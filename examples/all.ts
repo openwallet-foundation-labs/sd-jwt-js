@@ -47,12 +47,12 @@ export const createKeyPair = () => {
 
   // Issue a signed JWT credential with the specified claims and disclosures
   // Return a Encoded SD JWT. Issuer send the credential to the holder
-  const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
+  const credential = await sdjwt.issue(claims, { privateKey }, disclosureFrame);
   console.log('encodedJwt:', credential);
 
   // Holder Receive the credential from the issuer and validate it
   // Return a boolean result
-  const validated = await sdjwt.validate(credential, publicKey);
+  const validated = await sdjwt.validate(credential, { publicKey });
   console.log('validated:', validated);
 
   // You can decode the SD JWT to get the payload and the disclosures
@@ -94,6 +94,10 @@ export const createKeyPair = () => {
 
   // Verify the presentation using the public key and the required claims
   // return a boolean result
-  const verified = await sdjwt.verify(credential, publicKey, requiredClaims);
+  const verified = await sdjwt.verify(
+    credential,
+    { publicKey },
+    requiredClaims,
+  );
   console.log('verified:', verified);
 })();

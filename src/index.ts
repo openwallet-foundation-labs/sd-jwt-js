@@ -11,7 +11,9 @@ import {
   SDJWTCompact,
   SDJWTConfig,
   SD_JWT_TYP,
+  SignOptions,
   Signer,
+  VerifyOptions,
   kbPayload,
 } from './type';
 import { KeyLike } from 'jose';
@@ -79,9 +81,42 @@ export class SDJwtInstance {
     return kbJwt;
   }
 
+  private async SignJwt(jwt: Jwt, signOption?: SignOptions) {
+    if (!signOption) {
+      const { signer } = this.userConfig;
+      if (signer) {
+        await jwt.signWithSigner(signer);
+        return jwt;
+      }
+      throw new SDJWTException('Invalid Sign Option');
+    }
+
+    if ('signer' in signOption) {
+      await jwt.signWithSigner(signOption.signer);
+      return jwt;
+    }
+    await jwt.sign(signOption.privateKey);
+    return jwt;
+  }
+
+  private async VerifyJwt(jwt: Jwt, verifyOption?: VerifyOptions) {
+    if (!verifyOption) {
+      const { verifier } = this.userConfig;
+      if (verifier) {
+        return jwt.verifyWithVerifier(verifier);
+      }
+      throw new SDJWTException('Invalid Verify Option');
+    }
+
+    if ('verifier' in verifyOption) {
+      return jwt.verifyWithVerifier(verifyOption.verifier);
+    }
+    return jwt.verify(verifyOption.publicKey);
+  }
+
   public async issue<Payload extends object>(
     payload: Payload,
-    privateKey: Uint8Array | KeyLike,
+    signOption?: SignOptions,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
       header?: object;
@@ -113,7 +148,7 @@ export class SDJwtInstance {
         _sd_alg: options?.hash_alg ?? SDJwtInstance.DEFAULT_HASH_ALG,
       },
     });
-    await jwt.sign(privateKey);
+    await this.SignJwt(jwt, signOption);
 
     const sdJwt = new SDJwt({
       jwt,
@@ -142,7 +177,7 @@ export class SDJwtInstance {
 
   public async verify(
     encodedSDJwt: string,
-    publicKey: Uint8Array | KeyLike,
+    verifyOption?: VerifyOptions,
     requiredClaimKeys?: string[],
     options?: {
       kb?: {
@@ -154,7 +189,7 @@ export class SDJwtInstance {
     if (!sdjwt.jwt) {
       throw new SDJWTException('Invalid SD JWT');
     }
-    const { payload, header } = await this.validate(encodedSDJwt, publicKey);
+    const { payload, header } = await this.validate(encodedSDJwt, verifyOption);
 
     if (requiredClaimKeys) {
       const keys = await sdjwt.keys();
@@ -177,13 +212,13 @@ export class SDJwtInstance {
     return { payload, header };
   }
 
-  public async validate(encodedSDJwt: string, publicKey: Uint8Array | KeyLike) {
+  public async validate(encodedSDJwt: string, verifyOption?: VerifyOptions) {
     const sdjwt = SDJwt.fromEncode(encodedSDJwt);
     if (!sdjwt.jwt) {
       throw new SDJWTException('Invalid SD JWT');
     }
 
-    const verifiedPayloads = await sdjwt.jwt.verify(publicKey);
+    const verifiedPayloads = await this.VerifyJwt(sdjwt.jwt, verifyOption);
     const claims = await sdjwt.getClaims();
     return { payload: claims, header: verifiedPayloads.header };
   }

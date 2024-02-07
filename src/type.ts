@@ -19,6 +19,14 @@ export type SDJWTConfig = {
   verifier?: Verifier | null;
 };
 
+export type SignOptions =
+  | { privateKey: Uint8Array | KeyLike }
+  | { signer: Signer };
+
+export type VerifyOptions =
+  | { publicKey: Uint8Array | KeyLike }
+  | { verifier: Verifier };
+
 export type kbHeader = { typ: 'kb+jwt'; alg: string };
 export type kbPayload = {
   iat: number;

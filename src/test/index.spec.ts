@@ -1,4 +1,4 @@
-import sdjwt, { Signer } from '../index';
+import sdjwt, { Signer, Verifier } from '../index';
 import Crypto from 'node:crypto';
 
 describe('index', () => {
@@ -15,7 +15,7 @@ describe('index', () => {
       {
         foo: 'bar',
       },
-      privateKey,
+      { privateKey },
       {
         _sd: ['foo'],
       },
@@ -49,7 +49,7 @@ describe('index', () => {
       {
         foo: 'bar',
       },
-      privateKey,
+      { privateKey },
       {
         _sd: ['foo'],
       },
@@ -73,23 +73,63 @@ describe('index', () => {
     expect(presentation).toBeDefined();
   });
 
+  test('issue with signer', async () => {
+    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      { signer: testSigner },
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    expect(credential).toBeDefined();
+  });
+
+  test('issue with signer in config', async () => {
+    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+    const SDJwtInstance = sdjwt.create({
+      signer: testSigner,
+    });
+    const credential = await SDJwtInstance.issue(
+      {
+        foo: 'bar',
+      },
+      undefined,
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    expect(credential).toBeDefined();
+  });
+
   test('verify failed', async () => {
     const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
       },
-      privateKey,
+      { privateKey },
       {
         _sd: ['foo'],
       },
     );
 
     try {
-      await sdjwt.verify(
-        credential,
-        Crypto.generateKeyPairSync('ed25519').privateKey,
-      );
+      await sdjwt.verify(credential, {
+        publicKey: Crypto.generateKeyPairSync('ed25519').privateKey,
+      });
     } catch (e) {
       expect(e).toBeDefined();
     }
@@ -101,7 +141,7 @@ describe('index', () => {
       {
         foo: 'bar',
       },
-      privateKey,
+      { privateKey },
       {
         _sd: ['foo'],
       },
@@ -121,9 +161,58 @@ describe('index', () => {
     });
 
     try {
-      await sdjwt.verify(presentation, publicKey);
+      await sdjwt.verify(presentation, { publicKey });
     } catch (e) {
       expect(e).toBeDefined();
     }
+  });
+
+  test('custom verifier', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
+    const credential = await sdjwt.issue({ foo: 'bar' }, { privateKey });
+
+    const verified = await sdjwt.verify(credential, { verifier: testVerifier });
+
+    expect(verified).toStrictEqual({
+      header: { alg: 'EdDSA', typ: 'sd-jwt' },
+      payload: { foo: 'bar' },
+    });
+  });
+
+  test('custom verifier in config', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
+    const SDJwtInstance = sdjwt.create({
+      verifier: testVerifier,
+    });
+
+    const credential = await SDJwtInstance.issue(
+      { foo: 'bar' },
+      { privateKey },
+    );
+
+    const verified = await SDJwtInstance.verify(credential);
+
+    expect(verified).toStrictEqual({
+      header: { alg: 'EdDSA', typ: 'sd-jwt' },
+      payload: { foo: 'bar' },
+    });
   });
 });

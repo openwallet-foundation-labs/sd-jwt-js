@@ -23,11 +23,11 @@ export const createKeyPair = () => {
 
   // Issue a signed JWT credential with the specified claims and disclosures
   // Return a Encoded SD JWT. Issuer send the credential to the holder
-  const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
+  const credential = await sdjwt.issue(claims, { privateKey }, disclosureFrame);
 
   // Holder Receive the credential from the issuer and validate it
   // Return a boolean result
-  const valid = await sdjwt.validate(credential, publicKey);
+  const valid = await sdjwt.validate(credential, { publicKey });
 
   // Holder Define the presentation frame to specify which claims should be presented
   // The list of presented claims must be a subset of the disclosed claims
@@ -43,6 +43,10 @@ export const createKeyPair = () => {
 
   // Verify the presentation using the public key and the required claims
   // return a boolean result
-  const verified = await sdjwt.verify(presentation, publicKey, requiredClaims);
+  const verified = await sdjwt.verify(
+    presentation,
+    { publicKey },
+    requiredClaims,
+  );
   console.log(verified);
 })();
