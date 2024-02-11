@@ -1,4 +1,3 @@
-import { generateSalt, digest, getHasher } from './crypto';
 import { SDJWTException } from './error';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
@@ -12,16 +11,13 @@ import {
   SDJWTConfig,
   SD_JWT_TYP,
   SignOptions,
-  Signer,
   VerifyOptions,
-  kbPayload,
 } from './type';
 import { KeyLike } from 'jose';
 
 export * from './type';
 export * from './sdjwt';
 export * from './kbjwt';
-export * from './crypto';
 export * from './jwt';
 export * from './base64url';
 export * from './decoy';
@@ -29,8 +25,8 @@ export * from './disclosure';
 
 export const defaultConfig: Required<SDJWTConfig> = {
   omitTyp: false,
-  hasher: digest,
-  saltGenerator: generateSalt,
+  hasher: null,
+  saltGenerator: null,
   signer: null,
   verifier: null,
 };

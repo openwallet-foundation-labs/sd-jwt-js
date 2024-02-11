@@ -1,6 +1,6 @@
 import { Base64Url } from './base64url';
 import { SDJWTException } from './error';
-import { Hasher } from './type';
+import { HasherAndAlg } from './type';
 
 export type DisclosureData<T> = [string, string, T] | [string, T];
 
@@ -44,10 +44,11 @@ export class Disclosure<T> {
       : [this.salt, this.value];
   }
 
-  public async digest(hasher: Hasher): Promise<string> {
+  public async digest(hash: HasherAndAlg): Promise<string> {
+    const { hasher, alg } = hash;
     if (!this._digest) {
-      const hash = await hasher(this.encode());
-      this._digest = Base64Url.encode(hash);
+      const hash = await hasher(this.encode(), alg);
+      this._digest = Base64Url.Uint8ArrayToBase64Url(hash);
     }
 
     return this._digest;

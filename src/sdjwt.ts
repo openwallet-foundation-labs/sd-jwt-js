@@ -1,4 +1,3 @@
-import { generateSalt, getHasher, digest as hash } from './crypto';
 import { createDecoy } from './decoy';
 import { Disclosure } from './disclosure';
 import { SDJWTException } from './error';
@@ -7,6 +6,7 @@ import { KBJwt } from './kbjwt';
 import {
   DisclosureFrame,
   Hasher,
+  HasherAndAlg,
   SDJWTCompact,
   SD_DECOY,
   SD_DIGEST,
@@ -99,15 +99,17 @@ export class SDJwt<
     });
   }
 
-  public async present(keys: string[]): Promise<SDJWTCompact> {
+  public async present(keys: string[], hasher: Hasher): Promise<SDJWTCompact> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
-
-    const hashmap = await createHashMapping(this.disclosures);
+    const alg = getSDAlg(this.jwt.payload);
+    const hash = { alg, hasher };
+    const hashmap = await createHashMapping(this.disclosures, hash);
     const { disclosureKeymap } = await unpack(
-      this.jwt?.payload,
+      this.jwt.payload,
       this.disclosures,
+      hasher,
     );
 
     const presentableKeys = Object.keys(disclosureKeymap);
@@ -148,26 +150,31 @@ export class SDJwt<
     return data.join(SD_SEPARATOR);
   }
 
-  public async keys(): Promise<string[]> {
-    return listKeys(await this.getClaims()).sort();
+  public async keys(hasher: Hasher): Promise<string[]> {
+    return listKeys(await this.getClaims(hasher)).sort();
   }
 
-  public async presentableKeys(): Promise<string[]> {
+  public async presentableKeys(hasher: Hasher): Promise<string[]> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
     const { disclosureKeymap } = await unpack(
       this.jwt?.payload,
       this.disclosures,
+      hasher,
     );
     return Object.keys(disclosureKeymap).sort();
   }
 
-  public async getClaims<T>(): Promise<T> {
+  public async getClaims<T>(hasher: Hasher): Promise<T> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
-    const { unpackedObj } = await unpack(this.jwt?.payload, this.disclosures);
+    const { unpackedObj } = await unpack(
+      this.jwt.payload,
+      this.disclosures,
+      hasher,
+    );
     return unpackedObj as T;
   }
 }
@@ -188,9 +195,9 @@ export const listKeys = (obj: any, prefix: string = '') => {
 
 export const pack = async <T extends object>(
   claims: T,
-  disclosureFrame?: DisclosureFrame<T>,
-  hasher: Hasher = hash,
-  saltGenerator: SaltGenerator = generateSalt,
+  disclosureFrame: DisclosureFrame<T> | undefined,
+  hash: HasherAndAlg,
+  saltGenerator: SaltGenerator,
 ): Promise<{ packedClaims: any; disclosures: Array<Disclosure<any>> }> => {
   if (!disclosureFrame) {
     return {
@@ -223,9 +230,9 @@ export const pack = async <T extends object>(
         : claims[i];
       // @ts-ignore
       if (sd.includes(i)) {
-        const salt = saltGenerator(16);
+        const salt = await saltGenerator(16);
         const disclosure = new Disclosure([salt, claim]);
-        const digest = await disclosure.digest(hasher);
+        const digest = await disclosure.digest(hash);
         packedClaims.push({ '...': digest });
         disclosures.push(disclosure);
       } else {
@@ -233,7 +240,7 @@ export const pack = async <T extends object>(
       }
     }
     for (let j = 0; j < decoyCount; j++) {
-      const decoyDigest = await createDecoy(hasher, saltGenerator);
+      const decoyDigest = await createDecoy(hash, saltGenerator);
       packedClaims.push({ '...': decoyDigest });
     }
     return { packedClaims, disclosures };
@@ -248,7 +255,8 @@ export const pack = async <T extends object>(
         // @ts-ignore
         claims[key],
         disclosureFrame[key],
-        hasher,
+        hash,
+        saltGenerator,
       );
       recursivePackedClaims[key] = packed.packedClaims;
       disclosures.push(...packed.disclosures);
@@ -263,9 +271,9 @@ export const pack = async <T extends object>(
       : claims[key];
     // @ts-ignore
     if (sd.includes(key)) {
-      const salt = saltGenerator(16);
+      const salt = await saltGenerator(16);
       const disclosure = new Disclosure([salt, key, claim]);
-      const digest = await disclosure.digest(hasher);
+      const digest = await disclosure.digest(hash);
 
       _sd.push(digest);
       disclosures.push(disclosure);
@@ -275,7 +283,7 @@ export const pack = async <T extends object>(
   }
 
   for (let j = 0; j < decoyCount; j++) {
-    const decoyDigest = await createDecoy(hasher, saltGenerator);
+    const decoyDigest = await createDecoy(hash, saltGenerator);
     _sd.push(decoyDigest);
   }
 
@@ -384,24 +392,30 @@ export const unpackObj = (
 
 export const createHashMapping = async (
   disclosures: Array<Disclosure<any>>,
-  hasher: Hasher = hash,
+  hash: HasherAndAlg,
 ) => {
   const map: Record<string, Disclosure<any>> = {};
   for (let i = 0; i < disclosures.length; i++) {
     const disclosure = disclosures[i];
-    const digest = await disclosure.digest(hasher);
+    const digest = await disclosure.digest(hash);
     map[digest] = disclosure;
   }
   return map;
 };
 
+export const getSDAlg = (sdjwtPayload: any) => {
+  const { _sd_alg } = sdjwtPayload;
+  return _sd_alg;
+};
+
 export const unpack = async (
   sdjwtPayload: any,
   disclosures: Array<Disclosure<any>>,
+  hasher: Hasher,
 ) => {
   const { _sd_alg, ...payload } = sdjwtPayload;
-  const hasher = getHasher(_sd_alg);
-  const map = await createHashMapping(disclosures, hasher);
+  const hash = { hasher, alg: _sd_alg };
+  const map = await createHashMapping(disclosures, hash);
 
   return unpackObj(payload, map);
 };

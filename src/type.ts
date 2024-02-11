@@ -13,8 +13,8 @@ export type Base64urlString = string;
 
 export type SDJWTConfig = {
   omitTyp?: boolean;
-  hasher?: Hasher;
-  saltGenerator?: SaltGenerator;
+  hasher?: Hasher | null;
+  saltGenerator?: SaltGenerator | null;
   signer?: Signer | null;
   verifier?: Verifier | null;
 };
@@ -55,8 +55,12 @@ export type OrPromise<T> = T | Promise<T>;
 
 export type Signer = (data: string) => OrPromise<string>;
 export type Verifier = (data: string, sig: string) => OrPromise<boolean>;
-export type Hasher = (data: string) => Promise<string>;
-export type SaltGenerator = (length: number) => string;
+export type Hasher = (data: string, alg: string) => OrPromise<Uint8Array>;
+export type SaltGenerator = (length: number) => OrPromise<string>;
+export type HasherAndAlg = {
+  hasher: Hasher;
+  alg: string;
+};
 
 type NonNever<T> = {
   [P in keyof T as T[P] extends never ? never : P]: T[P];
