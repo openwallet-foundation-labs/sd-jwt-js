@@ -1,7 +1,6 @@
 import { Base64Url } from './base64url';
 import { SDJWTException } from './error';
 import { Hasher } from './type';
-import { hexToB64Url} from './crypto';
 
 export type DisclosureData<T> = [string, string, T] | [string, T];
 
@@ -36,11 +35,7 @@ export class Disclosure<T> {
   }
 
   public encode() {
-    return this.encodeRaw(JSON.stringify(this.decode()));
-  }
-
-  public encodeRaw(s: string) {
-    return Base64Url.encode(s);
+    return Base64Url.encode(JSON.stringify(this.decode()));
   }
 
   public decode(): DisclosureData<T> {
@@ -49,19 +44,12 @@ export class Disclosure<T> {
       : [this.salt, this.value];
   }
 
-  public async digestRaw(hasher: Hasher, encodeString: string): Promise<string> {
-    // 
-    // draft-ietf-oauth-selective-disclosure-jwt-07
-    // 
-    // The bytes of the output of the hash function MUST be base64url-encoded, and are not the bytes making up the (often used) hex
-    // representation of the bytes of the digest.
-    // 
-    const hexString = await hasher(encodeString);
-    this._digest = hexToB64Url(hexString);
-    return this._digest;
-  }
-
   public async digest(hasher: Hasher): Promise<string> {
-    return await this.digestRaw(hasher, this.encode());
+    if (!this._digest) {
+      const hash = await hasher(this.encode());
+      this._digest = Base64Url.encode(hash);
+    }
+
+    return this._digest;
   }
 }
