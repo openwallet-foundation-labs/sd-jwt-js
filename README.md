@@ -91,8 +91,6 @@ Check out more details in our [documentation](https://github.com/openwallet-foun
 
 ## Dependencies
 
-- [jose](https://github.com/panva/jose)
-
 ## Build
 
 To build this projects

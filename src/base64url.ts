@@ -1,9 +1,9 @@
-import { base64url } from 'jose';
+import { Base64 } from 'js-base64';
 
-const encode = (input: string | Uint8Array): string => base64url.encode(input);
+const encode = (input: string): string => Base64.encodeURI(input);
 
-const decode = (input: string | Uint8Array): string => {
-  return new TextDecoder().decode(base64url.decode(input));
+const decode = (input: string): string => {
+  return Base64.decode(input);
 };
 
 export const Base64Url = {
