@@ -44,18 +44,19 @@ export class SDJwt<
     this.kbJwt = data?.kbJwt;
   }
 
-  public static decodeSDJwt<
+  public static async decodeSDJwt<
     Header extends Record<string, any> = Record<string, any>,
     Payload extends Record<string, any> = Record<string, any>,
     KBHeader extends kbHeader = kbHeader,
     KBPayload extends kbPayload = kbPayload,
   >(
     sdjwt: SDJWTCompact,
-  ): {
+    hash: HasherAndAlg,
+  ): Promise<{
     jwt: Jwt<Header, Payload>;
     disclosures: Array<Disclosure<any>>;
     kbJwt?: KBJwt<KBHeader, KBPayload>;
-  } {
+  }> {
     const [encodedJwt, ...encodedDisclosures] = sdjwt.split(SD_SEPARATOR);
     const jwt = Jwt.fromEncode<Header, Payload>(encodedJwt);
 
@@ -70,7 +71,10 @@ export class SDJwt<
     const kbJwt = encodedKeyBindingJwt
       ? KBJwt.fromKBEncode<KBHeader, KBPayload>(encodedKeyBindingJwt)
       : undefined;
-    const disclosures = encodedDisclosures.map(Disclosure.fromEncode);
+
+    const disclosures = await Promise.all(
+      encodedDisclosures.map((ed) => Disclosure.fromEncode(ed, hash)),
+    );
 
     return {
       jwt,
@@ -79,18 +83,21 @@ export class SDJwt<
     };
   }
 
-  public static fromEncode<
+  public static async fromEncode<
     Header extends Record<string, any> = Record<string, any>,
     Payload extends Record<string, any> = Record<string, any>,
     KBHeader extends kbHeader = kbHeader,
     KBPayload extends kbPayload = kbPayload,
-  >(encodedSdJwt: SDJWTCompact): SDJwt<Header, Payload> {
-    const { jwt, disclosures, kbJwt } = SDJwt.decodeSDJwt<
+  >(
+    encodedSdJwt: SDJWTCompact,
+    hash: HasherAndAlg,
+  ): Promise<SDJwt<Header, Payload>> {
+    const { jwt, disclosures, kbJwt } = await SDJwt.decodeSDJwt<
       Header,
       Payload,
       KBHeader,
       KBPayload
-    >(encodedSdJwt);
+    >(encodedSdJwt, hash);
 
     return new SDJwt<Header, Payload, KBHeader, KBPayload>({
       jwt,
@@ -217,8 +224,13 @@ export const pack = async <T extends object>(
     for (const key in disclosureFrame) {
       if (key !== SD_DIGEST) {
         const idx = parseInt(key);
-        // @ts-ignore
-        const packed = await pack(claims[idx], disclosureFrame[idx], hasher);
+        const packed = await pack(
+          claims[idx],
+          // @ts-ignore
+          disclosureFrame[idx],
+          hash,
+          saltGenerator,
+        );
         recursivePackedClaims[idx] = packed.packedClaims;
         disclosures.push(...packed.disclosures);
       }

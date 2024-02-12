@@ -2,17 +2,25 @@ import { Disclosure } from '../disclosure';
 import { Jwt } from '../jwt';
 import { SDJwt, createHashMapping, listKeys, pack, unpack } from '../sdjwt';
 import Crypto from 'node:crypto';
-import { DisclosureFrame } from '../type';
+import { DisclosureFrame, Signer } from '../type';
+import { generateSalt, digest as hasher } from './crypto.spec';
+
+const hash = { alg: 'SHA256', hasher };
 
 describe('SD JWT', () => {
   test('create and encode', async () => {
     const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
     const jwt = new Jwt({
       header: { alg: 'EdDSA' },
       payload: { foo: 'bar' },
     });
 
-    await jwt.sign(privateKey);
+    await jwt.sign(testSigner);
     const sdJwt = new SDJwt({
       jwt,
       disclosures: [],
@@ -25,12 +33,17 @@ describe('SD JWT', () => {
 
   test('decode', async () => {
     const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
     const jwt = new Jwt({
       header: { alg: 'EdDSA' },
       payload: { foo: 'bar' },
     });
 
-    await jwt.sign(privateKey);
+    await jwt.sign(testSigner);
     const sdJwt = new SDJwt({
       jwt,
       disclosures: [],
@@ -38,7 +51,7 @@ describe('SD JWT', () => {
 
     const encoded = sdJwt.encodeSDJwt();
 
-    const newSdJwt = SDJwt.fromEncode(encoded);
+    const newSdJwt = await SDJwt.fromEncode(encoded, hash);
     expect(newSdJwt).toBeDefined();
     const newJwt = newSdJwt.jwt;
     expect(newJwt?.header).toEqual(jwt.header);
@@ -48,54 +61,68 @@ describe('SD JWT', () => {
 
   test('keys', async () => {
     const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
     const jwt = new Jwt({
       header: { alg: 'EdDSA' },
       payload: { foo: 'bar' },
     });
 
-    await jwt.sign(privateKey);
+    await jwt.sign(testSigner);
     const sdJwt = new SDJwt({
       jwt,
       disclosures: [],
     });
 
-    const keys = await sdJwt.keys();
+    const keys = await sdJwt.keys(hasher);
     expect(keys).toBeDefined();
     expect(keys).toEqual(['foo']);
   });
 
   test('presentable keys', async () => {
     const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
     const jwt = new Jwt({
       header: { alg: 'EdDSA' },
       payload: { foo: 'bar' },
     });
 
-    await jwt.sign(privateKey);
+    await jwt.sign(testSigner);
     const sdJwt = new SDJwt({
       jwt,
       disclosures: [],
     });
 
-    const keys = await sdJwt.presentableKeys();
+    const keys = await sdJwt.presentableKeys(hasher);
     expect(keys).toBeDefined();
     expect(keys).toEqual([]);
   });
 
   test('claims', async () => {
     const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
     const jwt = new Jwt({
       header: { alg: 'EdDSA' },
       payload: { foo: 'bar' },
     });
 
-    await jwt.sign(privateKey);
+    await jwt.sign(testSigner);
     const sdJwt = new SDJwt({
       jwt,
       disclosures: [],
     });
 
-    const claims = await sdJwt.getClaims();
+    const claims = await sdJwt.getClaims(hasher);
     expect(claims).toBeDefined();
     expect(claims).toEqual({
       foo: 'bar',
@@ -108,9 +135,14 @@ describe('SD JWT', () => {
       lastname: 'Doe',
     };
 
-    const { packedClaims, disclosures } = await pack(claim, {
-      _sd: ['firstname'],
-    });
+    const { packedClaims, disclosures } = await pack(
+      claim,
+      {
+        _sd: ['firstname'],
+      },
+      hash,
+      generateSalt,
+    );
 
     expect(disclosures).toBeDefined();
     expect(packedClaims).toBeDefined();
@@ -166,23 +198,32 @@ describe('SD JWT', () => {
       lastname: 'Doe',
     };
 
-    const { packedClaims, disclosures } = await pack(claim, {
-      _sd: ['firstname'],
-    });
+    const { packedClaims, disclosures } = await pack(
+      claim,
+      {
+        _sd: ['firstname'],
+      },
+      hash,
+      generateSalt,
+    );
 
     const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
     const jwt = new Jwt({
       header: { alg: 'EdDSA' },
       payload: packedClaims,
     });
 
-    await jwt.sign(privateKey);
+    await jwt.sign(testSigner);
     const sdJwt = new SDJwt({
       jwt,
       disclosures,
     });
 
-    const keys = await sdJwt.presentableKeys();
+    const keys = await sdJwt.presentableKeys(hasher);
 
     expect(keys).toBeDefined();
     expect(keys).toEqual(['firstname']);
@@ -194,11 +235,16 @@ describe('SD JWT', () => {
       lastname: 'Doe',
     };
 
-    const { disclosures } = await pack(claim, {
-      _sd: ['firstname'],
-    });
+    const { disclosures } = await pack(
+      claim,
+      {
+        _sd: ['firstname'],
+      },
+      hash,
+      generateSalt,
+    );
 
-    const mapping = await createHashMapping(disclosures);
+    const mapping = await createHashMapping(disclosures, hash);
     expect(mapping).toBeDefined();
     expect(Object.keys(mapping).length).toEqual(1);
     expect(mapping[Object.keys(mapping)[0]]).toBeInstanceOf(Disclosure);
@@ -210,13 +256,19 @@ describe('SD JWT', () => {
       lastname: 'Doe',
     };
 
-    const { packedClaims, disclosures } = await pack(claim, {
-      _sd: ['firstname'],
-    });
+    const { packedClaims, disclosures } = await pack(
+      claim,
+      {
+        _sd: ['firstname'],
+      },
+      hash,
+      generateSalt,
+    );
 
     const { disclosureKeymap, unpackedObj } = await unpack(
       packedClaims,
       disclosures,
+      hasher,
     );
     expect(disclosureKeymap).toBeDefined();
     expect(unpackedObj).toBeDefined();
@@ -263,8 +315,13 @@ describe('SD JWT', () => {
       },
     };
 
-    const { packedClaims, disclosures } = await pack(claims, disclosureFrame);
-    const { unpackedObj } = await unpack(packedClaims, disclosures);
+    const { packedClaims, disclosures } = await pack(
+      claims,
+      disclosureFrame,
+      hash,
+      generateSalt,
+    );
+    const { unpackedObj } = await unpack(packedClaims, disclosures, hasher);
 
     expect(unpackedObj).toEqual(claims);
   });
