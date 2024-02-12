@@ -1,13 +1,20 @@
-import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
-import Crypto from 'node:crypto';
-
-export const createKeyPair = () => {
-  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-  return { privateKey, publicKey };
-};
+import { DisclosureFrame, SDJwtInstance } from '@hopae/sd-jwt';
+import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
-  const { privateKey, publicKey } = createKeyPair();
+  const { signer, verifier } = createSignerVerifier();
+
+  // Create SDJwt instance for use
+  const sdjwt = new SDJwtInstance({
+    signer,
+    sign_alg: 'EdDSA',
+    verifier,
+    hasher: digest,
+    saltGenerator: generateSalt,
+    kbSigner: signer,
+    kb_sign_alg: 'EdDSA',
+    kbVerifier: verifier,
+  });
   const claims = {
     firstname: 'John',
     lastname: 'Doe',
@@ -26,32 +33,17 @@ export const createKeyPair = () => {
     sd_hash: '1234',
   };
 
-  const encodedSdjwt = await sdjwt.issue(
-    claims,
-    { privateKey },
-    disclosureFrame,
-  );
+  const encodedSdjwt = await sdjwt.issue(claims, disclosureFrame);
   console.log('encodedSdjwt:', encodedSdjwt);
-  const sdjwttoken = sdjwt.decode(encodedSdjwt);
+  const sdjwttoken = await sdjwt.decode(encodedSdjwt);
   console.log(sdjwttoken);
 
   const presentedSdJwt = await sdjwt.present(encodedSdjwt, ['id'], {
     kb: {
-      alg: 'EdDSA',
       payload: kbPayload,
-      privateKey,
     },
   });
 
-  const verified = await sdjwt.verify(
-    presentedSdJwt,
-    { publicKey },
-    ['id', 'ssn'],
-    {
-      kb: {
-        publicKey,
-      },
-    },
-  );
+  const verified = await sdjwt.verify(presentedSdJwt, ['id', 'ssn'], true);
   console.log(verified);
 })();

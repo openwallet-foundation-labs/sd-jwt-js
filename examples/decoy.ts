@@ -1,13 +1,18 @@
-import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
-import Crypto from 'node:crypto';
-
-export const createKeyPair = () => {
-  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-  return { privateKey, publicKey };
-};
+import { DisclosureFrame, SDJwtInstance } from '@hopae/sd-jwt';
+import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
-  const { privateKey, publicKey } = createKeyPair();
+  const { signer, verifier } = createSignerVerifier();
+
+  // Create SDJwt instance for use
+  const sdjwt = new SDJwtInstance({
+    signer,
+    verifier,
+    sign_alg: 'EdDSA',
+    hasher: digest,
+    hash_alg: 'SHA-256',
+    saltGenerator: generateSalt,
+  });
   // Issuer Define the claims object with the user's information
   const claims = {
     lastname: 'Doe',
@@ -20,10 +25,10 @@ export const createKeyPair = () => {
     _sd: ['id'],
     _sd_decoy: 1, // 1 decoy digest will be added in SD JWT
   };
-  const credential = await sdjwt.issue(claims, { privateKey }, disclosureFrame);
+  const credential = await sdjwt.issue(claims, disclosureFrame);
   console.log('encodedSdjwt:', credential);
 
   // You can check the decoy digest in the SD JWT by decoding it
-  const sdJwtToken = sdjwt.decode(credential);
+  const sdJwtToken = await sdjwt.decode(credential);
   console.log(sdJwtToken);
 })();

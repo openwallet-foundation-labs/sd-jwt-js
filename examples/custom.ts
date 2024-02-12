@@ -1,31 +1,18 @@
-import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
-import Crypto from 'node:crypto';
-
-export const salt = (length: number): string => {
-  const saltBytes = Crypto.randomBytes(length);
-  const salt = saltBytes.toString('hex');
-  return salt;
-};
-
-export const digest = async (
-  data: string,
-  algorithm: string = 'SHA-256',
-): Promise<string> => {
-  const hash = Crypto.createHash(algorithm);
-  hash.update(data);
-  return hash.digest('hex');
-};
-
-export const createKeyPair = () => {
-  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-  return { privateKey, publicKey };
-};
+import { DisclosureFrame, SDJwtInstance } from '@hopae/sd-jwt';
+import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
-  // You can create a custom SDJwt instance with your own hasher and salt generator
-  const SDJwtInstance = sdjwt.create({ hasher: digest, saltGenerator: salt });
+  const { signer, verifier } = createSignerVerifier();
 
-  const { privateKey, publicKey } = createKeyPair();
+  // Create SDJwt instance for use
+  const sdjwt = new SDJwtInstance({
+    signer,
+    verifier,
+    sign_alg: 'EdDSA',
+    hasher: digest,
+    hash_alg: 'SHA-256',
+    saltGenerator: generateSalt,
+  });
 
   // Issuer Define the claims object with the user's information
   const claims = {
@@ -42,30 +29,26 @@ export const createKeyPair = () => {
 
   // Issue a signed JWT credential with the specified claims and disclosures
   // Return a Encoded SD JWT. Issuer send the credential to the holder
-  const credential = await SDJwtInstance.issue(
-    claims,
-    { privateKey },
-    disclosureFrame,
-  );
+  const credential = await sdjwt.issue(claims, disclosureFrame);
   console.log('encodedJwt:', credential);
 
   // Holder Receive the credential from the issuer and validate it
   // Return a boolean result
-  const validated = await SDJwtInstance.validate(credential, { publicKey });
+  const validated = await sdjwt.validate(credential);
   console.log('validated:', validated);
 
   // You can decode the SD JWT to get the payload and the disclosures
-  const sdJwtToken = SDJwtInstance.decode(credential);
+  const sdJwtToken = await sdjwt.decode(credential);
 
   // You can get the keys of the claims from the decoded SD JWT
-  const keys = await sdJwtToken.keys();
+  const keys = await sdJwtToken.keys(digest);
   console.log({ keys });
 
   // You can get the claims from the decoded SD JWT
-  const payloads = await sdJwtToken.getClaims();
+  const payloads = await sdJwtToken.getClaims(digest);
 
   // You can get the presentable keys from the decoded SD JWT
-  const presentableKeys = await sdJwtToken.presentableKeys();
+  const presentableKeys = await sdJwtToken.presentableKeys(digest);
 
   console.log({
     payloads: JSON.stringify(payloads, null, 2),
@@ -85,10 +68,7 @@ export const createKeyPair = () => {
 
   // Create a presentation using the issued credential and the presentation frame
   // return a Encoded SD JWT. Holder send the presentation to the verifier
-  const presentation = await SDJwtInstance.present(
-    credential,
-    presentationFrame,
-  );
+  const presentation = await sdjwt.present(credential, presentationFrame);
   console.log('presentedSDJwt:', presentation);
 
   // Verifier Define the required claims that need to be verified in the presentation
@@ -96,10 +76,6 @@ export const createKeyPair = () => {
 
   // Verify the presentation using the public key and the required claims
   // return a boolean result
-  const verified = await SDJwtInstance.verify(
-    presentation,
-    { publicKey },
-    requiredClaims,
-  );
+  const verified = await sdjwt.verify(presentation, requiredClaims);
   console.log('verified:', verified);
 })();
