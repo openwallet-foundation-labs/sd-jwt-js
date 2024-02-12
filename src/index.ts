@@ -13,7 +13,6 @@ import {
   SignOptions,
   VerifyOptions,
 } from './type';
-import { KeyLike } from 'jose';
 
 export * from './type';
 export * from './sdjwt';

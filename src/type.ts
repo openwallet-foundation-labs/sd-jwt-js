@@ -1,4 +1,3 @@
-import { KeyLike } from 'jose';
 import { Jwt } from './jwt';
 
 export const SD_SEPARATOR = '~';
@@ -19,13 +18,9 @@ export type SDJWTConfig = {
   verifier?: Verifier | null;
 };
 
-export type SignOptions =
-  | { privateKey: Uint8Array | KeyLike }
-  | { signer: Signer };
+export type SignOptions = { signer: Signer };
 
-export type VerifyOptions =
-  | { publicKey: Uint8Array | KeyLike }
-  | { verifier: Verifier };
+export type VerifyOptions = { verifier: Verifier };
 
 export type kbHeader = { typ: 'kb+jwt'; alg: string };
 export type kbPayload = {
@@ -37,19 +32,13 @@ export type kbPayload = {
 
 export type KeyBinding = Jwt<kbHeader, kbPayload>;
 
-export type KBOptionWithKey = {
-  alg: string;
-  payload: kbPayload;
-  privateKey: Uint8Array | KeyLike;
-};
-
 export type KBOptionWithSigner = {
   alg: string;
   payload: kbPayload;
   signer: Signer;
 };
 
-export type KBOptions = KBOptionWithKey | KBOptionWithSigner;
+export type KBOptions = KBOptionWithSigner;
 
 export type OrPromise<T> = T | Promise<T>;
 
