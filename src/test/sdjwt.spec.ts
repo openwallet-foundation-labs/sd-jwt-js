@@ -40,6 +40,34 @@ describe('SD JWT', () => {
 
     const jwt = new Jwt({
       header: { alg: 'EdDSA' },
+      payload: { foo: 'bar', _sd_alg: 'sha-256' },
+    });
+
+    await jwt.sign(testSigner);
+    const sdJwt = new SDJwt({
+      jwt,
+      disclosures: [],
+    });
+
+    const encoded = sdJwt.encodeSDJwt();
+
+    const newSdJwt = await SDJwt.fromEncode(encoded, hasher);
+    expect(newSdJwt).toBeDefined();
+    const newJwt = newSdJwt.jwt;
+    expect(newJwt?.header).toEqual(jwt.header);
+    expect(newJwt?.payload).toEqual(jwt.payload);
+    expect(newJwt?.signature).toEqual(jwt.signature);
+  });
+
+  test('decode compatibilty', async () => {
+    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
       payload: { foo: 'bar' },
     });
 
@@ -51,7 +79,7 @@ describe('SD JWT', () => {
 
     const encoded = sdJwt.encodeSDJwt();
 
-    const newSdJwt = await SDJwt.fromEncode(encoded, hash);
+    const newSdJwt = await SDJwt.fromEncode(encoded, hasher);
     expect(newSdJwt).toBeDefined();
     const newJwt = newSdJwt.jwt;
     expect(newJwt?.header).toEqual(jwt.header);

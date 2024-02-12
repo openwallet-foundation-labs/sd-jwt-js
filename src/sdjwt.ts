@@ -51,7 +51,7 @@ export class SDJwt<
     KBPayload extends kbPayload = kbPayload,
   >(
     sdjwt: SDJWTCompact,
-    hash: HasherAndAlg,
+    hasher: Hasher,
   ): Promise<{
     jwt: Jwt<Header, Payload>;
     disclosures: Array<Disclosure<any>>;
@@ -72,8 +72,12 @@ export class SDJwt<
       ? KBJwt.fromKBEncode<KBHeader, KBPayload>(encodedKeyBindingJwt)
       : undefined;
 
+    const { _sd_alg } = getSDAlgAndPayload(jwt.payload);
+
     const disclosures = await Promise.all(
-      encodedDisclosures.map((ed) => Disclosure.fromEncode(ed, hash)),
+      encodedDisclosures.map((ed) =>
+        Disclosure.fromEncode(ed, { alg: _sd_alg, hasher }),
+      ),
     );
 
     return {
@@ -90,14 +94,14 @@ export class SDJwt<
     KBPayload extends kbPayload = kbPayload,
   >(
     encodedSdJwt: SDJWTCompact,
-    hash: HasherAndAlg,
+    hasher: Hasher,
   ): Promise<SDJwt<Header, Payload>> {
     const { jwt, disclosures, kbJwt } = await SDJwt.decodeSDJwt<
       Header,
       Payload,
       KBHeader,
       KBPayload
-    >(encodedSdJwt, hash);
+    >(encodedSdJwt, hasher);
 
     return new SDJwt<Header, Payload, KBHeader, KBPayload>({
       jwt,
@@ -110,7 +114,7 @@ export class SDJwt<
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
-    const alg = getSDAlg(this.jwt.payload);
+    const { _sd_alg: alg } = getSDAlgAndPayload(this.jwt.payload);
     const hash = { alg, hasher };
     const hashmap = await createHashMapping(this.disclosures, hash);
     const { disclosureKeymap } = await unpack(
@@ -200,7 +204,7 @@ export const listKeys = (obj: any, prefix: string = '') => {
   return keys;
 };
 
-export const pack = async <T extends object>(
+export const pack = async <T extends Record<string, unknown>>(
   claims: T,
   disclosureFrame: DisclosureFrame<T> | undefined,
   hash: HasherAndAlg,
@@ -415,9 +419,13 @@ export const createHashMapping = async (
   return map;
 };
 
-export const getSDAlg = (sdjwtPayload: any) => {
-  const { _sd_alg } = sdjwtPayload;
-  return _sd_alg;
+export const getSDAlgAndPayload = (sdjwtPayload: any) => {
+  const { _sd_alg, ...payload } = sdjwtPayload;
+  if (typeof _sd_alg !== 'string') {
+    // This is for compatibility
+    return { _sd_alg: 'sha-256', payload };
+  }
+  return { _sd_alg, payload };
 };
 
 export const unpack = async (
@@ -425,7 +433,7 @@ export const unpack = async (
   disclosures: Array<Disclosure<any>>,
   hasher: Hasher,
 ) => {
-  const { _sd_alg, ...payload } = sdjwtPayload;
+  const { _sd_alg, payload } = getSDAlgAndPayload(sdjwtPayload);
   const hash = { hasher, alg: _sd_alg };
   const map = await createHashMapping(disclosures, hash);
 

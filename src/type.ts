@@ -12,15 +12,13 @@ export type Base64urlString = string;
 
 export type SDJWTConfig = {
   omitTyp?: boolean;
-  hasher?: Hasher | null;
-  saltGenerator?: SaltGenerator | null;
-  signer?: Signer | null;
-  verifier?: Verifier | null;
+  hasher?: Hasher;
+  saltGenerator?: SaltGenerator;
+  signer?: Signer;
+  verifier?: Verifier;
+  kbSigner?: Signer;
+  kbVerifier?: Verifier;
 };
-
-export type SignOptions = { signer: Signer };
-
-export type VerifyOptions = { verifier: Verifier };
 
 export type kbHeader = { typ: 'kb+jwt'; alg: string };
 export type kbPayload = {
@@ -32,13 +30,10 @@ export type kbPayload = {
 
 export type KeyBinding = Jwt<kbHeader, kbPayload>;
 
-export type KBOptionWithSigner = {
+export type KBOptions = {
   alg: string;
   payload: kbPayload;
-  signer: Signer;
 };
-
-export type KBOptions = KBOptionWithSigner;
 
 export type OrPromise<T> = T | Promise<T>;
 
@@ -73,4 +68,4 @@ type Frame<Payload> = Payload extends Array<infer U>
     >
   : SD<Payload> & DECOY;
 
-export type DisclosureFrame<T> = Frame<T>;
+export type DisclosureFrame<T extends Record<string, unknown>> = Frame<T>;
