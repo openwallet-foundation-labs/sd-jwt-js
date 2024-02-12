@@ -29,10 +29,12 @@ describe('index', () => {
     const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance({
       signer,
+      sign_alg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
       kbSigner: signer,
+      kb_sign_alg: 'EdDSA',
     });
     const credential = await sdjwt.issue(
       {
@@ -47,7 +49,6 @@ describe('index', () => {
 
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
-        alg: 'EdDSA',
         payload: {
           sd_hash: 'sha-256',
           aud: '1',
@@ -64,6 +65,7 @@ describe('index', () => {
     const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance({
       signer,
+      sign_alg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
@@ -94,6 +96,7 @@ describe('index', () => {
 
     const sdjwt = new SDJwtInstance({
       signer,
+      sign_alg: 'EdDSA',
       verifier: failedverifier,
       hasher: digest,
       saltGenerator: generateSalt,
@@ -128,11 +131,13 @@ describe('index', () => {
     };
     const sdjwt = new SDJwtInstance({
       signer,
+      sign_alg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
       kbSigner: signer,
       kbVerifier: failedverifier,
+      kb_sign_alg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -146,7 +151,6 @@ describe('index', () => {
 
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
-        alg: 'EdDSA',
         payload: {
           sd_hash: '',
           aud: '1',
@@ -167,11 +171,13 @@ describe('index', () => {
     const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance({
       signer,
+      sign_alg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
       kbSigner: signer,
       kbVerifier: verifier,
+      kb_sign_alg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -185,7 +191,6 @@ describe('index', () => {
 
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
-        alg: 'EdDSA',
         payload: {
           sd_hash: 'sha-256',
           aud: '1',
@@ -266,6 +271,8 @@ describe('index', () => {
       saltGenerator: generateSalt,
       kbSigner: signer,
       kbVerifier: verifier,
+      sign_alg: 'EdDSA',
+      kb_sign_alg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -279,7 +286,6 @@ describe('index', () => {
 
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
-        alg: 'EdDSA',
         payload: {
           sd_hash: 'sha-256',
           aud: '1',
@@ -303,6 +309,8 @@ describe('index', () => {
       hasher: digest,
       saltGenerator: generateSalt,
       kbVerifier: verifier,
+      sign_alg: 'EdDSA',
+      kb_sign_alg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -316,7 +324,6 @@ describe('index', () => {
     try {
       const presentation = await sdjwt.present(credential, ['foo'], {
         kb: {
-          alg: 'EdDSA',
           payload: {
             sd_hash: 'sha-256',
             aud: '1',
@@ -338,6 +345,8 @@ describe('index', () => {
       hasher: digest,
       saltGenerator: generateSalt,
       kbSigner: signer,
+      sign_alg: 'EdDSA',
+      kb_sign_alg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -351,7 +360,6 @@ describe('index', () => {
 
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
-        alg: 'EdDSA',
         payload: {
           sd_hash: 'sha-256',
           aud: '1',

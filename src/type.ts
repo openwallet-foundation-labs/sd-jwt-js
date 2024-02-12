@@ -13,10 +13,13 @@ export type Base64urlString = string;
 export type SDJWTConfig = {
   omitTyp?: boolean;
   hasher?: Hasher;
+  hash_alg?: string;
   saltGenerator?: SaltGenerator;
   signer?: Signer;
+  sign_alg?: string;
   verifier?: Verifier;
   kbSigner?: Signer;
+  kb_sign_alg?: string;
   kbVerifier?: Verifier;
 };
 
@@ -31,7 +34,6 @@ export type kbPayload = {
 export type KeyBinding = Jwt<kbHeader, kbPayload>;
 
 export type KBOptions = {
-  alg: string;
   payload: kbPayload;
 };
 

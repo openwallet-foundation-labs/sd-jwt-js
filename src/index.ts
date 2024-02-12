@@ -35,11 +35,14 @@ export class SDJwtInstance {
     if (!this.userConfig.kbSigner) {
       throw new SDJWTException('Key Binding Signer not found');
     }
-    const { alg, payload } = options;
+    if (!this.userConfig.kb_sign_alg) {
+      throw new SDJWTException('Key Binding sign algorithm not specified');
+    }
+    const { payload } = options;
     const kbJwt = new KBJwt({
       header: {
         typ: KB_JWT_TYP,
-        alg,
+        alg: this.userConfig.kb_sign_alg,
       },
       payload,
     });
@@ -68,8 +71,6 @@ export class SDJwtInstance {
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
       header?: object;
-      sign_alg?: string;
-      hash_alg?: string;
     },
   ): Promise<SDJWTCompact> {
     if (!this.userConfig.hasher) {
@@ -80,8 +81,12 @@ export class SDJwtInstance {
       throw new SDJWTException('SaltGenerator not found');
     }
 
+    if (!this.userConfig.sign_alg) {
+      throw new SDJWTException('sign alogrithm not specified');
+    }
+
     const hasher = this.userConfig.hasher;
-    const hash_alg = options?.hash_alg ?? SDJwtInstance.DEFAULT_HASH_ALG;
+    const hash_alg = this.userConfig.hash_alg ?? SDJwtInstance.DEFAULT_HASH_ALG;
 
     const { packedClaims, disclosures } = await pack(
       payload,
@@ -89,7 +94,7 @@ export class SDJwtInstance {
       { hasher, alg: hash_alg },
       this.userConfig.saltGenerator,
     );
-    const alg = options?.sign_alg ?? 'EdDSA';
+    const alg = this.userConfig.sign_alg;
     const OptionHeader = options?.header ?? {};
     const CustomHeader = this.userConfig.omitTyp
       ? OptionHeader
@@ -99,7 +104,7 @@ export class SDJwtInstance {
       header,
       payload: {
         ...packedClaims,
-        _sd_alg: options?.hash_alg ?? SDJwtInstance.DEFAULT_HASH_ALG,
+        _sd_alg: hash_alg,
       },
     });
     await this.SignJwt(jwt);
