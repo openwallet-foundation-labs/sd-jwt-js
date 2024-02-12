@@ -6,13 +6,6 @@ export const generateSalt = (length: number): string => {
   return salt;
 };
 
-function base64urlEncode(base64string: string) {
-  return base64string
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-}
-
 export const digest = async (
   data: string,
   algorithm: string = 'SHA-256',
@@ -22,10 +15,6 @@ export const digest = async (
   hash.update(data);
   const hashBuffer = hash.digest();
   return new Uint8Array(hashBuffer);
-};
-
-export const getHasher = (algorithm: string = 'SHA-256') => {
-  return (data: string) => digest(data, algorithm);
 };
 
 const toNodeCryptoAlg = (hashAlg: string): string =>

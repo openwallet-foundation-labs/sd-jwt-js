@@ -204,7 +204,7 @@ export const listKeys = (obj: any, prefix: string = '') => {
   return keys;
 };
 
-export const pack = async <T extends Record<string, unknown>>(
+export const pack = async <T extends object>(
   claims: T,
   disclosureFrame: DisclosureFrame<T> | undefined,
   hash: HasherAndAlg,

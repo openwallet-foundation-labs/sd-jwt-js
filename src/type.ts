@@ -68,4 +68,4 @@ type Frame<Payload> = Payload extends Array<infer U>
     >
   : SD<Payload> & DECOY;
 
-export type DisclosureFrame<T extends Record<string, unknown>> = Frame<T>;
+export type DisclosureFrame<T extends object> = Frame<T>;
