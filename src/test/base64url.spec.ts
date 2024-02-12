@@ -13,4 +13,11 @@ describe('Base64url', () => {
     const str = 'hello world';
     expect(Base64Url.decode(Base64Url.encode(str))).toStrictEqual(str);
   });
+  test('Uint8Array', () => {
+    const str = 'hello world';
+    const uint8 = new TextEncoder().encode(str);
+    expect(Base64Url.Uint8ArrayToBase64Url(uint8)).toStrictEqual(
+      Base64Url.encode(str),
+    );
+  });
 });
