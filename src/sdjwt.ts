@@ -249,7 +249,7 @@ export const pack = async <T extends object>(
         const salt = await saltGenerator(16);
         const disclosure = new Disclosure([salt, claim]);
         const digest = await disclosure.digest(hash);
-        packedClaims.push({ '...': digest });
+        packedClaims.push({ [SD_LIST_KEY]: digest });
         disclosures.push(disclosure);
       } else {
         packedClaims.push(claim);
@@ -257,7 +257,7 @@ export const pack = async <T extends object>(
     }
     for (let j = 0; j < decoyCount; j++) {
       const decoyDigest = await createDecoy(hash, saltGenerator);
-      packedClaims.push({ '...': decoyDigest });
+      packedClaims.push({ [SD_LIST_KEY]: decoyDigest });
     }
     return { packedClaims, disclosures };
   }
