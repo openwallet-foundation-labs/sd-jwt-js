@@ -353,4 +353,28 @@ describe('SD JWT', () => {
 
     expect(unpackedObj).toEqual(claims);
   });
+
+  test('no disclosures', async () => {
+    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+    });
+
+    await jwt.sign(testSigner);
+    const sdJwt = new SDJwt({
+      jwt,
+      disclosures: [],
+    });
+
+    const credential = sdJwt.encodeSDJwt();
+    const decoded = await SDJwt.decodeSDJwt(credential, hasher);
+    expect(jwt).toEqual(decoded.jwt);
+    expect(decoded.disclosures).toEqual([]);
+  });
 });

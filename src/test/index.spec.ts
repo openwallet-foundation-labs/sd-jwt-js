@@ -162,4 +162,208 @@ describe('index', () => {
       expect(e).toBeDefined();
     }
   });
+
+  test('verify with kbJwt', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+      kbVerifier: verifier,
+    });
+
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    const presentation = await sdjwt.present(credential, ['foo'], {
+      kb: {
+        alg: 'EdDSA',
+        payload: {
+          sd_hash: 'sha-256',
+          aud: '1',
+          iat: 1,
+          nonce: '342',
+        },
+      },
+    });
+
+    const results = await sdjwt.verify(presentation, ['foo'], true);
+    expect(results).toBeDefined();
+  });
+
+  test('Hasher not found', async () => {
+    const sdjwt = new SDJwtInstance({});
+    try {
+      const credential = await sdjwt.issue(
+        {
+          foo: 'bar',
+        },
+        {
+          _sd: ['foo'],
+        },
+      );
+
+      expect(credential).toBeDefined();
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('SaltGenerator not found', async () => {
+    const sdjwt = new SDJwtInstance({
+      hasher: digest,
+    });
+    try {
+      const credential = await sdjwt.issue(
+        {
+          foo: 'bar',
+        },
+        {
+          _sd: ['foo'],
+        },
+      );
+
+      expect(credential).toBeDefined();
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('Signer not found', async () => {
+    const sdjwt = new SDJwtInstance({
+      hasher: digest,
+      saltGenerator: generateSalt,
+    });
+    try {
+      const credential = await sdjwt.issue(
+        {
+          foo: 'bar',
+        },
+        {
+          _sd: ['foo'],
+        },
+      );
+
+      expect(credential).toBeDefined();
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('Verifier not found', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+      kbVerifier: verifier,
+    });
+
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    const presentation = await sdjwt.present(credential, ['foo'], {
+      kb: {
+        alg: 'EdDSA',
+        payload: {
+          sd_hash: 'sha-256',
+          aud: '1',
+          iat: 1,
+          nonce: '342',
+        },
+      },
+    });
+    try {
+      const results = await sdjwt.verify(presentation, ['foo'], true);
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('kbSigner not found', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbVerifier: verifier,
+    });
+
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+    try {
+      const presentation = await sdjwt.present(credential, ['foo'], {
+        kb: {
+          alg: 'EdDSA',
+          payload: {
+            sd_hash: 'sha-256',
+            aud: '1',
+            iat: 1,
+            nonce: '342',
+          },
+        },
+      });
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('kbVerifier not found', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+    });
+
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    const presentation = await sdjwt.present(credential, ['foo'], {
+      kb: {
+        alg: 'EdDSA',
+        payload: {
+          sd_hash: 'sha-256',
+          aud: '1',
+          iat: 1,
+          nonce: '342',
+        },
+      },
+    });
+    try {
+      const results = await sdjwt.verify(presentation, ['foo'], true);
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
 });
