@@ -1,6 +1,41 @@
 import { generateSalt, digest as hasher } from './crypto.spec';
 import { Disclosure } from '../disclosure';
 import { SDJWTException } from '../error';
+import { Base64Url } from '../base64url';
+
+const hash = { alg: 'SHA256', hasher };
+
+/* 
+  ref draft-ietf-oauth-selective-disclosure-jwt-07
+  Claim given_name:
+  SHA-256 Hash: jsu9yVulwQQlhFlM_3JlzMaSFzglhQG0DpfayQwLUK4
+  Disclosure: WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgImdpdmVuX25hbWUiLCAiSm9obiJd
+  Contents: ["2GLC42sKQveCfGfryNRN9w", "given_name", "John"]
+  For example, the SHA-256 digest of the Disclosure
+  WyI2cU1RdlJMNWhhaiIsICJmYW1pbHlfbmFtZSIsICJNw7ZiaXVzIl0 would be uutlBuYeMDyjLLTpf6Jxi7yNkEF35jdyWMn9U7b_RYY.
+  The SHA-256 digest of the Disclosure
+  WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIkZSIl0 would be w0I8EKcdCtUPkGCNUrfwVp2xEgNjtoIDlOxc9-PlOhs.
+*/
+const TestDataDraft7 = {
+  claimTests: [
+    {
+      contents: '["2GLC42sKQveCfGfryNRN9w", "given_name", "John"]',
+      digest: 'jsu9yVulwQQlhFlM_3JlzMaSFzglhQG0DpfayQwLUK4',
+      disclosure:
+        'WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgImdpdmVuX25hbWUiLCAiSm9obiJd',
+    },
+  ],
+  sha256Tests: [
+    {
+      digest: 'uutlBuYeMDyjLLTpf6Jxi7yNkEF35jdyWMn9U7b_RYY',
+      disclosure: 'WyI2cU1RdlJMNWhhaiIsICJmYW1pbHlfbmFtZSIsICJNw7ZiaXVzIl0',
+    },
+    {
+      digest: 'w0I8EKcdCtUPkGCNUrfwVp2xEgNjtoIDlOxc9-PlOhs',
+      disclosure: 'WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIkZSIl0',
+    },
+  ],
+};
 
 describe('Disclosure', () => {
   test('create object disclosure', async () => {
@@ -46,7 +81,10 @@ describe('Disclosure', () => {
     const salt = generateSalt(16);
     const disclosure = new Disclosure([salt, 'name', 'James']);
     const encodedDisclosure = disclosure.encode();
-    const newDisclosure = Disclosure.fromEncode(encodedDisclosure);
+    const newDisclosure = await Disclosure.fromEncode(encodedDisclosure, {
+      alg: 'SHA256',
+      hasher,
+    });
 
     expect(newDisclosure).toBeDefined();
     expect(newDisclosure.key).toBe('name');
@@ -54,7 +92,7 @@ describe('Disclosure', () => {
     expect(newDisclosure.salt).toBe(salt);
   });
 
-  test('digest disclosure', async () => {
+  test('digest disclosure #1', async () => {
     const salt = generateSalt(16);
     const disclosure = new Disclosure([salt, 'name', 'James']);
     const digest = await disclosure.digest({ alg: 'SHA256', hasher });
@@ -62,7 +100,7 @@ describe('Disclosure', () => {
     expect(typeof digest).toBe('string');
   });
 
-  test('digest disclosure #1', async () => {
+  test('digest disclosure #2', async () => {
     const disclosure = new Disclosure([
       '2GLC42sKQveCfGfryNRN9w',
       'given_name',
@@ -72,7 +110,32 @@ describe('Disclosure', () => {
     expect(encode).toBe(
       'WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwiZ2l2ZW5fbmFtZSIsIkpvaG4iXQ',
     );
-    const digest = await disclosure.digest({ alg: 'SHA256', hasher });
+    const digest = await disclosure.digest(hash);
     expect(digest).toBe('8VHiz7qTXavxvpiTYDCSr_shkUO6qRcVXjkhEnt1os4');
+  });
+
+  test('digest disclosure #2', async () => {
+    const encoded = Base64Url.encode(TestDataDraft7.claimTests[0].contents);
+    expect(encoded).toStrictEqual(TestDataDraft7.claimTests[0].disclosure);
+
+    const disclosure = await Disclosure.fromEncode(
+      TestDataDraft7.claimTests[0].disclosure,
+      hash,
+    );
+
+    const digest = await disclosure.digest(hash);
+    expect(digest).toBe(TestDataDraft7.claimTests[0].digest);
+  });
+
+  test('digest disclosure #3', async () => {
+    for (const sha256Test of TestDataDraft7.sha256Tests) {
+      const disclosure = await Disclosure.fromEncode(
+        sha256Test.disclosure,
+        hash,
+      );
+
+      const digest = await disclosure.digest(hash);
+      expect(digest).toBe(sha256Test.digest);
+    }
   });
 });

@@ -10,7 +10,8 @@ export class Disclosure<T> {
   public value: T;
   private _digest: string | undefined;
 
-  public constructor(data: DisclosureData<T>) {
+  public constructor(data: DisclosureData<T>, digest?: string) {
+    this._digest = digest;
     if (data.length === 2) {
       this.salt = data[0];
       this.value = data[1];
@@ -25,13 +26,19 @@ export class Disclosure<T> {
     throw new SDJWTException('Invalid disclosure data');
   }
 
-  public static fromEncode<T>(s: string) {
+  // We need to digest of the original encoded data.
+  // After decode process, we use JSON.stringify to encode the data.
+  // This can be different from the original encoded data.
+  public static async fromEncode<T>(s: string, hash: HasherAndAlg) {
+    const { hasher, alg } = hash;
+    const digest = await hasher(s, alg);
+    const digestStr = Base64Url.Uint8ArrayToBase64Url(digest);
     const item = JSON.parse(Base64Url.decode(s)) as DisclosureData<T>;
-    return Disclosure.fromArray<T>(item);
+    return Disclosure.fromArray<T>(item, digestStr);
   }
 
-  public static fromArray<T>(item: DisclosureData<T>) {
-    return new Disclosure(item);
+  public static fromArray<T>(item: DisclosureData<T>, digest?: string) {
+    return new Disclosure(item, digest);
   }
 
   public encode() {
