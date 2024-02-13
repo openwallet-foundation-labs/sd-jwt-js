@@ -1,6 +1,7 @@
 import { createDecoy } from '../decoy';
 import { Base64Url } from '../base64url';
 import { digest } from '../crypto';
+import { describe, expect, test } from 'vitest';
 
 describe('Decoy', () => {
   test('decoy', async () => {
@@ -15,11 +16,11 @@ describe('Decoy', () => {
   //  *  Disclosure: WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgImVtYWlsIiwgImpvaG5kb2VAZXhhbXBsZS5jb20iXQ
   //  *  Contents: ["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]
   test('apply hasher and saltGenerator', async () => {
-    const decoyValue = await createDecoy(
-      digest,
-      () => Base64Url.encode('["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]'),
+    const decoyValue = await createDecoy(digest, () =>
+      Base64Url.encode(
+        '["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]',
+      ),
     );
     expect(decoyValue).toBe('JzYjH4svliH0R3PyEMfeZu6Jt69u5qehZo7F7EPYlSE');
   });
-
 });

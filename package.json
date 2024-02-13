@@ -13,9 +13,9 @@
   },
   "scripts": {
     "build": "tsup",
-    "test": "jest ./src/test/*.spec.ts",
-    "test:e2e": "jest ./test/*.spec.ts",
-    "test:cov": "jest ./src/test/*.spec.ts ./test/*.spec.ts --coverage"
+    "test": "vitest",
+    "test:browser": "vitest --environment jsdom",
+    "test:cov": "vitest run --coverage"
   },
   "keywords": [
     "verifiable-credentials",
@@ -37,11 +37,13 @@
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.2",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
+    "@vitest/coverage-v8": "^1.2.2",
+    "jsdom": "^24.0.0",
     "ts-node": "^10.9.1",
     "tsup": "^8.0.2",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.2",
+    "vite": "^5.1.1",
+    "vitest": "^1.2.2"
   },
   "dependencies": {
     "jose": "^5.1.3"

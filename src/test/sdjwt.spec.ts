@@ -3,6 +3,7 @@ import { Jwt } from '../jwt';
 import { SDJwt, createHashMapping, listKeys, pack, unpack } from '../sdjwt';
 import Crypto from 'node:crypto';
 import { DisclosureFrame } from '../type';
+import { describe, test, expect } from 'vitest';
 
 describe('SD JWT', () => {
   test('create and encode', async () => {

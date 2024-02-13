@@ -3,6 +3,7 @@ import sdjwt from '../src';
 import { DisclosureFrame } from '../src/type';
 import fs from 'fs';
 import path from 'path';
+import { describe, expect, test } from 'vitest';
 
 export const createKeyPair = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');

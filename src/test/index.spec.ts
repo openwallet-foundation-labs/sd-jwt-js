@@ -1,5 +1,6 @@
 import sdjwt, { Signer, Verifier } from '../index';
 import Crypto from 'node:crypto';
+import { describe, expect, test } from 'vitest';
 
 describe('index', () => {
   test('create', async () => {

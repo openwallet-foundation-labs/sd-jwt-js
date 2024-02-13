@@ -1,4 +1,5 @@
 import { digest, generateSalt } from '../crypto';
+import { describe, expect, test } from 'vitest';
 
 describe('Crypto', () => {
   test('Salt', () => {

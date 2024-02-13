@@ -2,6 +2,7 @@ import { SDJWTException } from '../error';
 import { KBJwt } from '../kbjwt';
 import { KB_JWT_TYP, Verifier } from '../type';
 import Crypto from 'node:crypto';
+import { describe, expect, test } from 'vitest';
 
 describe('KB JWT', () => {
   test('create', async () => {
