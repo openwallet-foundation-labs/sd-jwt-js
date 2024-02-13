@@ -1,5 +1,5 @@
 import { createDecoy } from '../decoy';
-import { Base64Url } from '../base64url';
+import { Base64urlEncode } from '../base64url';
 import { digest, generateSalt } from './crypto.spec';
 
 const hash = {
@@ -20,7 +20,7 @@ describe('Decoy', () => {
   //  *  Contents: ["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]
   test('apply hasher and saltGenerator', async () => {
     const decoyValue = await createDecoy(hash, () =>
-      Base64Url.encode(
+      Base64urlEncode(
         '["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]',
       ),
     );

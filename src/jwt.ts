@@ -1,4 +1,4 @@
-import { Base64Url } from './base64url';
+import { Base64urlDecode, Base64urlEncode } from './base64url';
 import { SDJWTException } from './error';
 import { Base64urlString, Signer, Verifier } from './type';
 
@@ -37,8 +37,8 @@ export class Jwt<
     }
 
     return {
-      header: JSON.parse(Base64Url.decode(header)),
-      payload: JSON.parse(Base64Url.decode(payload)),
+      header: JSON.parse(Base64urlDecode(header)),
+      payload: JSON.parse(Base64urlDecode(payload)),
       signature: signature,
     };
   }
@@ -75,8 +75,8 @@ export class Jwt<
       throw new SDJWTException('Sign Error: Invalid JWT');
     }
 
-    const header = Base64Url.encode(JSON.stringify(this.header));
-    const payload = Base64Url.encode(JSON.stringify(this.payload));
+    const header = Base64urlEncode(JSON.stringify(this.header));
+    const payload = Base64urlEncode(JSON.stringify(this.payload));
     const data = `${header}.${payload}`;
     this.signature = await signer(data);
 
@@ -88,8 +88,8 @@ export class Jwt<
       throw new SDJWTException('Serialize Error: Invalid JWT');
     }
 
-    const header = Base64Url.encode(JSON.stringify(this.header));
-    const payload = Base64Url.encode(JSON.stringify(this.payload));
+    const header = Base64urlEncode(JSON.stringify(this.header));
+    const payload = Base64urlEncode(JSON.stringify(this.payload));
     const signature = this.signature;
     const compact = `${header}.${payload}.${signature}`;
 
@@ -101,8 +101,8 @@ export class Jwt<
       throw new SDJWTException('Verify Error: Invalid JWT');
     }
 
-    const header = Base64Url.encode(JSON.stringify(this.header));
-    const payload = Base64Url.encode(JSON.stringify(this.payload));
+    const header = Base64urlEncode(JSON.stringify(this.header));
+    const payload = Base64urlEncode(JSON.stringify(this.payload));
     const data = `${header}.${payload}`;
 
     const verified = verifier(data, this.signature);

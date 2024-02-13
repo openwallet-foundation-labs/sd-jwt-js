@@ -1,4 +1,8 @@
-import { Base64Url } from './base64url';
+import {
+  Uint8ArrayToBase64Url,
+  Base64urlDecode,
+  Base64urlEncode,
+} from './base64url';
 import { SDJWTException } from './error';
 import { HasherAndAlg } from './type';
 
@@ -32,8 +36,8 @@ export class Disclosure<T> {
   public static async fromEncode<T>(s: string, hash: HasherAndAlg) {
     const { hasher, alg } = hash;
     const digest = await hasher(s, alg);
-    const digestStr = Base64Url.Uint8ArrayToBase64Url(digest);
-    const item = JSON.parse(Base64Url.decode(s)) as DisclosureData<T>;
+    const digestStr = Uint8ArrayToBase64Url(digest);
+    const item = JSON.parse(Base64urlDecode(s)) as DisclosureData<T>;
     return Disclosure.fromArray<T>(item, digestStr);
   }
 
@@ -42,7 +46,7 @@ export class Disclosure<T> {
   }
 
   public encode() {
-    return Base64Url.encode(JSON.stringify(this.decode()));
+    return Base64urlEncode(JSON.stringify(this.decode()));
   }
 
   public decode(): DisclosureData<T> {
@@ -55,7 +59,7 @@ export class Disclosure<T> {
     const { hasher, alg } = hash;
     if (!this._digest) {
       const hash = await hasher(this.encode(), alg);
-      this._digest = Base64Url.Uint8ArrayToBase64Url(hash);
+      this._digest = Uint8ArrayToBase64Url(hash);
     }
 
     return this._digest;
