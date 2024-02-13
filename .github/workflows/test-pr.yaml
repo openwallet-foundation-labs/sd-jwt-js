@@ -22,3 +22,5 @@ jobs:
         run: pnpm test:browser
       - name: Run Tests(Node)
         run: pnpm test
+      - name: Run E2E Tests
+        run: pnpm test:e2e

@@ -13,8 +13,9 @@
   },
   "scripts": {
     "build": "tsup",
-    "test": "vitest",
-    "test:browser": "vitest --environment jsdom",
+    "test": "vitest ./src/test/*.spec.ts",
+    "test:browser": "vitest ./src/test/*.spec.ts --environment jsdom",
+    "test:e2e": "vitest ./test/e2e/*.spec.ts --environment",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [
