@@ -29,12 +29,12 @@ describe('index', () => {
     const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance({
       signer,
-      sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
       kbSigner: signer,
-      kb_sign_alg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
     });
     const credential = await sdjwt.issue(
       {
@@ -65,7 +65,7 @@ describe('index', () => {
     const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance({
       signer,
-      sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
@@ -96,7 +96,7 @@ describe('index', () => {
 
     const sdjwt = new SDJwtInstance({
       signer,
-      sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
       verifier: failedverifier,
       hasher: digest,
       saltGenerator: generateSalt,
@@ -131,13 +131,13 @@ describe('index', () => {
     };
     const sdjwt = new SDJwtInstance({
       signer,
-      sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
       kbSigner: signer,
       kbVerifier: failedverifier,
-      kb_sign_alg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -171,13 +171,13 @@ describe('index', () => {
     const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance({
       signer,
-      sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
       kbSigner: signer,
       kbVerifier: verifier,
-      kb_sign_alg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -271,8 +271,8 @@ describe('index', () => {
       saltGenerator: generateSalt,
       kbSigner: signer,
       kbVerifier: verifier,
-      sign_alg: 'EdDSA',
-      kb_sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -309,8 +309,8 @@ describe('index', () => {
       hasher: digest,
       saltGenerator: generateSalt,
       kbVerifier: verifier,
-      sign_alg: 'EdDSA',
-      kb_sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(
@@ -345,8 +345,8 @@ describe('index', () => {
       hasher: digest,
       saltGenerator: generateSalt,
       kbSigner: signer,
-      sign_alg: 'EdDSA',
-      kb_sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
     });
 
     const credential = await sdjwt.issue(

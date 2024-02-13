@@ -13,13 +13,13 @@ export type Base64urlString = string;
 export type SDJWTConfig = {
   omitTyp?: boolean;
   hasher?: Hasher;
-  hash_alg?: string;
+  hashAlg?: string;
   saltGenerator?: SaltGenerator;
   signer?: Signer;
-  sign_alg?: string;
+  signAlg?: string;
   verifier?: Verifier;
   kbSigner?: Signer;
-  kb_sign_alg?: string;
+  kbSignAlg?: string;
   kbVerifier?: Verifier;
 };
 

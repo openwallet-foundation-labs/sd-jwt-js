@@ -27,10 +27,10 @@ describe('App', () => {
     const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance({
       signer,
-      sign_alg: 'EdDSA',
+      signAlg: 'EdDSA',
       verifier,
       hasher: digest,
-      hash_alg: 'SHA-256',
+      hashAlg: 'SHA-256',
       saltGenerator: generateSalt,
     });
 
@@ -193,10 +193,10 @@ async function JSONtest(filename: string) {
   const { signer, verifier } = createSignerVerifier();
   const sdjwt = new SDJwtInstance({
     signer,
-    sign_alg: 'EdDSA',
+    signAlg: 'EdDSA',
     verifier,
     hasher: digest,
-    hash_alg: 'SHA-256',
+    hashAlg: 'SHA-256',
     saltGenerator: generateSalt,
   });
 

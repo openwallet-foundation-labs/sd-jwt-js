@@ -7,12 +7,12 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   // Create SDJwt instance for use
   const sdjwt = new SDJwtInstance({
     signer,
-    sign_alg: 'EdDSA',
+    signAlg: 'EdDSA',
     verifier,
     hasher: digest,
     saltGenerator: generateSalt,
     kbSigner: signer,
-    kb_sign_alg: 'EdDSA',
+    kbSignAlg: 'EdDSA',
     kbVerifier: verifier,
   });
   const claims = {

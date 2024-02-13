@@ -8,9 +8,9 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   const sdjwt = new SDJwtInstance({
     signer,
     verifier,
-    sign_alg: 'EdDSA',
+    signAlg: 'EdDSA',
     hasher: digest,
-    hash_alg: 'SHA-256',
+    hashAlg: 'SHA-256',
     saltGenerator: generateSalt,
   });
   // Issuer Define the claims object with the user's information
