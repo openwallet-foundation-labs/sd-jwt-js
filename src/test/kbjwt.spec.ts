@@ -1,6 +1,6 @@
 import { SDJWTException } from '../error';
 import { KBJwt } from '../kbjwt';
-import { KB_JWT_TYP, Verifier } from '../type';
+import { KB_JWT_TYP, Signer, Verifier } from '../type';
 import Crypto from 'node:crypto';
 
 describe('KB JWT', () => {
@@ -32,6 +32,10 @@ describe('KB JWT', () => {
 
   test('decode', async () => {
     const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
     const kbJwt = new KBJwt({
       header: {
         typ: KB_JWT_TYP,
@@ -44,7 +48,7 @@ describe('KB JWT', () => {
         sd_hash: 'hash',
       },
     });
-    const encodedKbJwt = await kbJwt.sign(privateKey);
+    const encodedKbJwt = await kbJwt.sign(testSigner);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
     expect(decoded.header).toEqual({
       typ: KB_JWT_TYP,
@@ -60,6 +64,18 @@ describe('KB JWT', () => {
 
   test('verify', async () => {
     const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
     const kbJwt = new KBJwt({
       header: {
         typ: KB_JWT_TYP,
@@ -72,9 +88,9 @@ describe('KB JWT', () => {
         sd_hash: 'hash',
       },
     });
-    const encodedKbJwt = await kbJwt.sign(privateKey);
+    const encodedKbJwt = await kbJwt.sign(testSigner);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
-    const verified = await decoded.verify(publicKey);
+    const verified = await decoded.verify(testVerifier);
     expect(verified).toStrictEqual({
       header: {
         typ: KB_JWT_TYP,
@@ -91,6 +107,19 @@ describe('KB JWT', () => {
 
   test('verify failed', async () => {
     const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
     const kbJwt = new KBJwt({
       header: {
         typ: KB_JWT_TYP,
@@ -103,10 +132,10 @@ describe('KB JWT', () => {
         sd_hash: '',
       },
     });
-    const encodedKbJwt = await kbJwt.sign(privateKey);
+    const encodedKbJwt = await kbJwt.sign(testSigner);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
     try {
-      await decoded.verify(publicKey);
+      await decoded.verify(testVerifier);
     } catch (e: unknown) {
       const error = e as SDJWTException;
       expect(error.message).toBe('Invalid Key Binding Jwt');
@@ -115,6 +144,10 @@ describe('KB JWT', () => {
 
   test('verify with custom Verifier', async () => {
     const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
     const testVerifier: Verifier = async (data: string, sig: string) => {
       return Crypto.verify(
         null,
@@ -137,9 +170,9 @@ describe('KB JWT', () => {
       },
     });
 
-    const encodedKbJwt = await kbJwt.sign(privateKey);
+    const encodedKbJwt = await kbJwt.sign(testSigner);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
-    const verified = await decoded.verifyWithVerifier(testVerifier);
+    const verified = await decoded.verify(testVerifier);
     expect(verified).toStrictEqual({
       header: {
         typ: KB_JWT_TYP,
@@ -156,6 +189,10 @@ describe('KB JWT', () => {
 
   test('verify failed with custom Verifier', async () => {
     const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
     const testVerifier: Verifier = async (data: string, sig: string) => {
       return Crypto.verify(
         null,
@@ -178,10 +215,10 @@ describe('KB JWT', () => {
       },
     });
 
-    const encodedKbJwt = await kbJwt.sign(privateKey);
+    const encodedKbJwt = await kbJwt.sign(testSigner);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
     try {
-      await decoded.verifyWithVerifier(testVerifier);
+      await decoded.verify(testVerifier);
     } catch (e: unknown) {
       const error = e as SDJWTException;
       expect(error.message).toBe('Invalid Key Binding Jwt');
@@ -190,6 +227,18 @@ describe('KB JWT', () => {
 
   test('compatibility test for version 06', async () => {
     const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
     const kbJwt = new KBJwt({
       header: {
         typ: KB_JWT_TYP,
@@ -206,9 +255,9 @@ describe('KB JWT', () => {
     (kbJwt.payload as any)!['_sd_hash'] = 'hash';
     delete (kbJwt.payload as any)!.sd_hash;
 
-    const encodedKbJwt = await kbJwt.sign(privateKey);
+    const encodedKbJwt = await kbJwt.sign(testSigner);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);
-    const verified = await decoded.verify(publicKey);
+    const verified = await decoded.verify(testVerifier);
     expect(verified).toStrictEqual({
       header: {
         typ: KB_JWT_TYP,

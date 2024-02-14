@@ -1,21 +1,45 @@
-import sdjwt, { Signer, Verifier } from '../index';
+import { Signer, Verifier, SDJwtInstance } from '../index';
 import Crypto from 'node:crypto';
+import { digest, generateSalt } from './crypto.spec';
+
+export const createSignerVerifier = () => {
+  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+  const signer: Signer = async (data: string) => {
+    const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+    return Buffer.from(sig).toString('base64url');
+  };
+  const verifier: Verifier = async (data: string, sig: string) => {
+    return Crypto.verify(
+      null,
+      Buffer.from(data),
+      publicKey,
+      Buffer.from(sig, 'base64url'),
+    );
+  };
+  return { signer, verifier };
+};
 
 describe('index', () => {
   test('create', async () => {
-    const SDJwtInstance = sdjwt.create({
-      omitTyp: true,
-    });
-    expect(SDJwtInstance).toBeDefined();
+    const sdjwt = new SDJwtInstance();
+    expect(sdjwt).toBeDefined();
   });
 
   test('kbJwt', async () => {
-    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      signAlg: 'EdDSA',
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+      kbSignAlg: 'EdDSA',
+    });
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
       },
-      { privateKey },
       {
         _sd: ['foo'],
       },
@@ -25,87 +49,31 @@ describe('index', () => {
 
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
-        alg: 'EdDSA',
         payload: {
           sd_hash: 'sha-256',
           aud: '1',
           iat: 1,
           nonce: '342',
         },
-        privateKey,
       },
     });
 
     expect(presentation).toBeDefined();
   });
 
-  test('kbJwt with custom signer', async () => {
-    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
-    const testSigner: Signer = async (data: string) => {
-      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
-      return Buffer.from(sig).toString('base64url');
-    };
+  test('issue', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      signAlg: 'EdDSA',
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+    });
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
       },
-      { privateKey },
-      {
-        _sd: ['foo'],
-      },
-    );
-
-    expect(credential).toBeDefined();
-
-    const presentation = await sdjwt.present(credential, ['foo'], {
-      kb: {
-        alg: 'EdDSA',
-        payload: {
-          sd_hash: 'sha-256',
-          aud: '1',
-          iat: 1,
-          nonce: '342',
-        },
-        signer: testSigner,
-      },
-    });
-
-    expect(presentation).toBeDefined();
-  });
-
-  test('issue with signer', async () => {
-    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
-    const testSigner: Signer = async (data: string) => {
-      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
-      return Buffer.from(sig).toString('base64url');
-    };
-    const credential = await sdjwt.issue(
-      {
-        foo: 'bar',
-      },
-      { signer: testSigner },
-      {
-        _sd: ['foo'],
-      },
-    );
-
-    expect(credential).toBeDefined();
-  });
-
-  test('issue with signer in config', async () => {
-    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
-    const testSigner: Signer = async (data: string) => {
-      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
-      return Buffer.from(sig).toString('base64url');
-    };
-    const SDJwtInstance = sdjwt.create({
-      signer: testSigner,
-    });
-    const credential = await SDJwtInstance.issue(
-      {
-        foo: 'bar',
-      },
-      undefined,
       {
         _sd: ['foo'],
       },
@@ -115,33 +83,67 @@ describe('index', () => {
   });
 
   test('verify failed', async () => {
-    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const { signer } = createSignerVerifier();
+    const { publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const failedverifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
+    const sdjwt = new SDJwtInstance({
+      signer,
+      signAlg: 'EdDSA',
+      verifier: failedverifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+    });
+
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
       },
-      { privateKey },
       {
         _sd: ['foo'],
       },
     );
 
     try {
-      await sdjwt.verify(credential, {
-        publicKey: Crypto.generateKeyPairSync('ed25519').privateKey,
-      });
+      await sdjwt.verify(credential);
     } catch (e) {
       expect(e).toBeDefined();
     }
   });
 
   test('verify failed with kbJwt', async () => {
-    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const { signer, verifier } = createSignerVerifier();
+    const { publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const failedverifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+    const sdjwt = new SDJwtInstance({
+      signer,
+      signAlg: 'EdDSA',
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+      kbVerifier: failedverifier,
+      kbSignAlg: 'EdDSA',
+    });
+
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
       },
-      { privateKey },
       {
         _sd: ['foo'],
       },
@@ -149,70 +151,227 @@ describe('index', () => {
 
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
-        alg: 'EdDSA',
         payload: {
           sd_hash: '',
           aud: '1',
           iat: 1,
           nonce: '342',
         },
-        privateKey,
       },
     });
 
     try {
-      await sdjwt.verify(presentation, { publicKey });
+      await sdjwt.verify(presentation);
     } catch (e) {
       expect(e).toBeDefined();
     }
   });
 
-  test('custom verifier', async () => {
-    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-    const testVerifier: Verifier = async (data: string, sig: string) => {
-      return Crypto.verify(
-        null,
-        Buffer.from(data),
-        publicKey,
-        Buffer.from(sig, 'base64url'),
-      );
-    };
-
-    const credential = await sdjwt.issue({ foo: 'bar' }, { privateKey });
-
-    const verified = await sdjwt.verify(credential, { verifier: testVerifier });
-
-    expect(verified).toStrictEqual({
-      header: { alg: 'EdDSA', typ: 'sd-jwt' },
-      payload: { foo: 'bar' },
-    });
-  });
-
-  test('custom verifier in config', async () => {
-    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-    const testVerifier: Verifier = async (data: string, sig: string) => {
-      return Crypto.verify(
-        null,
-        Buffer.from(data),
-        publicKey,
-        Buffer.from(sig, 'base64url'),
-      );
-    };
-
-    const SDJwtInstance = sdjwt.create({
-      verifier: testVerifier,
+  test('verify with kbJwt', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      signAlg: 'EdDSA',
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+      kbVerifier: verifier,
+      kbSignAlg: 'EdDSA',
     });
 
-    const credential = await SDJwtInstance.issue(
-      { foo: 'bar' },
-      { privateKey },
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      {
+        _sd: ['foo'],
+      },
     );
 
-    const verified = await SDJwtInstance.verify(credential);
-
-    expect(verified).toStrictEqual({
-      header: { alg: 'EdDSA', typ: 'sd-jwt' },
-      payload: { foo: 'bar' },
+    const presentation = await sdjwt.present(credential, ['foo'], {
+      kb: {
+        payload: {
+          sd_hash: 'sha-256',
+          aud: '1',
+          iat: 1,
+          nonce: '342',
+        },
+      },
     });
+
+    const results = await sdjwt.verify(presentation, ['foo'], true);
+    expect(results).toBeDefined();
+  });
+
+  test('Hasher not found', async () => {
+    const sdjwt = new SDJwtInstance({});
+    try {
+      const credential = await sdjwt.issue(
+        {
+          foo: 'bar',
+        },
+        {
+          _sd: ['foo'],
+        },
+      );
+
+      expect(credential).toBeDefined();
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('SaltGenerator not found', async () => {
+    const sdjwt = new SDJwtInstance({
+      hasher: digest,
+    });
+    try {
+      const credential = await sdjwt.issue(
+        {
+          foo: 'bar',
+        },
+        {
+          _sd: ['foo'],
+        },
+      );
+
+      expect(credential).toBeDefined();
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('Signer not found', async () => {
+    const sdjwt = new SDJwtInstance({
+      hasher: digest,
+      saltGenerator: generateSalt,
+    });
+    try {
+      const credential = await sdjwt.issue(
+        {
+          foo: 'bar',
+        },
+        {
+          _sd: ['foo'],
+        },
+      );
+
+      expect(credential).toBeDefined();
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('Verifier not found', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+      kbVerifier: verifier,
+      signAlg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
+    });
+
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    const presentation = await sdjwt.present(credential, ['foo'], {
+      kb: {
+        payload: {
+          sd_hash: 'sha-256',
+          aud: '1',
+          iat: 1,
+          nonce: '342',
+        },
+      },
+    });
+    try {
+      const results = await sdjwt.verify(presentation, ['foo'], true);
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('kbSigner not found', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbVerifier: verifier,
+      signAlg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
+    });
+
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+    try {
+      const presentation = await sdjwt.present(credential, ['foo'], {
+        kb: {
+          payload: {
+            sd_hash: 'sha-256',
+            aud: '1',
+            iat: 1,
+            nonce: '342',
+          },
+        },
+      });
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+
+  test('kbVerifier not found', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+      signAlg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
+    });
+
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    const presentation = await sdjwt.present(credential, ['foo'], {
+      kb: {
+        payload: {
+          sd_hash: 'sha-256',
+          aud: '1',
+          iat: 1,
+          nonce: '342',
+        },
+      },
+    });
+    try {
+      const results = await sdjwt.verify(presentation, ['foo'], true);
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
   });
 });

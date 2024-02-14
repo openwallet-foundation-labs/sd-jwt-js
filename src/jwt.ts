@@ -1,6 +1,5 @@
-import { Base64Url } from './base64url';
+import { Base64urlDecode, Base64urlEncode } from './base64url';
 import { SDJWTException } from './error';
-import * as jose from 'jose';
 import { Base64urlString, Signer, Verifier } from './type';
 
 export type JwtData<
@@ -38,8 +37,8 @@ export class Jwt<
     }
 
     return {
-      header: JSON.parse(Base64Url.decode(header)),
-      payload: JSON.parse(Base64Url.decode(payload)),
+      header: JSON.parse(Base64urlDecode(header)),
+      payload: JSON.parse(Base64urlDecode(payload)),
       signature: signature,
     };
   }
@@ -71,28 +70,13 @@ export class Jwt<
     return this;
   }
 
-  public async sign(privateKey: Uint8Array | jose.KeyLike) {
-    if (!this.header || !this.payload) {
-      throw new SDJWTException('Sign Error: Invalid JWT');
-    }
-    // @ts-ignore
-    const header = this.header as jose.JWTHeaderParameters;
-    const encodedJwt = await new jose.SignJWT(this.payload)
-      .setProtectedHeader(header)
-      .sign(privateKey);
-
-    const { signature } = Jwt.decodeJWT(encodedJwt);
-    this.signature = signature;
-    return encodedJwt;
-  }
-
-  public async signWithSigner(signer: Signer) {
+  public async sign(signer: Signer) {
     if (!this.header || !this.payload) {
       throw new SDJWTException('Sign Error: Invalid JWT');
     }
 
-    const header = Base64Url.encode(JSON.stringify(this.header));
-    const payload = Base64Url.encode(JSON.stringify(this.payload));
+    const header = Base64urlEncode(JSON.stringify(this.header));
+    const payload = Base64urlEncode(JSON.stringify(this.payload));
     const data = `${header}.${payload}`;
     this.signature = await signer(data);
 
@@ -104,35 +88,21 @@ export class Jwt<
       throw new SDJWTException('Serialize Error: Invalid JWT');
     }
 
-    const header = Base64Url.encode(JSON.stringify(this.header));
-    const payload = Base64Url.encode(JSON.stringify(this.payload));
+    const header = Base64urlEncode(JSON.stringify(this.header));
+    const payload = Base64urlEncode(JSON.stringify(this.payload));
     const signature = this.signature;
     const compact = `${header}.${payload}.${signature}`;
 
     return compact;
   }
 
-  public async verify(publicKey: Uint8Array | jose.KeyLike) {
+  public async verify(verifier: Verifier) {
     if (!this.header || !this.payload || !this.signature) {
       throw new SDJWTException('Verify Error: Invalid JWT');
     }
 
-    const jwt = this.encodeJwt();
-    try {
-      await jose.jwtVerify(jwt, publicKey);
-    } catch (e) {
-      throw new SDJWTException('Verify Error: Invalid JWT Signature');
-    }
-    return { payload: this.payload, header: this.header };
-  }
-
-  public async verifyWithVerifier(verifier: Verifier) {
-    if (!this.header || !this.payload || !this.signature) {
-      throw new SDJWTException('Verify Error: Invalid JWT');
-    }
-
-    const header = Base64Url.encode(JSON.stringify(this.header));
-    const payload = Base64Url.encode(JSON.stringify(this.payload));
+    const header = Base64urlEncode(JSON.stringify(this.header));
+    const payload = Base64urlEncode(JSON.stringify(this.payload));
     const data = `${header}.${payload}`;
 
     const verified = verifier(data, this.signature);

@@ -1,14 +1,20 @@
-import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
-import Crypto from 'node:crypto';
-
-export const createKeyPair = () => {
-  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-  return { privateKey, publicKey };
-};
+import { DisclosureFrame, SDJwtInstance } from '@hopae/sd-jwt';
+import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
-  const { privateKey, publicKey } = createKeyPair();
+  const { signer, verifier } = createSignerVerifier();
 
+  // Create SDJwt instance for use
+  const sdjwt = new SDJwtInstance({
+    signer,
+    signAlg: 'EdDSA',
+    verifier,
+    hasher: digest,
+    saltGenerator: generateSalt,
+    kbSigner: signer,
+    kbSignAlg: 'EdDSA',
+    kbVerifier: verifier,
+  });
   // Issuer Define the claims object with the user's information
   const claims = {
     firstname: 'John',
@@ -24,22 +30,22 @@ export const createKeyPair = () => {
 
   // Issue a signed JWT credential with the specified claims and disclosures
   // Return a Encoded SD JWT. Issuer send the credential to the holder
-  const credential = await sdjwt.issue(claims, { privateKey }, disclosureFrame);
+  const credential = await sdjwt.issue(claims, disclosureFrame);
   console.log('encodedSdjwt:', credential);
 
   // You can decode the SD JWT to get the payload and the disclosures
-  const sdJwtToken = sdjwt.decode(credential);
+  const sdJwtToken = await sdjwt.decode(credential);
   console.log(sdJwtToken);
 
   // You can get the keys of the claims from the decoded SD JWT
-  const keys = await sdJwtToken.keys();
+  const keys = await sdJwtToken.keys(digest);
   console.log({ keys });
 
   // You can get the claims from the decoded SD JWT
-  const payloads = await sdJwtToken.getClaims();
+  const payloads = await sdJwtToken.getClaims(digest);
 
   // You can get the presentable keys from the decoded SD JWT
-  const presentableKeys = await sdJwtToken.presentableKeys();
+  const presentableKeys = await sdJwtToken.presentableKeys(digest);
 
   console.log({
     payloads: JSON.stringify(payloads, null, 2),

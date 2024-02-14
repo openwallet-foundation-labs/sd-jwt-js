@@ -19,9 +19,13 @@ describe('JWT', () => {
     // These objects are turned into strings with JSON.stringify. The resulting strings are encoded with base64 encoding using Buffer.from(string).toString('base64').
     // These base64 encoded strings are concatenated with a period (.) between them, following the structure of a JWT, which is composed of three Base64-URL strings separated by dots (header.payload.signature).
     // A 'signature' string is added at the end to represent a JWT signature.
-    // So, the jwt variable ends up being a string with the format of a base64Url encoded Header, a period, a base64Url encoded Payload, another period, and a 'signature' string. 
+    // So, the jwt variable ends up being a string with the format of a base64Url encoded Header, a period, a base64Url encoded Payload, another period, and a 'signature' string.
     // It's important to note that the 'signature' here is just a placeholder string and not an actual cryptographic signature generated from the header and payload data.
-    const jwt = `${Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64')}.${Buffer.from(JSON.stringify({ sub: '1234567890', name: 'John Doe' })).toString('base64')}.signature`;
+    const jwt = `${Buffer.from(
+      JSON.stringify({ alg: 'HS256', typ: 'JWT' }),
+    ).toString('base64')}.${Buffer.from(
+      JSON.stringify({ sub: '1234567890', name: 'John Doe' }),
+    ).toString('base64')}.signature`;
     const result = Jwt.decodeJWT(jwt);
     expect(result).toEqual({
       header: { alg: 'HS256', typ: 'JWT' },
@@ -36,7 +40,9 @@ describe('JWT', () => {
   });
 
   test('throws an error when JWT parts are missing', () => {
-    const jwt = `${Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64')}`;
+    const jwt = `${Buffer.from(
+      JSON.stringify({ alg: 'HS256', typ: 'JWT' }),
+    ).toString('base64')}`;
     expect(() => Jwt.decodeJWT(jwt)).toThrow('Invalid JWT as input');
   });
 
@@ -51,117 +57,25 @@ describe('JWT', () => {
 
   test('sign', async () => {
     const { privateKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
     const jwt = new Jwt({
       header: { alg: 'EdDSA' },
       payload: { foo: 'bar' },
     });
 
-    const encodedJwt = await jwt.sign(privateKey);
+    const encodedJwt = await jwt.sign(testSigner);
     expect(typeof encodedJwt).toBe('string');
   });
 
   test('verify', async () => {
     const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-    const jwt = new Jwt({
-      header: { alg: 'EdDSA' },
-      payload: { foo: 'bar' },
-    });
-
-    const encodedJwt = await jwt.sign(privateKey);
-    const newJwt = Jwt.fromEncode(encodedJwt);
-    const verified = await newJwt.verify(publicKey);
-    expect(verified).toStrictEqual({
-      header: { alg: 'EdDSA' },
-      payload: { foo: 'bar' },
-    });
-    try {
-      await newJwt.verify(Crypto.generateKeyPairSync('ed25519').privateKey);
-    } catch (e: unknown) {
-      expect(e).toBeInstanceOf(SDJWTException);
-    }
-  });
-
-  test('encode', async () => {
-    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-    const jwt = new Jwt({
-      header: { alg: 'EdDSA' },
-      payload: { foo: 'bar' },
-    });
-
-    const encodedJwt = await jwt.sign(privateKey);
-    const newJwt = Jwt.fromEncode(encodedJwt);
-    const newEncodedJwt = newJwt.encodeJwt();
-    expect(newEncodedJwt).toBe(encodedJwt);
-  });
-
-  test('decode failed', () => {
-    expect(() => Jwt.fromEncode('asfasfas')).toThrow();
-  });
-
-  test('sign failed', async () => {
-    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
-    const jwt = new Jwt({
-      header: { alg: 'EdDSA' },
-    });
-
-    try {
-      await jwt.sign(privateKey);
-    } catch (e: unknown) {
-      expect(e).toBeInstanceOf(SDJWTException);
-    }
-  });
-
-  test('encode failed', async () => {
-    const jwt = new Jwt({
-      header: { alg: 'EdDSA' },
-    });
-
-    try {
-      jwt.encodeJwt();
-    } catch (e: unknown) {
-      expect(e).toBeInstanceOf(SDJWTException);
-    }
-  });
-
-  test('verify failed', async () => {
-    const { privateKey } = Crypto.generateKeyPairSync('ed25519');
-    const jwt = new Jwt({
-      header: { alg: 'EdDSA' },
-    });
-
-    try {
-      await jwt.verify(privateKey);
-    } catch (e: unknown) {
-      expect(e).toBeInstanceOf(SDJWTException);
-    }
-  });
-
-  test('custom signer', async () => {
-    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
     const testSigner: Signer = async (data: string) => {
       const sig = Crypto.sign(null, Buffer.from(data), privateKey);
       return Buffer.from(sig).toString('base64url');
     };
-
-    const jwt = new Jwt({
-      header: { alg: 'EdDSA' },
-      payload: { foo: 'bar' },
-    });
-
-    const encodedJwt = await jwt.signWithSigner(testSigner);
-    const encodedJwt2 = await jwt.sign(privateKey);
-    expect(encodedJwt).toEqual(encodedJwt2);
-
-    const newJwt = Jwt.fromEncode(encodedJwt);
-    const verified = await newJwt.verify(publicKey);
-    expect(verified).toStrictEqual({
-      header: { alg: 'EdDSA' },
-      payload: { foo: 'bar' },
-    });
-  });
-
-  test('custom verifier', async () => {
-    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
     const testVerifier: Verifier = async (data: string, sig: string) => {
       return Crypto.verify(
         null,
@@ -176,12 +90,51 @@ describe('JWT', () => {
       payload: { foo: 'bar' },
     });
 
-    const encodedJwt = await jwt.sign(privateKey);
+    const encodedJwt = await jwt.sign(testSigner);
     const newJwt = Jwt.fromEncode(encodedJwt);
-    const verified = await newJwt.verifyWithVerifier(testVerifier);
+    const verified = await newJwt.verify(testVerifier);
     expect(verified).toStrictEqual({
       header: { alg: 'EdDSA' },
       payload: { foo: 'bar' },
     });
+    try {
+      await newJwt.verify(() => false);
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(SDJWTException);
+    }
+  });
+
+  test('encode', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+    });
+
+    const encodedJwt = await jwt.sign(testSigner);
+    const newJwt = Jwt.fromEncode(encodedJwt);
+    const newEncodedJwt = newJwt.encodeJwt();
+    expect(newEncodedJwt).toBe(encodedJwt);
+  });
+
+  test('decode failed', () => {
+    expect(() => Jwt.fromEncode('asfasfas')).toThrow();
+  });
+
+  test('encode failed', async () => {
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
+    });
+
+    try {
+      jwt.encodeJwt();
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(SDJWTException);
+    }
   });
 });

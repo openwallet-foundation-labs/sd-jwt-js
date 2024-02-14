@@ -1,7 +1,10 @@
-import { Base64Url } from './base64url';
+import {
+  Uint8ArrayToBase64Url,
+  Base64urlDecode,
+  Base64urlEncode,
+} from './base64url';
 import { SDJWTException } from './error';
-import { Hasher } from './type';
-import { hexToB64Url} from './crypto';
+import { HasherAndAlg } from './type';
 
 export type DisclosureData<T> = [string, string, T] | [string, T];
 
@@ -11,7 +14,8 @@ export class Disclosure<T> {
   public value: T;
   private _digest: string | undefined;
 
-  public constructor(data: DisclosureData<T>) {
+  public constructor(data: DisclosureData<T>, digest?: string) {
+    this._digest = digest;
     if (data.length === 2) {
       this.salt = data[0];
       this.value = data[1];
@@ -26,21 +30,23 @@ export class Disclosure<T> {
     throw new SDJWTException('Invalid disclosure data');
   }
 
-  public static fromEncode<T>(s: string) {
-    const item = JSON.parse(Base64Url.decode(s)) as DisclosureData<T>;
-    return Disclosure.fromArray<T>(item);
+  // We need to digest of the original encoded data.
+  // After decode process, we use JSON.stringify to encode the data.
+  // This can be different from the original encoded data.
+  public static async fromEncode<T>(s: string, hash: HasherAndAlg) {
+    const { hasher, alg } = hash;
+    const digest = await hasher(s, alg);
+    const digestStr = Uint8ArrayToBase64Url(digest);
+    const item = JSON.parse(Base64urlDecode(s)) as DisclosureData<T>;
+    return Disclosure.fromArray<T>(item, digestStr);
   }
 
-  public static fromArray<T>(item: DisclosureData<T>) {
-    return new Disclosure(item);
+  public static fromArray<T>(item: DisclosureData<T>, digest?: string) {
+    return new Disclosure(item, digest);
   }
 
   public encode() {
-    return this.encodeRaw(JSON.stringify(this.decode()));
-  }
-
-  public encodeRaw(s: string) {
-    return Base64Url.encode(s);
+    return Base64urlEncode(JSON.stringify(this.decode()));
   }
 
   public decode(): DisclosureData<T> {
@@ -49,19 +55,13 @@ export class Disclosure<T> {
       : [this.salt, this.value];
   }
 
-  public async digestRaw(hasher: Hasher, encodeString: string): Promise<string> {
-    // 
-    // draft-ietf-oauth-selective-disclosure-jwt-07
-    // 
-    // The bytes of the output of the hash function MUST be base64url-encoded, and are not the bytes making up the (often used) hex
-    // representation of the bytes of the digest.
-    // 
-    const hexString = await hasher(encodeString);
-    this._digest = hexToB64Url(hexString);
-    return this._digest;
-  }
+  public async digest(hash: HasherAndAlg): Promise<string> {
+    const { hasher, alg } = hash;
+    if (!this._digest) {
+      const hash = await hasher(this.encode(), alg);
+      this._digest = Uint8ArrayToBase64Url(hash);
+    }
 
-  public async digest(hasher: Hasher): Promise<string> {
-    return await this.digestRaw(hasher, this.encode());
+    return this._digest;
   }
 }
