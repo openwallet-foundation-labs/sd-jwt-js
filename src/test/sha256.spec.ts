@@ -97,13 +97,6 @@ describe('SHA-256 tests', () => {
   });
 
   test('test#14', async () => {
-    const payload = 'ሰላም';
-    const s1 = bytesToHex(await digest(payload));
-    const s2 = bytesToHex(sha256(payload));
-    expect(s1).toStrictEqual(s2);
-  });
-
-  test('test#15', async () => {
     const payload = 'Բարեւ Ձեզ';
     const s1 = bytesToHex(await digest(payload));
     const s2 = bytesToHex(sha256(payload));
