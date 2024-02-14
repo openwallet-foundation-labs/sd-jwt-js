@@ -11,7 +11,8 @@
     "custom": "ts-node custom.ts",
     "decoy": "ts-node decoy.ts",
     "custom_header": "ts-node custom_header.ts",
-    "kb": "ts-node kb.ts"
+    "kb": "ts-node kb.ts",
+    "decode": "ts-node decode.ts"
   },
   "keywords": [],
   "author": "",
