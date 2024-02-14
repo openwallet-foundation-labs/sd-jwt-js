@@ -1,18 +1,40 @@
 import Crypto from 'node:crypto';
-import sdjwt from '../src';
-import { DisclosureFrame } from '../src/type';
+import { SDJwtInstance } from '../src';
+import { DisclosureFrame, Signer, Verifier } from '../src/type';
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
+import { digest, generateSalt } from '../src/test/crypto.spec';
 
-export const createKeyPair = () => {
+export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
-  return { privateKey, publicKey };
+  const signer: Signer = async (data: string) => {
+    const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+    return Buffer.from(sig).toString('base64url');
+  };
+  const verifier: Verifier = async (data: string, sig: string) => {
+    return Crypto.verify(
+      null,
+      Buffer.from(data),
+      publicKey,
+      Buffer.from(sig, 'base64url'),
+    );
+  };
+  return { signer, verifier };
 };
 
 describe('App', () => {
   test('Example', async () => {
-    const { privateKey, publicKey } = createKeyPair();
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      signAlg: 'EdDSA',
+      verifier,
+      hasher: digest,
+      hashAlg: 'SHA-256',
+      saltGenerator: generateSalt,
+    });
+
     const claims = {
       firstname: 'John',
       lastname: 'Doe',
@@ -45,17 +67,13 @@ describe('App', () => {
         _sd: ['hi'],
       },
     };
-    const encodedSdjwt = await sdjwt.issue(
-      claims,
-      { privateKey },
-      disclosureFrame,
-    );
+    const encodedSdjwt = await sdjwt.issue(claims, disclosureFrame);
     expect(encodedSdjwt).toBeDefined();
-    const validated = await sdjwt.validate(encodedSdjwt, { publicKey });
+    const validated = await sdjwt.validate(encodedSdjwt);
     expect(validated).toBeDefined();
 
-    const decoded = sdjwt.decode(encodedSdjwt);
-    const keys = await decoded.keys();
+    const decoded = await sdjwt.decode(encodedSdjwt);
+    const keys = await decoded.keys(digest);
     expect(keys).toEqual([
       'data',
       'data.firstname',
@@ -73,9 +91,9 @@ describe('App', () => {
       'lastname',
       'ssn',
     ]);
-    const payloads = await decoded.getClaims();
+    const payloads = await decoded.getClaims(digest);
     expect(payloads).toEqual(claims);
-    const presentableKeys = await decoded.presentableKeys();
+    const presentableKeys = await decoded.presentableKeys(digest);
     expect(presentableKeys).toEqual([
       'data.list',
       'data.list.0',
@@ -102,11 +120,7 @@ describe('App', () => {
     });
 
     const requiredClaimKeys = ['firstname', 'id', 'data.ssn'];
-    const verified = await sdjwt.verify(
-      encodedSdjwt,
-      { publicKey },
-      requiredClaimKeys,
-    );
+    const verified = await sdjwt.verify(encodedSdjwt, requiredClaimKeys);
     expect(verified).toBeDefined();
   });
 
@@ -177,17 +191,21 @@ describe('App', () => {
 
 async function JSONtest(filename: string) {
   const test = loadTestJsonFile(filename);
-  const { privateKey, publicKey } = createKeyPair();
+  const { signer, verifier } = createSignerVerifier();
+  const sdjwt = new SDJwtInstance({
+    signer,
+    signAlg: 'EdDSA',
+    verifier,
+    hasher: digest,
+    hashAlg: 'SHA-256',
+    saltGenerator: generateSalt,
+  });
 
-  const encodedSdjwt = await sdjwt.issue(
-    test.claims,
-    { privateKey },
-    test.disclosureFrame,
-  );
+  const encodedSdjwt = await sdjwt.issue(test.claims, test.disclosureFrame);
 
   expect(encodedSdjwt).toBeDefined();
 
-  const validated = await sdjwt.validate(encodedSdjwt, { publicKey });
+  const validated = await sdjwt.validate(encodedSdjwt);
 
   expect(validated).toBeDefined();
   expect(validated).toStrictEqual({
@@ -206,11 +224,7 @@ async function JSONtest(filename: string) {
 
   expect(presentationClaims).toEqual(test.presenatedClaims);
 
-  const verified = await sdjwt.verify(
-    encodedSdjwt,
-    { publicKey },
-    test.requiredClaimKeys,
-  );
+  const verified = await sdjwt.verify(encodedSdjwt, test.requiredClaimKeys);
 
   expect(verified).toBeDefined();
   expect(verified).toStrictEqual({

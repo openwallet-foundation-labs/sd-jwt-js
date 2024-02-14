@@ -91,7 +91,10 @@ Check out more details in our [documentation](https://github.com/openwallet-foun
 
 ## Dependencies
 
-- [jose](https://github.com/panva/jose)
+- "@noble/hashes": "1.0.0",
+  - pure js hash algorithm implementation with security audit (v1.0.0)
+- "js-base64": "^3.7.6"
+  - pure js base64 implementation
 
 ## Build
 

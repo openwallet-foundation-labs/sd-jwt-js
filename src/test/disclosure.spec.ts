@@ -1,19 +1,21 @@
-import { generateSalt, digest as hashHex } from '../crypto';
-import { Disclosure, DisclosureData } from '../disclosure';
+import { generateSalt, digest as hasher } from './crypto.spec';
+import { Disclosure } from '../disclosure';
 import { SDJWTException } from '../error';
-import { Base64Url } from '../base64url';
 import { describe, expect, test } from 'vitest';
+import { Base64urlEncode } from '../base64url';
+
+const hash = { alg: 'SHA256', hasher };
 
 /* 
-ref draft-ietf-oauth-selective-disclosure-jwt-07
-Claim given_name:
-SHA-256 Hash: jsu9yVulwQQlhFlM_3JlzMaSFzglhQG0DpfayQwLUK4
-Disclosure: WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgImdpdmVuX25hbWUiLCAiSm9obiJd
-Contents: ["2GLC42sKQveCfGfryNRN9w", "given_name", "John"]
-For example, the SHA-256 digest of the Disclosure
-WyI2cU1RdlJMNWhhaiIsICJmYW1pbHlfbmFtZSIsICJNw7ZiaXVzIl0 would be uutlBuYeMDyjLLTpf6Jxi7yNkEF35jdyWMn9U7b_RYY.
-The SHA-256 digest of the Disclosure
-WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIkZSIl0 would be w0I8EKcdCtUPkGCNUrfwVp2xEgNjtoIDlOxc9-PlOhs.
+  ref draft-ietf-oauth-selective-disclosure-jwt-07
+  Claim given_name:
+  SHA-256 Hash: jsu9yVulwQQlhFlM_3JlzMaSFzglhQG0DpfayQwLUK4
+  Disclosure: WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwgImdpdmVuX25hbWUiLCAiSm9obiJd
+  Contents: ["2GLC42sKQveCfGfryNRN9w", "given_name", "John"]
+  For example, the SHA-256 digest of the Disclosure
+  WyI2cU1RdlJMNWhhaiIsICJmYW1pbHlfbmFtZSIsICJNw7ZiaXVzIl0 would be uutlBuYeMDyjLLTpf6Jxi7yNkEF35jdyWMn9U7b_RYY.
+  The SHA-256 digest of the Disclosure
+  WyJsa2x4RjVqTVlsR1RQVW92TU5JdkNBIiwgIkZSIl0 would be w0I8EKcdCtUPkGCNUrfwVp2xEgNjtoIDlOxc9-PlOhs.
 */
 const TestDataDraft7 = {
   claimTests: [
@@ -80,7 +82,10 @@ describe('Disclosure', () => {
     const salt = generateSalt(16);
     const disclosure = new Disclosure([salt, 'name', 'James']);
     const encodedDisclosure = disclosure.encode();
-    const newDisclosure = Disclosure.fromEncode(encodedDisclosure);
+    const newDisclosure = await Disclosure.fromEncode(encodedDisclosure, {
+      alg: 'SHA256',
+      hasher,
+    });
 
     expect(newDisclosure).toBeDefined();
     expect(newDisclosure.key).toBe('name');
@@ -88,60 +93,50 @@ describe('Disclosure', () => {
     expect(newDisclosure.salt).toBe(salt);
   });
 
-  test('digest disclosure', async () => {
+  test('digest disclosure #1', async () => {
     const salt = generateSalt(16);
     const disclosure = new Disclosure([salt, 'name', 'James']);
-    const digest = await disclosure.digest(hashHex);
+    const digest = await disclosure.digest({ alg: 'SHA256', hasher });
     expect(digest).toBeDefined();
     expect(typeof digest).toBe('string');
   });
 
-  test('should return a digest after calling digest method', async () => {
-    const givenData: DisclosureData<string> = [
+  test('digest disclosure #2', async () => {
+    const disclosure = new Disclosure([
       '2GLC42sKQveCfGfryNRN9w',
       'given_name',
       'John',
-    ];
-    const theDisclosure = new Disclosure(givenData);
-    //
-    // JSON.stringify() version
-    // SHA-256 Hash : 8VHiz7qTXavxvpiTYDCSr_shkUO6qRcVXjkhEnt1os4
-    // Disclosure: WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwiZ2l2ZW5fbmFtZSIsIkpvaG4iXQ
-    // Contents: ["2GLC42sKQveCfGfryNRN9w","given_name","John"]
-    //
-    // Testing encoding of the data using encodeRaw and encode functions.
-    // The differences in the output of encodeRaw and encode methods
-    // arise from the formatting during JSON.stringify operation. encodeRaw retains whitespace while encode does not.
-    expect(theDisclosure.encodeRaw(TestDataDraft7.claimTests[0].contents)).toBe(
-      TestDataDraft7.claimTests[0].disclosure,
-    );
-    expect(theDisclosure.encode()).toBe(
+    ]);
+    const encode = disclosure.encode();
+    expect(encode).toBe(
       'WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwiZ2l2ZW5fbmFtZSIsIkpvaG4iXQ',
     );
+    const digest = await disclosure.digest(hash);
+    expect(digest).toBe('8VHiz7qTXavxvpiTYDCSr_shkUO6qRcVXjkhEnt1os4');
+  });
 
-    //
-    // Testing digestRaw function. Testing against known digest and disclosure pairs.
-    // The digest is expected to be same as the known digest when passed with the corresponding disclosure.
-    //
-    await expect(
-      theDisclosure.digestRaw(hashHex, TestDataDraft7.claimTests[0].disclosure),
-    ).resolves.toBe(TestDataDraft7.claimTests[0].digest);
-    await expect(
-      theDisclosure.digestRaw(
-        hashHex,
-        'WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwiZ2l2ZW5fbmFtZSIsIkpvaG4iXQ',
-      ),
-    ).resolves.toBe('8VHiz7qTXavxvpiTYDCSr_shkUO6qRcVXjkhEnt1os4');
-    await expect(theDisclosure.digest(hashHex)).resolves.toBe(
-      '8VHiz7qTXavxvpiTYDCSr_shkUO6qRcVXjkhEnt1os4',
+  test('digest disclosure #2', async () => {
+    const encoded = Base64urlEncode(TestDataDraft7.claimTests[0].contents);
+    expect(encoded).toStrictEqual(TestDataDraft7.claimTests[0].disclosure);
+
+    const disclosure = await Disclosure.fromEncode(
+      TestDataDraft7.claimTests[0].disclosure,
+      hash,
     );
-    //
-    // The result of digestRaw changes based on the hashing strategy used. In this test, we are using the test data from 'draft-ietf-oauth-selective-disclosure-jwt-07'.
-    //
-    for (const elem of TestDataDraft7.sha256Tests) {
-      await expect(
-        theDisclosure.digestRaw(hashHex, elem.disclosure),
-      ).resolves.toBe(elem.digest);
+
+    const digest = await disclosure.digest(hash);
+    expect(digest).toBe(TestDataDraft7.claimTests[0].digest);
+  });
+
+  test('digest disclosure #3', async () => {
+    for (const sha256Test of TestDataDraft7.sha256Tests) {
+      const disclosure = await Disclosure.fromEncode(
+        sha256Test.disclosure,
+        hash,
+      );
+
+      const digest = await disclosure.digest(hash);
+      expect(digest).toBe(sha256Test.digest);
     }
   });
 });

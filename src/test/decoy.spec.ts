@@ -1,12 +1,16 @@
 import { createDecoy } from '../decoy';
-import { Base64Url } from '../base64url';
-import { digest } from '../crypto';
 import { describe, expect, test } from 'vitest';
+import { Base64urlEncode } from '../base64url';
+import { digest, generateSalt } from './crypto.spec';
+
+const hash = {
+  hasher: digest,
+  alg: 'SHA256',
+};
 
 describe('Decoy', () => {
   test('decoy', async () => {
-    const decoyValue = await createDecoy();
-    // base64url-encoded sha256 is a 43-octet URL safe string.
+    const decoyValue = await createDecoy(hash, generateSalt);
     expect(decoyValue.length).toBe(43);
   });
 
@@ -16,8 +20,8 @@ describe('Decoy', () => {
   //  *  Disclosure: WyI2SWo3dE0tYTVpVlBHYm9TNXRtdlZBIiwgImVtYWlsIiwgImpvaG5kb2VAZXhhbXBsZS5jb20iXQ
   //  *  Contents: ["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]
   test('apply hasher and saltGenerator', async () => {
-    const decoyValue = await createDecoy(digest, () =>
-      Base64Url.encode(
+    const decoyValue = await createDecoy(hash, () =>
+      Base64urlEncode(
         '["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]',
       ),
     );
