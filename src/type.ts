@@ -1,4 +1,3 @@
-import { KeyLike } from 'jose';
 import { Jwt } from './jwt';
 
 export const SD_SEPARATOR = '~';
@@ -14,18 +13,15 @@ export type Base64urlString = string;
 export type SDJWTConfig = {
   omitTyp?: boolean;
   hasher?: Hasher;
+  hashAlg?: string;
   saltGenerator?: SaltGenerator;
-  signer?: Signer | null;
-  verifier?: Verifier | null;
+  signer?: Signer;
+  signAlg?: string;
+  verifier?: Verifier;
+  kbSigner?: Signer;
+  kbSignAlg?: string;
+  kbVerifier?: Verifier;
 };
-
-export type SignOptions =
-  | { privateKey: Uint8Array | KeyLike }
-  | { signer: Signer };
-
-export type VerifyOptions =
-  | { publicKey: Uint8Array | KeyLike }
-  | { verifier: Verifier };
 
 export type kbHeader = { typ: 'kb+jwt'; alg: string };
 export type kbPayload = {
@@ -37,26 +33,20 @@ export type kbPayload = {
 
 export type KeyBinding = Jwt<kbHeader, kbPayload>;
 
-export type KBOptionWithKey = {
-  alg: string;
+export type KBOptions = {
   payload: kbPayload;
-  privateKey: Uint8Array | KeyLike;
 };
-
-export type KBOptionWithSigner = {
-  alg: string;
-  payload: kbPayload;
-  signer: Signer;
-};
-
-export type KBOptions = KBOptionWithKey | KBOptionWithSigner;
 
 export type OrPromise<T> = T | Promise<T>;
 
 export type Signer = (data: string) => OrPromise<string>;
 export type Verifier = (data: string, sig: string) => OrPromise<boolean>;
-export type Hasher = (data: string) => Promise<string>;
-export type SaltGenerator = (length: number) => string;
+export type Hasher = (data: string, alg: string) => OrPromise<Uint8Array>;
+export type SaltGenerator = (length: number) => OrPromise<string>;
+export type HasherAndAlg = {
+  hasher: Hasher;
+  alg: string;
+};
 
 type NonNever<T> = {
   [P in keyof T as T[P] extends never ? never : P]: T[P];
@@ -80,4 +70,4 @@ type Frame<Payload> = Payload extends Array<infer U>
     >
   : SD<Payload> & DECOY;
 
-export type DisclosureFrame<T> = Frame<T>;
+export type DisclosureFrame<T extends object> = Frame<T>;

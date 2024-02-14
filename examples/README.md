@@ -26,6 +26,7 @@ pnpm run all
 - sdjwtobject: Example of using SD JWT Object
 - decoy: Example of adding decoy digest in SD JWT
 - kb: key binding example in SD JWT
+- decode: Decoding example of a SD JWT sample
 
 ### Variables In Examples
 
