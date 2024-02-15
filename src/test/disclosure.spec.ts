@@ -1,6 +1,7 @@
 import { generateSalt, digest as hasher } from './crypto.spec';
 import { Disclosure } from '../disclosure';
 import { SDJWTException } from '../error';
+import { describe, expect, test } from 'vitest';
 import { Base64urlEncode } from '../base64url';
 
 const hash = { alg: 'SHA256', hasher };
