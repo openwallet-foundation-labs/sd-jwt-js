@@ -1,7 +1,8 @@
-import Crypto from 'node:crypto';
+import { describe, expect, test } from 'vitest';
+import { createHash, randomBytes } from 'crypto';
 
 export const generateSalt = (length: number): string => {
-  const saltBytes = Crypto.randomBytes(length);
+  const saltBytes = randomBytes(length);
   const salt = saltBytes.toString('hex');
   return salt;
 };
@@ -11,7 +12,7 @@ export const digest = async (
   algorithm: string = 'SHA-256',
 ): Promise<Uint8Array> => {
   const nodeAlg = toNodeCryptoAlg(algorithm);
-  const hash = Crypto.createHash(nodeAlg);
+  const hash = createHash(nodeAlg);
   hash.update(data);
   const hashBuffer = hash.digest();
   return new Uint8Array(hashBuffer);

@@ -2,6 +2,7 @@ import { SDJWTException } from '../error';
 import { Jwt } from '../jwt';
 import Crypto from 'node:crypto';
 import { Signer, Verifier } from '../type';
+import { describe, expect, test } from 'vitest';
 
 describe('JWT', () => {
   test('create', async () => {
