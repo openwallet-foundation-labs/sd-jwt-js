@@ -118,7 +118,7 @@ pnpm test
 pnpm test:e2e
 ```
 
-We use [Jest](https://jestjs.io/) for our testing framework. Ensure you have written tests for all new features.
+We use [Vitest](https://vitest.dev/) for our testing framework. Ensure you have written tests for all new features.
 
 ## Security
 
