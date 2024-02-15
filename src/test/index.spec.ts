@@ -1,5 +1,6 @@
 import { Signer, Verifier, SDJwtInstance } from '../index';
 import Crypto from 'node:crypto';
+import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from './crypto.spec';
 
 export const createSignerVerifier = () => {

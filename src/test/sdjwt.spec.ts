@@ -2,6 +2,7 @@ import { Disclosure } from '../disclosure';
 import { Jwt } from '../jwt';
 import { SDJwt, createHashMapping, listKeys, pack, unpack } from '../sdjwt';
 import Crypto from 'node:crypto';
+import { describe, test, expect } from 'vitest';
 import { DisclosureFrame, Signer } from '../type';
 import { generateSalt, digest as hasher } from './crypto.spec';
 

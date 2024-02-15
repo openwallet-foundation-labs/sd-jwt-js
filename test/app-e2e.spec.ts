@@ -3,6 +3,7 @@ import { SDJwtInstance } from '../src';
 import { DisclosureFrame, Signer, Verifier } from '../src/type';
 import fs from 'fs';
 import path from 'path';
+import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '../src/test/crypto.spec';
 
 export const createSignerVerifier = () => {
