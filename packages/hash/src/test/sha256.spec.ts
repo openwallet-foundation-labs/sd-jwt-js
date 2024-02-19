@@ -1,6 +1,7 @@
 import { digest } from './crypto.spec';
 import { bytesToHex } from '@noble/hashes/utils';
 import { sha256 } from '../sha256';
+import { describe, expect, test } from 'vitest';
 
 describe('SHA-256 tests', () => {
   test('test#1', async () => {
