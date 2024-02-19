@@ -44,7 +44,7 @@ export const splitSdJwt = (
   return {
     jwt: encodedJwt,
     disclosures: encodedDisclosures,
-    kbJwt: encodedKeyBindingJwt,
+    kbJwt: encodedKeyBindingJwt || undefined,
   };
 };
 

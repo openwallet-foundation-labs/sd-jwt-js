@@ -91,6 +91,9 @@ importers:
         specifier: workspace:*
         version: link:../utils
     devDependencies:
+      '@hopae/sd-jwt-node-crypto':
+        specifier: workspace:*
+        version: link:../node-crypto
       '@types/node':
         specifier: ^20.10.2
         version: 20.10.2
@@ -201,6 +204,9 @@ importers:
         specifier: workspace:*
         version: link:../utils
     devDependencies:
+      '@hopae/sd-jwt-node-crypto':
+        specifier: workspace:*
+        version: link:../node-crypto
       '@types/node':
         specifier: ^20.10.2
         version: 20.10.2
