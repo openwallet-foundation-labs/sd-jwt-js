@@ -48,6 +48,12 @@ importers:
 
   packages/core:
     dependencies:
+      '@hopae/sd-jwt-type':
+        specifier: workspace:*
+        version: link:../types
+      '@hopae/sd-jwt-util':
+        specifier: workspace:*
+        version: link:../utils
       '@noble/hashes':
         specifier: 1.0.0
         version: 1.0.0

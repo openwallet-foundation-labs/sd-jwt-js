@@ -15,7 +15,6 @@ export * from './type';
 export * from './sdjwt';
 export * from './kbjwt';
 export * from './jwt';
-export * from './base64url';
 export * from './decoy';
 export * from './disclosure';
 export * from './sha256';

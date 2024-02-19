@@ -1,5 +1,5 @@
 import { HasherAndAlg, SaltGenerator } from './type';
-import { Uint8ArrayToBase64Url } from './base64url';
+import { Uint8ArrayToBase64Url } from '@hopae/sd-jwt-util';
 
 export const createDecoy = async (
   hash: HasherAndAlg,

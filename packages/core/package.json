@@ -53,7 +53,9 @@
   },
   "dependencies": {
     "js-base64": "^3.7.6",
-    "@noble/hashes": "1.0.0"
+    "@noble/hashes": "1.0.0",
+    "@hopae/sd-jwt-util": "workspace:*",
+    "@hopae/sd-jwt-type": "workspace:*"
   },
   "tsup": {
     "entry": [

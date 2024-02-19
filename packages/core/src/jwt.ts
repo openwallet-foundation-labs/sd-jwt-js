@@ -1,4 +1,4 @@
-import { Base64urlDecode, Base64urlEncode } from './base64url';
+import { Base64urlDecode, Base64urlEncode } from '@hopae/sd-jwt-util';
 import { SDJWTException } from './error';
 import { Base64urlString, Signer, Verifier } from './type';
 

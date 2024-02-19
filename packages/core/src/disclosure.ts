@@ -2,7 +2,7 @@ import {
   Uint8ArrayToBase64Url,
   Base64urlDecode,
   Base64urlEncode,
-} from './base64url';
+} from '@hopae/sd-jwt-util';
 import { SDJWTException } from './error';
 import { HasherAndAlg } from './type';
 

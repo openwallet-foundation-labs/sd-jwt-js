@@ -1,6 +1,6 @@
 import { createDecoy } from '../decoy';
 import { describe, expect, test } from 'vitest';
-import { Base64urlEncode } from '../base64url';
+import { Base64urlEncode } from '@hopae/sd-jwt-util';
 import { digest, generateSalt } from './crypto.spec';
 
 const hash = {
