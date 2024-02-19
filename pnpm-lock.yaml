@@ -13,10 +13,6 @@ importers:
         version: 8.1.2
 
   packages/broswer-crypto:
-    dependencies:
-      '@noble/hashes':
-        specifier: 1.0.0
-        version: 1.0.0
     devDependencies:
       '@types/node':
         specifier: ^20.10.2
@@ -124,10 +120,6 @@ importers:
         version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
 
   packages/node-crypto:
-    dependencies:
-      '@noble/hashes':
-        specifier: 1.0.0
-        version: 1.0.0
     devDependencies:
       '@types/node':
         specifier: ^20.10.2
