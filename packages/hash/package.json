@@ -13,8 +13,8 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
-    "test": "vitest ./src/test/*.spec.ts",
-    "test:browser": "vitest ./src/test/*.spec.ts --environment jsdom",
+    "test": "vitest run ./src/test/*.spec.ts",
+    "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [

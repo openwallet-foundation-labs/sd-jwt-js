@@ -6,7 +6,16 @@ export const sha256 = (text: string): Uint8Array => {
   return hashBytes;
 };
 
-// TODO: need to impl default hasher
+export const hasher = (data: string, algorithm: string) => {
+  if (toCryptoAlg(algorithm) !== 'sha256') {
+    throw new Error('Not implemented');
+  }
+  return sha256(data);
+};
+
+const toCryptoAlg = (hashAlg: string): string =>
+  // To cover sha-256, sha256, SHA-256, SHA256
+  hashAlg.replace('-', '').toLowerCase();
 
 function toUTF8Array(str: string) {
   const utf8 = [];

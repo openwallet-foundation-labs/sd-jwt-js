@@ -1,5 +1,5 @@
 {
-  "name": "@hopae/sd-jwt-core",
+  "name": "@hopae/sd-jwt-browser-crypto",
   "version": "2.0.1",
   "description": "sd-jwt draft 7 implementation in typescript",
   "main": "dist/index.js",
@@ -15,7 +15,6 @@
     "build": "rm -rf **/dist && tsup",
     "test": "vitest run ./src/test/*.spec.ts",
     "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
-    "test:e2e": "vitest run ./test/*e2e.spec.ts --environment node",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [
@@ -47,7 +46,6 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "js-base64": "^3.7.6",
     "@noble/hashes": "1.0.0"
   },
   "tsup": {
