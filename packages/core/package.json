@@ -54,7 +54,8 @@
   },
   "dependencies": {
     "@hopae/sd-jwt-util": "workspace:*",
-    "@hopae/sd-jwt-type": "workspace:*"
+    "@hopae/sd-jwt-type": "workspace:*",
+    "@hopae/sd-jwt-decode": "workspace:*"
   },
   "tsup": {
     "entry": [

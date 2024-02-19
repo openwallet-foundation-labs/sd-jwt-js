@@ -44,6 +44,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@hopae/sd-jwt-decode':
+        specifier: workspace:*
+        version: link:../decode
       '@hopae/sd-jwt-type':
         specifier: workspace:*
         version: link:../types
