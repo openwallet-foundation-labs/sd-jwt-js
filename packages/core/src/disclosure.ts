@@ -2,8 +2,8 @@ import {
   Uint8ArrayToBase64Url,
   Base64urlDecode,
   Base64urlEncode,
+  SDJWTException,
 } from '@hopae/sd-jwt-util';
-import { SDJWTException } from './error';
 import { HasherAndAlg } from './type';
 
 export type DisclosureData<T> = [string, string, T] | [string, T];

@@ -1,6 +1,6 @@
 import { createDecoy } from './decoy';
 import { Disclosure } from './disclosure';
-import { SDJWTException } from './error';
+import { SDJWTException } from '@hopae/sd-jwt-util';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import {

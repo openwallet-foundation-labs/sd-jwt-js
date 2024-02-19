@@ -1,4 +1,4 @@
-import { SDJWTException } from '../error';
+import { SDJWTException } from '@hopae/sd-jwt-util';
 import { Jwt } from '../jwt';
 import Crypto from 'node:crypto';
 import { Signer, Verifier } from '../type';
