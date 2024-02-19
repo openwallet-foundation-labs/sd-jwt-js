@@ -1,4 +1,4 @@
-import { Disclosure } from '../disclosure';
+import { Disclosure } from '@hopae/sd-jwt-util';
 import { Jwt } from '../jwt';
 import { SDJwt, createHashMapping, listKeys, pack, unpack } from '../sdjwt';
 import Crypto from 'node:crypto';

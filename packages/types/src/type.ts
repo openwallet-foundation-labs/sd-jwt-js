@@ -8,6 +8,8 @@ export const KB_JWT_TYP = 'kb+jwt';
 export type SDJWTCompact = string;
 export type Base64urlString = string;
 
+export type DisclosureData<T> = [string, string, T] | [string, T];
+
 export type SDJWTConfig = {
   omitTyp?: boolean;
   hasher?: Hasher;

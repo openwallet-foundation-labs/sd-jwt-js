@@ -15,7 +15,6 @@ export * from './sdjwt';
 export * from './kbjwt';
 export * from './jwt';
 export * from './decoy';
-export * from './disclosure';
 
 export class SDJwtInstance {
   public static DEFAULT_hashAlg = 'sha-256';
