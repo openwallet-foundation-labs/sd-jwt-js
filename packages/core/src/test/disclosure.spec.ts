@@ -1,4 +1,4 @@
-import { generateSalt, digest as hasher } from './crypto.spec';
+import { generateSalt, digest as hasher } from '@hopae/sd-jwt-node-crypto';
 import { Disclosure } from '../disclosure';
 import { describe, expect, test } from 'vitest';
 import { Base64urlEncode, SDJWTException } from '@hopae/sd-jwt-util';

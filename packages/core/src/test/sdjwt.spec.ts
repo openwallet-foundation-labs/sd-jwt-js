@@ -3,8 +3,8 @@ import { Jwt } from '../jwt';
 import { SDJwt, createHashMapping, listKeys, pack, unpack } from '../sdjwt';
 import Crypto from 'node:crypto';
 import { describe, test, expect } from 'vitest';
-import { DisclosureFrame, Signer } from '../type';
-import { generateSalt, digest as hasher } from './crypto.spec';
+import { DisclosureFrame, Signer } from '@hopae/sd-jwt-type';
+import { generateSalt, digest as hasher } from '@hopae/sd-jwt-node-crypto';
 
 const hash = { alg: 'SHA256', hasher };
 
