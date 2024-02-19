@@ -12,7 +12,10 @@
     }
   },
   "scripts": {
-    "build": "rm -rf **/dist && tsup"
+    "build": "rm -rf **/dist && tsup",
+    "test": "vitest run ./src/test/*.spec.ts",
+    "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
+    "test:cov": "vitest run --coverage"
   },
   "keywords": [
     "verifiable-credentials",
