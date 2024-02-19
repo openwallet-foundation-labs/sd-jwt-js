@@ -3,7 +3,7 @@ import {
   Base64urlEncode,
   SDJWTException,
 } from '@hopae/sd-jwt-util';
-import { Base64urlString, Signer, Verifier } from './type';
+import { Base64urlString, Signer, Verifier } from '@hopae/sd-jwt-type';
 
 export type JwtData<
   Header extends Record<string, any>,

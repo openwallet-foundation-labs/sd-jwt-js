@@ -15,7 +15,7 @@ import {
   SaltGenerator,
   kbHeader,
   kbPayload,
-} from './type';
+} from '@hopae/sd-jwt-type';
 
 export type SDJwtData<
   Header extends Record<string, any>,

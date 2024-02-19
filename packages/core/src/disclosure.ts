@@ -4,7 +4,7 @@ import {
   Base64urlEncode,
   SDJWTException,
 } from '@hopae/sd-jwt-util';
-import { HasherAndAlg } from './type';
+import { HasherAndAlg } from '@hopae/sd-jwt-type';
 
 export type DisclosureData<T> = [string, string, T] | [string, T];
 

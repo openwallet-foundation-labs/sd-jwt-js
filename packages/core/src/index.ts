@@ -9,9 +9,8 @@ import {
   SDJWTCompact,
   SDJWTConfig,
   SD_JWT_TYP,
-} from './type';
+} from '@hopae/sd-jwt-type';
 
-export * from './type';
 export * from './sdjwt';
 export * from './kbjwt';
 export * from './jwt';
