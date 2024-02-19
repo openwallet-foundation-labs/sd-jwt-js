@@ -33,6 +33,25 @@ export const decodeJwt = <
   };
 };
 
+export const splitSdJwt = (
+  sdjwt: string,
+): { jwt: string; disclosures: string[]; kbJwt?: string } => {
+  const [encodedJwt, ...encodedDisclosures] = sdjwt.split(SD_SEPARATOR);
+  if (encodedDisclosures.length === 0) {
+    return {
+      jwt: encodedJwt,
+      disclosures: [],
+    };
+  }
+
+  const encodedKeyBindingJwt = encodedDisclosures.pop();
+  return {
+    jwt: encodedJwt,
+    disclosures: encodedDisclosures,
+    kbJwt: encodedKeyBindingJwt,
+  };
+};
+
 export const decodeSdJwt = async (
   sdjwt: string,
   hasher: Hasher,
@@ -74,6 +93,50 @@ export const getClaims = async <T>(
 ): Promise<T> => {
   const { unpackedObj } = await unpack(rawPayload, disclosures, hasher);
   return unpackedObj as T;
+};
+
+// This will be go to present package
+export const presentableKeys = async (
+  rawPayload: any,
+  disclosures: Array<Disclosure<any>>,
+  hasher: Hasher,
+): Promise<string[]> => {
+  const { disclosureKeymap } = await unpack(rawPayload, disclosures, hasher);
+  return Object.keys(disclosureKeymap).sort();
+};
+
+export const present = async (
+  sdJwt: string,
+  keys: string[],
+  hasher: Hasher,
+): Promise<string> => {
+  const { jwt, kbJwt } = splitSdJwt(sdJwt);
+  const {
+    jwt: { payload },
+    disclosures,
+  } = await decodeSdJwt(sdJwt, hasher);
+
+  const { _sd_alg: alg } = getSDAlgAndPayload(payload);
+  const hash = { alg, hasher };
+  const hashmap = await createHashMapping(disclosures, hash);
+
+  const { disclosureKeymap } = await unpack(payload, disclosures, hasher);
+  const presentableKeys = Object.keys(disclosureKeymap);
+
+  const missingKeys = keys.filter((k) => !presentableKeys.includes(k));
+  if (missingKeys.length > 0) {
+    throw new SDJWTException(
+      `Invalid sd-jwt: invalid present keys: ${missingKeys.join(', ')}`,
+    );
+  }
+
+  const presentedDisclosures = keys.map((k) => hashmap[disclosureKeymap[k]]);
+
+  return [
+    jwt,
+    ...presentedDisclosures.map((d) => d.encode()),
+    kbJwt ?? '',
+  ].join(SD_SEPARATOR);
 };
 
 export const unpackArray = (
@@ -210,7 +273,7 @@ export const unpack = async (
 type DecodedSDJwt = {
   jwt: {
     header: Record<string, any>;
-    payload: Record<string, any>; // raw payload of jwt
+    payload: Record<string, any>; // raw payload of sd-jwt
     signature: string;
   };
   disclosures: Array<Disclosure<any>>;
