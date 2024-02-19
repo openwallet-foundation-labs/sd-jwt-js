@@ -6,7 +6,7 @@ export const generateSalt = (length: number): string => {
   }
   const saltBytes = randomBytes(length);
   const salt = saltBytes.toString('hex');
-  return salt;
+  return salt.substring(0, length);
 };
 
 export const digest = async (
