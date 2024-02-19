@@ -11,10 +11,6 @@ import {
   SD_SEPARATOR,
 } from '@hopae/sd-jwt-type';
 
-export const decode = <T>(data: T): T => {
-  return data;
-};
-
 export const decodeJwt = <
   H extends Record<string, any>,
   T extends Record<string, any>,
