@@ -1,4 +1,5 @@
 import { sha256 as nobleSha256 } from '@noble/hashes/sha256';
+import { SDJWTException } from '../../utils/dist';
 
 export const sha256 = (text: string): Uint8Array => {
   const uint8Array = toUTF8Array(text);
@@ -8,7 +9,7 @@ export const sha256 = (text: string): Uint8Array => {
 
 export const hasher = (data: string, algorithm: string) => {
   if (toCryptoAlg(algorithm) !== 'sha256') {
-    throw new Error('Not implemented');
+    throw new SDJWTException('Not implemented');
   }
   return sha256(data);
 };
@@ -18,7 +19,7 @@ const toCryptoAlg = (hashAlg: string): string =>
   hashAlg.replace('-', '').toLowerCase();
 
 function toUTF8Array(str: string) {
-  const utf8 = [];
+  const utf8: Array<number> = [];
   for (let i = 0; i < str.length; i++) {
     let charcode = str.charCodeAt(i);
     if (charcode < 0x80) utf8.push(charcode);

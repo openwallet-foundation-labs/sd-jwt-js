@@ -40,6 +40,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "@hopae/sd-jwt-node-crypto": "workspace:*",
     "@types/node": "^20.10.2",
     "@vitest/coverage-v8": "^1.2.2",
     "jsdom": "^24.0.0",
@@ -51,7 +52,8 @@
     "vitest": "^1.2.2"
   },
   "dependencies": {
-    "@noble/hashes": "1.0.0"
+    "@noble/hashes": "1.0.0",
+    "@hopae/sd-jwt-util": "workspace:*"
   },
   "tsup": {
     "entry": [

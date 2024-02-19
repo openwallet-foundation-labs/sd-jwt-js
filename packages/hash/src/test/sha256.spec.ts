@@ -1,6 +1,6 @@
-import { digest } from './crypto.spec';
+import { digest } from '@hopae/sd-jwt-node-crypto';
 import { bytesToHex } from '@noble/hashes/utils';
-import { sha256 } from '../sha256';
+import { hasher, sha256 } from '../sha256';
 import { describe, expect, test } from 'vitest';
 
 describe('SHA-256 tests', () => {
@@ -102,5 +102,25 @@ describe('SHA-256 tests', () => {
     const s1 = bytesToHex(await digest(payload));
     const s2 = bytesToHex(sha256(payload));
     expect(s1).toStrictEqual(s2);
+  });
+
+  test('Hasher', async () => {
+    const s1 = bytesToHex(await digest('test'));
+    const s2 = bytesToHex(hasher('test', 'SHA-256'));
+    const s3 = bytesToHex(hasher('test', 'SHA256'));
+    const s4 = bytesToHex(hasher('test', 'sha256'));
+    const s5 = bytesToHex(hasher('test', 'sha-256'));
+    expect(s1).toStrictEqual(s2);
+    expect(s1).toStrictEqual(s3);
+    expect(s1).toStrictEqual(s4);
+    expect(s1).toStrictEqual(s5);
+  });
+
+  test('Hasher failed', async () => {
+    try {
+      const s1 = hasher('test', 'sha-512');
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+    }
   });
 });
