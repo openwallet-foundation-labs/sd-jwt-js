@@ -13,7 +13,8 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
-    "test": "vitest run ./src/test/*.spec.ts",
+    "test": "pnpm run test:node && pnpm run test:cov",
+    "test:node": "vitest run ./src/test/*.spec.ts",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [

@@ -13,7 +13,8 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
-    "test": "vitest run ./src/test/*.spec.ts",
+    "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:e2e && pnpm run test:cov",
+    "test:node": "vitest run ./src/test/*.spec.ts && vitest run ./src/test/*.spec.ts --environment jsdom",
     "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
     "test:e2e": "vitest run ./test/*e2e.spec.ts --environment node",
     "test:cov": "vitest run --coverage"
