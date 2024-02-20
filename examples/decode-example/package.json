@@ -1,0 +1,23 @@
+{
+  "name": "sdjwt-decode-examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "decode": "ts-node decode.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@hopae/sd-jwt-decode": "workspace:*",
+    "@hopae/sd-jwt-type": "workspace:*",
+    "@hopae/sd-jwt-node-crypto": "workspace:*"
+  }
+}

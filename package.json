@@ -14,7 +14,12 @@
     "digital-wallet",
     "sd-jwt",
     "sdjwt",
-    "sd-jwt-vc"
+    "sd-jwt-vc",
+    "decentralized-identity",
+    "ssi",
+    "oauth",
+    "oauth2",
+    "openid-connect"
   ],
   "repository": {
     "type": "git",

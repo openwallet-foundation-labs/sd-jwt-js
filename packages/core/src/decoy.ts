@@ -1,6 +1,9 @@
-import { HasherAndAlg, SaltGenerator } from './type';
-import { Uint8ArrayToBase64Url } from './base64url';
+import { HasherAndAlg, SaltGenerator } from '@hopae/sd-jwt-type';
+import { Uint8ArrayToBase64Url } from '@hopae/sd-jwt-util';
 
+// This function creates a decoy value that can be used to obscure SD JWT payload.
+// The value is basically a hash of a random salt. So the value is not predictable.
+// return value is a base64url encoded string.
 export const createDecoy = async (
   hash: HasherAndAlg,
   saltGenerator: SaltGenerator,
