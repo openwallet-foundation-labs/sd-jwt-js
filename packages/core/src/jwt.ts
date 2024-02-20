@@ -1,9 +1,6 @@
-import {
-  Base64urlDecode,
-  Base64urlEncode,
-  SDJWTException,
-} from '@hopae/sd-jwt-util';
+import { Base64urlEncode, SDJWTException } from '@hopae/sd-jwt-util';
 import { Base64urlString, Signer, Verifier } from '@hopae/sd-jwt-type';
+import { decodeJwt } from '@hopae/sd-jwt-decode';
 
 export type JwtData<
   Header extends Record<string, any>,
@@ -34,16 +31,7 @@ export class Jwt<
   >(
     jwt: string,
   ): { header: Header; payload: Payload; signature: Base64urlString } {
-    const { 0: header, 1: payload, 2: signature, length } = jwt.split('.');
-    if (length !== 3) {
-      throw new SDJWTException('Invalid JWT as input');
-    }
-
-    return {
-      header: JSON.parse(Base64urlDecode(header)),
-      payload: JSON.parse(Base64urlDecode(payload)),
-      signature: signature,
-    };
+    return decodeJwt(jwt);
   }
 
   public static fromEncode<
