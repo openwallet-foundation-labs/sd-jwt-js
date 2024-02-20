@@ -1,4 +1,5 @@
-import { DisclosureFrame, SDJwtInstance } from '@hopae/sd-jwt';
+import { SDJwtInstance } from '@hopae/sd-jwt-core';
+import { DisclosureFrame } from '@hopae/sd-jwt-type';
 import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
@@ -13,10 +14,8 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
     hashAlg: 'SHA-256',
     saltGenerator: generateSalt,
   });
-
   // Issuer Define the claims object with the user's information
   const claims = {
-    firstname: 'John',
     lastname: 'Doe',
     ssn: '123-45-6789',
     id: '1234',
@@ -24,17 +23,13 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
 
   // Issuer Define the disclosure frame to specify which claims can be disclosed
   const disclosureFrame: DisclosureFrame<typeof claims> = {
-    _sd: ['firstname', 'id'],
+    _sd: ['id'],
+    _sd_decoy: 1, // 1 decoy digest will be added in SD JWT
   };
-
-  // Issue a signed JWT credential with the specified claims and disclosures
-  // Return a Encoded SD JWT. Issuer send the credential to the holder
-  const credential = await sdjwt.issue(claims, disclosureFrame, {
-    header: { typ: 'vc+sd-jwt', custom: 'data' }, // You can add custom header data to the SD JWT
-  });
+  const credential = await sdjwt.issue(claims, disclosureFrame);
   console.log('encodedSdjwt:', credential);
 
-  // You can check the custom header data by decoding the SD JWT
+  // You can check the decoy digest in the SD JWT by decoding it
   const sdJwtToken = await sdjwt.decode(credential);
   console.log(sdJwtToken);
 })();

@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prepare": "cd ../ && pnpm install && pnpm build",
     "basic": "ts-node basic.ts",
     "all": "ts-node all.ts",
     "sdjwtobject": "ts-node sdjwtobject.ts",
@@ -23,6 +22,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@hopae/sd-jwt": "link:.."
+    "@hopae/sd-jwt-core": "workspace:*",
+    "@hopae/sd-jwt-type": "workspace:*"
   }
 }

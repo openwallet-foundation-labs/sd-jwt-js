@@ -1,4 +1,5 @@
-import { DisclosureFrame, SDJwtInstance } from '@hopae/sd-jwt';
+import { SDJwtInstance } from '@hopae/sd-jwt-core';
+import { DisclosureFrame } from '@hopae/sd-jwt-type';
 import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
@@ -20,11 +21,34 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
     lastname: 'Doe',
     ssn: '123-45-6789',
     id: '1234',
+    data: {
+      firstname: 'John',
+      lastname: 'Doe',
+      ssn: '123-45-6789',
+      list: [{ r: '1' }, 'b', 'c'],
+    },
+    data2: {
+      hi: 'bye',
+    },
   };
 
   // Issuer Define the disclosure frame to specify which claims can be disclosed
   const disclosureFrame: DisclosureFrame<typeof claims> = {
-    _sd: ['firstname', 'id'],
+    _sd: ['firstname', 'id', 'data2'],
+    data: {
+      _sd: ['list'],
+      _sd_decoy: 2,
+      list: {
+        _sd: [0, 2],
+        _sd_decoy: 1,
+        0: {
+          _sd: ['r'],
+        },
+      },
+    },
+    data2: {
+      _sd: ['hi'],
+    },
   };
 
   // Issue a signed JWT credential with the specified claims and disclosures
@@ -72,10 +96,10 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   console.log('presentedSDJwt:', presentation);
 
   // Verifier Define the required claims that need to be verified in the presentation
-  const requiredClaims = ['firstname', 'id'];
+  const requiredClaims = ['firstname', 'id', 'data.ssn'];
 
   // Verify the presentation using the public key and the required claims
   // return a boolean result
-  const verified = await sdjwt.verify(presentation, requiredClaims);
+  const verified = await sdjwt.verify(credential, requiredClaims);
   console.log('verified:', verified);
 })();

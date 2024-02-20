@@ -1,4 +1,4 @@
-import { SDJwtInstance } from '@hopae/sd-jwt';
+import { SDJwtInstance } from '@hopae/sd-jwt-core';
 import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
