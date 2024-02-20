@@ -7,7 +7,6 @@
   "packages": ["packages/*"],
   "command": {
     "publish": {
-      "allowBranch": "main",
       "conventionalCommits": true
     }
   }

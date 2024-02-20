@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  main:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,3 +25,5 @@ jobs:
         run: npx lerna run build
       - name: Test
         run: npx lerna run test
+      - name: Deploy
+        run: lerna version --yes && lerna publish from-git --yes

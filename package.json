@@ -8,7 +8,9 @@
     "test:browser": "pnpm -r test:browser",
     "test:e2e": "pnpm -r test:e2e",
     "test:cov": "pnpm -r test:cov",
-    "clean": "lerna clean -y"
+    "clean": "lerna clean -y",
+    "version:stable": "lerna version --yes",
+    "publish:stable": "lerna publish from-git --yes"
   },
   "keywords": [
     "verifiable-credentials",
