@@ -66,7 +66,7 @@ export class SDJwtInstance {
     payload: Payload,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
-      header?: object;
+      header?: object; // This is for customizing the header of the jwt
     },
   ): Promise<SDJWTCompact> {
     if (!this.userConfig.hasher) {
@@ -133,6 +133,9 @@ export class SDJwtInstance {
     return sdjwt.present(presentationKeys.sort(), hasher);
   }
 
+  // This function is for verifying the SD JWT
+  // If requiredClaimKeys is provided, it will check if the required claim keys are presentation in the SD JWT
+  // If requireKeyBindings is true, it will check if the key binding JWT is presentation and verify it
   public async verify(
     encodedSDJwt: string,
     requiredClaimKeys?: string[],
@@ -173,6 +176,8 @@ export class SDJwtInstance {
     return { payload, header, kb };
   }
 
+  // This function is for validating the SD JWT
+  // Just checking signature and return its the claims
   public async validate(encodedSDJwt: string) {
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');

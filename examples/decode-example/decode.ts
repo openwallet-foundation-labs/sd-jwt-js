@@ -11,6 +11,7 @@ import { digest } from '@hopae/sd-jwt-node-crypto';
     '================================================================',
   );
 
+  // Get the claims from the SD JWT
   const claims = await getClaims(
     decodedSdJwt.jwt.payload,
     decodedSdJwt.disclosures,

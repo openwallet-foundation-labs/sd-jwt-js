@@ -11,6 +11,8 @@ export type JwtData<
   signature?: Base64urlString;
 };
 
+// This class is used to create and verify JWT
+// Contains header, payload, and signature
 export class Jwt<
   Header extends Record<string, any> = Record<string, any>,
   Payload extends Record<string, any> = Record<string, any>,

@@ -53,6 +53,42 @@ type NonNever<T> = {
 export type SD<Payload> = { [SD_DIGEST]?: Array<keyof Payload> };
 export type DECOY = { [SD_DECOY]?: number };
 
+/**
+ * This is a disclosureFrame type that is used to represent the structure of what is being disclosed.
+ * DisclosureFrame is made from the payload type.
+ *
+ * For example, if the payload is
+ * {
+ *  foo: 'bar',
+ *  test: {
+ *   zzz: 'yyy',
+ *  }
+ *  arr: ['1', '2', {a: 'b'}]
+ * }
+ *
+ * The disclosureFrame can be subset of:
+ * {
+ *  _sd: ["foo", "test", "arr"],
+ *  test: {
+ *    _sd: ["zzz"],
+ *  },
+ *  arr: {
+ *    _sd: ["0", "1", "2"],
+ *    "2": {
+ *      _sd: ["a"],
+ *    }
+ *  }
+ * }
+ *
+ * The disclosureFrame can be used with decoy.
+ * Decoy can be used like this:
+ * {
+ *  ...
+ *  _sd: ...
+ *  _sd_decoy: 1 // number of decoy in this layer
+ * }
+ *
+ */
 type Frame<Payload> = Payload extends Array<infer U>
   ? U extends object
     ? Record<number, Frame<U>> & SD<Payload> & DECOY

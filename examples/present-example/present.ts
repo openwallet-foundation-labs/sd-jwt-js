@@ -21,6 +21,7 @@ import { digest } from '@hopae/sd-jwt-node-crypto';
   console.log('The claims are:');
   console.log(JSON.stringify(claims, null, 2));
 
+  // You can get presentable keys from the decoded SD JWT
   const keys = await presentableKeys(
     decodedSdJwt.jwt.payload,
     decodedSdJwt.disclosures,
@@ -28,9 +29,10 @@ import { digest } from '@hopae/sd-jwt-node-crypto';
   );
   console.log('The presentable keys are:', keys);
 
+  // You can present the SD JWT with the combination of presentable keys
   const presentedSdJwt = await present(
     sdjwt,
-    ['foo', 'arr', 'arr.0', 'test.zzz'],
+    ['foo', 'arr.0', 'arr', 'test.zzz'],
     digest,
   );
 
@@ -40,6 +42,8 @@ import { digest } from '@hopae/sd-jwt-node-crypto';
     '================================================================',
   );
 
+  // If you decoded the presented SD JWT, you can see the presented disclosures
+  // It only contains the disclosed keys you presented
   const presentedDecodedSdJwt = await decodeSdJwt(presentedSdJwt, digest);
 
   console.log('The decoded Disclosures are:');

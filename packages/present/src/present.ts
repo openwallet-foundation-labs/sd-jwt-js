@@ -8,6 +8,23 @@ import {
   unpack,
 } from '@hopae/sd-jwt-decode';
 
+// Presentable keys
+// The presentable keys are the path of JSON object that are presentable in the SD JWT
+// e.g. if the SD JWT has the following payload and set sd like this:
+// {
+//   "foo": "bar",  // sd
+//   "arr": [       // sd
+//     "1",         // sd
+//     "2",
+//     {
+//       "a": "1"   // sd
+//     }
+//   ],
+//   "test": {
+//     "zzz": "xxx" // sd
+//   }
+// }
+// The presentable keys are: ["arr", "arr.0", "arr.2.a", "foo", "test.zzz"]
 export const presentableKeys = async (
   rawPayload: any,
   disclosures: Array<Disclosure<any>>,
@@ -30,8 +47,10 @@ export const present = async (
 
   const { _sd_alg: alg } = getSDAlgAndPayload(payload);
   const hash = { alg, hasher };
-  const hashmap = await createHashMapping(disclosures, hash);
 
+  // hashmap: <digest> => <disclosure>
+  // to match the digest with the disclosure
+  const hashmap = await createHashMapping(disclosures, hash);
   const { disclosureKeymap } = await unpack(payload, disclosures, hasher);
   const presentableKeys = Object.keys(disclosureKeymap);
 

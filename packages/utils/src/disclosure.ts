@@ -17,6 +17,7 @@ export class Disclosure<T> {
     data: DisclosureData<T>,
     _meta?: { digest: string; encoded: string },
   ) {
+    // If the meta is provided, then we assume that the data is already encoded and digested
     this._digest = _meta?.digest;
     this._encoded = _meta?.encoded;
 
@@ -54,6 +55,8 @@ export class Disclosure<T> {
 
   public encode() {
     if (!this._encoded) {
+      // we use JSON.stringify to encode the data
+      // It's the most reliable and universal way to encode JSON object
       this._encoded = Base64urlEncode(JSON.stringify(this.decode()));
     }
     return this._encoded;

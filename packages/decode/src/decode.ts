@@ -29,11 +29,18 @@ export const decodeJwt = <
   };
 };
 
+// Split the sdjwt into 3 parts: jwt, disclosures and keybinding jwt. each part is base64url encoded
+// It's separated by the ~ character
+//
+// If there is no keybinding jwt, the third part will be undefined
+// If there are no disclosures, the second part will be an empty array
 export const splitSdJwt = (
   sdjwt: string,
 ): { jwt: string; disclosures: string[]; kbJwt?: string } => {
   const [encodedJwt, ...encodedDisclosures] = sdjwt.split(SD_SEPARATOR);
   if (encodedDisclosures.length === 0) {
+    // if input is just jwt, then return here.
+    // This is for compatibility with jwt
     return {
       jwt: encodedJwt,
       disclosures: [],
@@ -48,6 +55,8 @@ export const splitSdJwt = (
   };
 };
 
+// Decode the sdjwt into the jwt, disclosures and keybinding jwt
+// jwt, disclosures and keybinding jwt are also decoded
 export const decodeSdJwt = async (
   sdjwt: string,
   hasher: Hasher,
@@ -56,6 +65,8 @@ export const decodeSdJwt = async (
   const jwt = decodeJwt(encodedJwt);
 
   if (encodedDisclosures.length === 0) {
+    // if input is just jwt, then return here.
+    // This is for compatibility with jwt
     return {
       jwt,
       disclosures: [],
@@ -82,6 +93,8 @@ export const decodeSdJwt = async (
   };
 };
 
+// Get the claims from jwt and disclosures
+// The digested values are matched with the disclosures and the claims are extracted
 export const getClaims = async <T>(
   rawPayload: any,
   disclosures: Array<Disclosure<any>>,
@@ -188,6 +201,7 @@ export const unpackObj = (
   return { unpackedObj: obj, disclosureKeymap: keys };
 };
 
+// Creates a mapping of the digests of the disclosures to the actual disclosures
 export const createHashMapping = async (
   disclosures: Array<Disclosure<any>>,
   hash: HasherAndAlg,
@@ -201,6 +215,7 @@ export const createHashMapping = async (
   return map;
 };
 
+// Extract _sd_alg. If it is not present, it is assumed to be sha-256
 export const getSDAlgAndPayload = (sdjwtPayload: any) => {
   const { _sd_alg, ...payload } = sdjwtPayload;
   if (typeof _sd_alg !== 'string') {
@@ -210,6 +225,8 @@ export const getSDAlgAndPayload = (sdjwtPayload: any) => {
   return { _sd_alg, payload };
 };
 
+// Match the digests of the disclosures with the claims and extract the claims
+// unpack function use unpackObj and unpackArray to recursively unpack the claims
 export const unpack = async (
   sdjwtPayload: any,
   disclosures: Array<Disclosure<any>>,
