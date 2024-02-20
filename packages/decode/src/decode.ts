@@ -222,7 +222,9 @@ export const unpack = async (
   return unpackObj(payload, map);
 };
 
-type DecodedSDJwt = {
+// This is the type of the object that is returned by the decodeSdJwt function
+// It is a combination of the decoded jwt, the disclosures and the keybinding jwt
+export type DecodedSDJwt = {
   jwt: {
     header: Record<string, any>;
     payload: Record<string, any>; // raw payload of sd-jwt
