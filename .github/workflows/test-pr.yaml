@@ -4,10 +4,13 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
@@ -17,10 +20,11 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
       - name: Install Dependencies
-        run: pnpm install && pnpm build && pnpm install
+        run: pnpm install && pnpm build
       - name: Run Tests(Browser)
         run: pnpm test:browser
       - name: Run Tests(Node)
+        #TODO: rename test to test:node to make sure it runs on node, so we have no test script
         run: pnpm test
       - name: Run E2E Tests
         run: pnpm test:e2e
