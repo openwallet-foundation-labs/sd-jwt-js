@@ -17,7 +17,7 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install && pnpm build && pnpm install
       - name: Run Tests(Browser)
         run: pnpm test:browser
       - name: Run Tests(Node)

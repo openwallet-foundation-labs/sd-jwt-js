@@ -1,4 +1,4 @@
-import { SDJWTException } from './error';
+import { SDJWTException } from '@hopae/sd-jwt-util';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
@@ -9,16 +9,12 @@ import {
   SDJWTCompact,
   SDJWTConfig,
   SD_JWT_TYP,
-} from './type';
+} from '@hopae/sd-jwt-type';
 
-export * from './type';
 export * from './sdjwt';
 export * from './kbjwt';
 export * from './jwt';
-export * from './base64url';
 export * from './decoy';
-export * from './disclosure';
-export * from './sha256';
 
 export class SDJwtInstance {
   public static DEFAULT_hashAlg = 'sha-256';
@@ -70,7 +66,7 @@ export class SDJwtInstance {
     payload: Payload,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
-      header?: object;
+      header?: object; // This is for customizing the header of the jwt
     },
   ): Promise<SDJWTCompact> {
     if (!this.userConfig.hasher) {
@@ -137,6 +133,9 @@ export class SDJwtInstance {
     return sdjwt.present(presentationKeys.sort(), hasher);
   }
 
+  // This function is for verifying the SD JWT
+  // If requiredClaimKeys is provided, it will check if the required claim keys are presentation in the SD JWT
+  // If requireKeyBindings is true, it will check if the key binding JWT is presentation and verify it
   public async verify(
     encodedSDJwt: string,
     requiredClaimKeys?: string[],
@@ -177,6 +176,8 @@ export class SDJwtInstance {
     return { payload, header, kb };
   }
 
+  // This function is for validating the SD JWT
+  // Just checking signature and return its the claims
   public async validate(encodedSDJwt: string) {
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');

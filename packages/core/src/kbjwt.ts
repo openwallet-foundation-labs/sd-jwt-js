@@ -1,11 +1,12 @@
-import { SDJWTException } from './error';
+import { SDJWTException } from '@hopae/sd-jwt-util';
 import { Jwt } from './jwt';
-import { Verifier, kbHeader, kbPayload } from './type';
+import { Verifier, kbHeader, kbPayload } from '@hopae/sd-jwt-type';
 
 export class KBJwt<
   Header extends kbHeader = kbHeader,
   Payload extends kbPayload = kbPayload,
 > extends Jwt<Header, Payload> {
+  // Checking the validity of the key binding jwt
   public async verify(verifier: Verifier) {
     if (
       !this.header?.alg ||
@@ -21,6 +22,7 @@ export class KBJwt<
     return await super.verify(verifier);
   }
 
+  // This function is for creating KBJwt object for verify properly
   public static fromKBEncode<
     Header extends kbHeader = kbHeader,
     Payload extends kbPayload = kbPayload,
