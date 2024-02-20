@@ -4,7 +4,11 @@ import {
   Base64urlEncode,
 } from './base64url';
 import { SDJWTException } from './error';
-import { HasherAndAlg, DisclosureData } from '@hopae/sd-jwt-type';
+import {
+  HasherAndAlg,
+  DisclosureData,
+  HasherAndAlgSync,
+} from '@hopae/sd-jwt-type';
 
 export class Disclosure<T> {
   public salt: string;
@@ -46,6 +50,14 @@ export class Disclosure<T> {
     return Disclosure.fromArray<T>(item, { digest: digestStr, encoded: s });
   }
 
+  public static fromEncodeSync<T>(s: string, hash: HasherAndAlgSync) {
+    const { hasher, alg } = hash;
+    const digest = hasher(s, alg);
+    const digestStr = Uint8ArrayToBase64Url(digest);
+    const item = JSON.parse(Base64urlDecode(s)) as DisclosureData<T>;
+    return Disclosure.fromArray<T>(item, { digest: digestStr, encoded: s });
+  }
+
   public static fromArray<T>(
     item: DisclosureData<T>,
     _meta?: { digest: string; encoded: string },
@@ -72,6 +84,16 @@ export class Disclosure<T> {
     const { hasher, alg } = hash;
     if (!this._digest) {
       const hash = await hasher(this.encode(), alg);
+      this._digest = Uint8ArrayToBase64Url(hash);
+    }
+
+    return this._digest;
+  }
+
+  public digestSync(hash: HasherAndAlgSync): string {
+    const { hasher, alg } = hash;
+    if (!this._digest) {
+      const hash = hasher(this.encode(), alg);
       this._digest = Uint8ArrayToBase64Url(hash);
     }
 
