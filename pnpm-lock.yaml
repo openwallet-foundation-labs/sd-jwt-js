@@ -8,9 +8,33 @@ importers:
 
   .:
     devDependencies:
+      '@types/node':
+        specifier: ^20.10.2
+        version: 20.11.19
+      '@vitest/coverage-v8':
+        specifier: ^1.2.2
+        version: 1.2.2(vitest@1.2.2)
+      jsdom:
+        specifier: ^24.0.0
+        version: 24.0.0
       lerna:
         specifier: ^8.1.2
         version: 8.1.2
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.2(@types/node@20.11.19)(typescript@5.3.3)
+      tsup:
+        specifier: ^8.0.2
+        version: 8.0.2(ts-node@10.9.2)(typescript@5.3.3)
+      typescript:
+        specifier: ^5.3.2
+        version: 5.3.3
+      vite:
+        specifier: ^5.1.1
+        version: 5.1.1(@types/node@20.11.19)
+      vitest:
+        specifier: ^1.2.2
+        version: 1.2.2(@types/node@20.11.19)(jsdom@24.0.0)
 
   examples/core-example:
     dependencies:
@@ -78,35 +102,7 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
-  packages/broswer-crypto:
-    devDependencies:
-      '@types/node':
-        specifier: ^20.10.2
-        version: 20.10.2
-      '@vitest/coverage-v8':
-        specifier: ^1.2.2
-        version: 1.2.2(vitest@1.2.2)
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
-      lerna:
-        specifier: ^8.1.2
-        version: 8.1.2
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
-      tsup:
-        specifier: ^8.0.2
-        version: 8.0.2(ts-node@10.9.1)(typescript@5.3.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@20.10.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
+  packages/broswer-crypto: {}
 
   packages/core:
     dependencies:
@@ -123,33 +119,6 @@ importers:
       '@hopae/sd-jwt-node-crypto':
         specifier: workspace:*
         version: link:../node-crypto
-      '@types/node':
-        specifier: ^20.10.2
-        version: 20.10.2
-      '@vitest/coverage-v8':
-        specifier: ^1.2.2
-        version: 1.2.2(vitest@1.2.2)
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
-      lerna:
-        specifier: ^8.1.2
-        version: 8.1.2
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
-      tsup:
-        specifier: ^8.0.2
-        version: 8.0.2(ts-node@10.9.1)(typescript@5.3.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@20.10.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
 
   packages/decode:
     dependencies:
@@ -163,33 +132,6 @@ importers:
       '@hopae/sd-jwt-node-crypto':
         specifier: workspace:*
         version: link:../node-crypto
-      '@types/node':
-        specifier: ^20.10.2
-        version: 20.10.2
-      '@vitest/coverage-v8':
-        specifier: ^1.2.2
-        version: 1.2.2(vitest@1.2.2)
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
-      lerna:
-        specifier: ^8.1.2
-        version: 8.1.2
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
-      tsup:
-        specifier: ^8.0.2
-        version: 8.0.2(ts-node@10.9.1)(typescript@5.3.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@20.10.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
 
   packages/hash:
     dependencies:
@@ -203,63 +145,8 @@ importers:
       '@hopae/sd-jwt-node-crypto':
         specifier: workspace:*
         version: link:../node-crypto
-      '@types/node':
-        specifier: ^20.10.2
-        version: 20.10.2
-      '@vitest/coverage-v8':
-        specifier: ^1.2.2
-        version: 1.2.2(vitest@1.2.2)
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
-      lerna:
-        specifier: ^8.1.2
-        version: 8.1.2
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
-      tsup:
-        specifier: ^8.0.2
-        version: 8.0.2(ts-node@10.9.1)(typescript@5.3.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@20.10.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
 
-  packages/node-crypto:
-    devDependencies:
-      '@types/node':
-        specifier: ^20.10.2
-        version: 20.10.2
-      '@vitest/coverage-v8':
-        specifier: ^1.2.2
-        version: 1.2.2(vitest@1.2.2)
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
-      lerna:
-        specifier: ^8.1.2
-        version: 8.1.2
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
-      tsup:
-        specifier: ^8.0.2
-        version: 8.0.2(ts-node@10.9.1)(typescript@5.3.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@20.10.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
+  packages/node-crypto: {}
 
   packages/present:
     dependencies:
@@ -276,67 +163,12 @@ importers:
       '@hopae/sd-jwt-node-crypto':
         specifier: workspace:*
         version: link:../node-crypto
-      '@types/node':
-        specifier: ^20.10.2
-        version: 20.10.2
-      '@vitest/coverage-v8':
-        specifier: ^1.2.2
-        version: 1.2.2(vitest@1.2.2)
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
-      lerna:
-        specifier: ^8.1.2
-        version: 8.1.2
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
-      tsup:
-        specifier: ^8.0.2
-        version: 8.0.2(ts-node@10.9.1)(typescript@5.3.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@20.10.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
 
   packages/types:
     dependencies:
       js-base64:
         specifier: ^3.7.6
         version: 3.7.6
-    devDependencies:
-      '@types/node':
-        specifier: ^20.10.2
-        version: 20.10.2
-      '@vitest/coverage-v8':
-        specifier: ^1.2.2
-        version: 1.2.2(vitest@1.2.2)
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
-      lerna:
-        specifier: ^8.1.2
-        version: 8.1.2
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
-      tsup:
-        specifier: ^8.0.2
-        version: 8.0.2(ts-node@10.9.1)(typescript@5.3.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@20.10.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
 
   packages/utils:
     dependencies:
@@ -350,33 +182,6 @@ importers:
       '@hopae/sd-jwt-node-crypto':
         specifier: workspace:*
         version: link:../node-crypto
-      '@types/node':
-        specifier: ^20.10.2
-        version: 20.10.2
-      '@vitest/coverage-v8':
-        specifier: ^1.2.2
-        version: 1.2.2(vitest@1.2.2)
-      jsdom:
-        specifier: ^24.0.0
-        version: 24.0.0
-      lerna:
-        specifier: ^8.1.2
-        version: 8.1.2
-      ts-node:
-        specifier: ^10.9.1
-        version: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
-      tsup:
-        specifier: ^8.0.2
-        version: 8.0.2(ts-node@10.9.1)(typescript@5.3.2)
-      typescript:
-        specifier: ^5.3.2
-        version: 5.3.2
-      vite:
-        specifier: ^5.1.1
-        version: 5.1.1(@types/node@20.10.2)
-      vitest:
-        specifier: ^1.2.2
-        version: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
 
 packages:
 
@@ -716,7 +521,7 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@lerna/create@8.1.2(typescript@5.3.2):
+  /@lerna/create@8.1.2(typescript@5.3.3):
     resolution: {integrity: sha512-GzScCIkAW3tg3+Yn/MKCH9963bzG+zpjGz2NdfYDlYWI7p0f/SH46v1dqpPpYmZ2E/m3JK8HjTNNNL8eIm8/YQ==}
     engines: {node: '>=18.0.0'}
     dependencies:
@@ -731,7 +536,7 @@ packages:
       columnify: 1.6.0
       conventional-changelog-core: 5.0.1
       conventional-recommended-bump: 7.0.1
-      cosmiconfig: 8.3.6(typescript@5.3.2)
+      cosmiconfig: 8.3.6(typescript@5.3.3)
       dedent: 0.7.0
       execa: 5.0.0
       fs-extra: 11.2.0
@@ -1402,12 +1207,6 @@ packages:
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
     dev: true
 
-  /@types/node@20.10.2:
-    resolution: {integrity: sha512-37MXfxkb0vuIlRKHNxwCkb60PNBpR94u4efQuN4JgIAm66zfCDXGSAFCef9XUWFovX2R1ok6Z7MHhtdVXXkkIw==}
-    dependencies:
-      undici-types: 5.26.5
-    dev: true
-
   /@types/node@20.11.19:
     resolution: {integrity: sha512-7xMnVEcZFu0DikYjWOlRq7NTPETrm7teqUT2WkQjrTIkEgUyyGdWsj/Zg8bEJt5TNklzbPD1X3fqfsHw3SpapQ==}
     dependencies:
@@ -1436,7 +1235,7 @@ packages:
       std-env: 3.7.0
       test-exclude: 6.0.0
       v8-to-istanbul: 9.2.0
-      vitest: 1.2.2(@types/node@20.10.2)(jsdom@24.0.0)
+      vitest: 1.2.2(@types/node@20.11.19)(jsdom@24.0.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1515,12 +1314,6 @@ packages:
   /acorn-walk@8.3.2:
     resolution: {integrity: sha512-cjkyv4OtNCIeqhHrfS81QWXoCBPExR/J62oyEqepVw8WaQeSqpW2uhuLPh1m9eWhDuOo/jUXVTlifvesOWp/4A==}
     engines: {node: '>=0.4.0'}
-    dev: true
-
-  /acorn@8.11.2:
-    resolution: {integrity: sha512-nc0Axzp/0FILLEVsm4fNwLCwMttvhEI263QtVPQcbpfZZ3ts0hLsZGOpE6czNlid7CJ9MlyH8reXkpsf3YUY4w==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
     dev: true
 
   /acorn@8.11.3:
@@ -2128,7 +1921,7 @@ packages:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
     dev: true
 
-  /cosmiconfig@8.3.6(typescript@5.3.2):
+  /cosmiconfig@8.3.6(typescript@5.3.3):
     resolution: {integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -2141,7 +1934,7 @@ packages:
       js-yaml: 4.1.0
       parse-json: 5.2.0
       path-type: 4.0.0
-      typescript: 5.3.2
+      typescript: 5.3.3
     dev: true
 
   /create-require@1.1.1:
@@ -3363,7 +3156,7 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
     dependencies:
-      '@lerna/create': 8.1.2(typescript@5.3.2)
+      '@lerna/create': 8.1.2(typescript@5.3.3)
       '@npmcli/run-script': 7.0.2
       '@nx/devkit': 18.0.4(nx@18.0.4)
       '@octokit/plugin-enterprise-rest': 6.0.1
@@ -3376,7 +3169,7 @@ packages:
       conventional-changelog-angular: 7.0.0
       conventional-changelog-core: 5.0.1
       conventional-recommended-bump: 7.0.1
-      cosmiconfig: 8.3.6(typescript@5.3.2)
+      cosmiconfig: 8.3.6(typescript@5.3.3)
       dedent: 0.7.0
       envinfo: 7.8.1
       execa: 5.0.0
@@ -3428,7 +3221,7 @@ packages:
       strong-log-transformer: 2.1.0
       tar: 6.1.11
       temp-dir: 1.0.0
-      typescript: 5.3.2
+      typescript: 5.3.3
       upath: 2.0.1
       uuid: 9.0.1
       validate-npm-package-license: 3.0.4
@@ -4552,7 +4345,7 @@ packages:
       pathe: 1.1.2
     dev: true
 
-  /postcss-load-config@4.0.2(ts-node@10.9.1):
+  /postcss-load-config@4.0.2(ts-node@10.9.2):
     resolution: {integrity: sha512-bSVhyJGL00wMVoPUzAVAnbEoWyqRxkjv64tUl427SKnPrENtq6hJwUojroMz2VB+Q1edmi4IfrAPpami5VVgMQ==}
     engines: {node: '>= 14'}
     peerDependencies:
@@ -4565,7 +4358,7 @@ packages:
         optional: true
     dependencies:
       lilconfig: 3.0.0
-      ts-node: 10.9.1(@types/node@20.10.2)(typescript@5.3.2)
+      ts-node: 10.9.2(@types/node@20.11.19)(typescript@5.3.3)
       yaml: 2.3.4
     dev: true
 
@@ -5176,7 +4969,7 @@ packages:
   /strip-literal@1.3.0:
     resolution: {integrity: sha512-PugKzOsyXpArk0yWmUwqOZecSO0GH0bPoctLcqNDH9J04pVW3lflYE0ujElBGTloevcxF5MofAOZ7C5l2b+wLg==}
     dependencies:
-      acorn: 8.11.2
+      acorn: 8.11.3
     dev: true
 
   /strong-log-transformer@2.1.0:
@@ -5373,37 +5166,6 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
 
-  /ts-node@10.9.1(@types/node@20.10.2)(typescript@5.3.2):
-    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.9
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 20.10.2
-      acorn: 8.11.3
-      acorn-walk: 8.3.2
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.3.2
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    dev: true
-
   /ts-node@10.9.2(@types/node@20.11.19)(typescript@5.3.3):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
@@ -5448,7 +5210,7 @@ packages:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
     dev: true
 
-  /tsup@8.0.2(ts-node@10.9.1)(typescript@5.3.2):
+  /tsup@8.0.2(ts-node@10.9.2)(typescript@5.3.3):
     resolution: {integrity: sha512-NY8xtQXdH7hDUAZwcQdY/Vzlw9johQsaqf7iwZ6g1DOUlFYQ5/AtVAjTvihhEyeRlGo4dLRVHtrRaL35M1daqQ==}
     engines: {node: '>=18'}
     hasBin: true
@@ -5475,13 +5237,13 @@ packages:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss-load-config: 4.0.2(ts-node@10.9.1)
+      postcss-load-config: 4.0.2(ts-node@10.9.2)
       resolve-from: 5.0.0
       rollup: 4.10.0
       source-map: 0.8.0-beta.0
       sucrase: 3.35.0
       tree-kill: 1.2.2
-      typescript: 5.3.2
+      typescript: 5.3.3
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -5541,12 +5303,6 @@ packages:
 
   /typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
-    dev: true
-
-  /typescript@5.3.2:
-    resolution: {integrity: sha512-6l+RyNy7oAHDfxC4FzSJcz9vnjTKxrLpDG5M2Vu4SHRVNg6xzqZp6LYSR9zjqQTu8DU/f5xwxUdADOkbrIX2gQ==}
-    engines: {node: '>=14.17'}
-    hasBin: true
     dev: true
 
   /typescript@5.3.3:
@@ -5653,7 +5409,7 @@ packages:
       builtins: 5.0.1
     dev: true
 
-  /vite-node@1.2.2(@types/node@20.10.2):
+  /vite-node@1.2.2(@types/node@20.11.19):
     resolution: {integrity: sha512-1as4rDTgVWJO3n1uHmUYqq7nsFgINQ9u+mRcXpjeOMJUmviqNKjcZB7UfRZrlM7MjYXMKpuWp5oGkjaFLnjawg==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -5662,7 +5418,7 @@ packages:
       debug: 4.3.4
       pathe: 1.1.2
       picocolors: 1.0.0
-      vite: 5.1.1(@types/node@20.10.2)
+      vite: 5.1.1(@types/node@20.11.19)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -5674,7 +5430,7 @@ packages:
       - terser
     dev: true
 
-  /vite@5.1.1(@types/node@20.10.2):
+  /vite@5.1.1(@types/node@20.11.19):
     resolution: {integrity: sha512-wclpAgY3F1tR7t9LL5CcHC41YPkQIpKUGeIuT8MdNwNZr6OqOTLs7JX5vIHAtzqLWXts0T+GDrh9pN2arneKqg==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -5702,7 +5458,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.10.2
+      '@types/node': 20.11.19
       esbuild: 0.19.12
       postcss: 8.4.35
       rollup: 4.10.0
@@ -5710,7 +5466,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest@1.2.2(@types/node@20.10.2)(jsdom@24.0.0):
+  /vitest@1.2.2(@types/node@20.11.19)(jsdom@24.0.0):
     resolution: {integrity: sha512-d5Ouvrnms3GD9USIK36KG8OZ5bEvKEkITFtnGv56HFaSlbItJuYr7hv2Lkn903+AvRAgSixiamozUVfORUekjw==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -5735,7 +5491,7 @@ packages:
       jsdom:
         optional: true
     dependencies:
-      '@types/node': 20.10.2
+      '@types/node': 20.11.19
       '@vitest/expect': 1.2.2
       '@vitest/runner': 1.2.2
       '@vitest/snapshot': 1.2.2
@@ -5755,8 +5511,8 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.6.0
       tinypool: 0.8.2
-      vite: 5.1.1(@types/node@20.10.2)
-      vite-node: 1.2.2(@types/node@20.10.2)
+      vite: 5.1.1(@types/node@20.11.19)
+      vite-node: 1.2.2(@types/node@20.11.19)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
       - less

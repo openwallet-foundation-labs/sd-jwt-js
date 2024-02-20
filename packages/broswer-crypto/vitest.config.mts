@@ -1,5 +1,5 @@
 // vite.config.ts
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -8,7 +8,7 @@ export default defineConfig({
     coverage: {
       reporter: ['text', 'json', 'html'],
     },
-    environment: 'node', // Default environment
+    environment: 'jsdom', // Default environment
     // Override per environment as needed
   },
 });

@@ -13,7 +13,6 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
-    "test": "vitest run ./src/test/*.spec.ts",
     "test:browser": "vitest run ./src/test/*.spec.ts",
     "test:cov": "vitest run --coverage"
   },
