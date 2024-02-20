@@ -1,8 +1,10 @@
 {
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "npmClient": "pnpm",
   "exact": true,
   "message": "chore(release): %s",
-  "packages": ["packages/*"]
+  "packages": [
+    "packages/*"
+  ]
 }
