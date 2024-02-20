@@ -31,6 +31,53 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
+  examples/decode-example:
+    dependencies:
+      '@hopae/sd-jwt-decode':
+        specifier: workspace:*
+        version: link:../../packages/decode
+      '@hopae/sd-jwt-node-crypto':
+        specifier: workspace:*
+        version: link:../../packages/node-crypto
+      '@hopae/sd-jwt-type':
+        specifier: workspace:*
+        version: link:../../packages/types
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.19
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.11.19)(typescript@5.3.3)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
+  examples/present-example:
+    dependencies:
+      '@hopae/sd-jwt-decode':
+        specifier: workspace:*
+        version: link:../../packages/decode
+      '@hopae/sd-jwt-node-crypto':
+        specifier: workspace:*
+        version: link:../../packages/node-crypto
+      '@hopae/sd-jwt-present':
+        specifier: workspace:*
+        version: link:../../packages/present
+      '@hopae/sd-jwt-type':
+        specifier: workspace:*
+        version: link:../../packages/types
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.19
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.11.19)(typescript@5.3.3)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
   packages/broswer-crypto:
     devDependencies:
       '@types/node':
