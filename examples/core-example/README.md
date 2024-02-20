@@ -1,12 +1,6 @@
 # SD JWT Core Examples
 
-This directory contains examples of how to use the SD JWT(sd-jwt-js) library.
-
-## How to run the examples
-
-```bash
-pnpm install
-```
+This directory contains example of basic usage(issue, validate, present, verify) of SD JWT
 
 ## Run the example
 
@@ -40,7 +34,3 @@ pnpm run all
 - verified: result of verification
 - sdJwtToken: SD JWT Token Object
 - SDJwtInstance: SD JWT Instance
-
-## More examples from tests
-
-You can find more examples from [tests](../test).
