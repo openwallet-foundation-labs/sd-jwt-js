@@ -46,6 +46,16 @@ export type HasherAndAlg = {
   alg: string;
 };
 
+// This functions are sync versions
+export type SignerSync = (data: string) => string;
+export type VerifierSync = (data: string, sig: string) => boolean;
+export type HasherSync = (data: string, alg: string) => Uint8Array;
+export type SaltGeneratorSync = (length: number) => string;
+export type HasherAndAlgSync = {
+  hasher: HasherSync;
+  alg: string;
+};
+
 type NonNever<T> = {
   [P in keyof T as T[P] extends never ? never : P]: T[P];
 };

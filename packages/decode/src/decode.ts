@@ -10,6 +10,7 @@ import {
   SD_LIST_KEY,
   SD_SEPARATOR,
 } from '@hopae/sd-jwt-type';
+import { HasherAndAlgSync, HasherSync } from '@hopae/sd-jwt-type/src/type';
 
 export const decodeJwt = <
   H extends Record<string, any>,
@@ -93,6 +94,40 @@ export const decodeSdJwt = async (
   };
 };
 
+export const decodeSdJwtSync = (
+  sdjwt: string,
+  hasher: HasherSync,
+): DecodedSDJwt => {
+  const [encodedJwt, ...encodedDisclosures] = sdjwt.split(SD_SEPARATOR);
+  const jwt = decodeJwt(encodedJwt);
+
+  if (encodedDisclosures.length === 0) {
+    // if input is just jwt, then return here.
+    // This is for compatibility with jwt
+    return {
+      jwt,
+      disclosures: [],
+    };
+  }
+
+  const encodedKeyBindingJwt = encodedDisclosures.pop();
+  const kbJwt = encodedKeyBindingJwt
+    ? decodeJwt(encodedKeyBindingJwt)
+    : undefined;
+
+  const { _sd_alg } = getSDAlgAndPayload(jwt.payload);
+
+  const disclosures = encodedDisclosures.map((ed) =>
+    Disclosure.fromEncodeSync(ed, { alg: _sd_alg, hasher }),
+  );
+
+  return {
+    jwt,
+    disclosures,
+    kbJwt,
+  };
+};
+
 // Get the claims from jwt and disclosures
 // The digested values are matched with the disclosures and the claims are extracted
 export const getClaims = async <T>(
@@ -101,6 +136,15 @@ export const getClaims = async <T>(
   hasher: Hasher,
 ): Promise<T> => {
   const { unpackedObj } = await unpack(rawPayload, disclosures, hasher);
+  return unpackedObj as T;
+};
+
+export const getClaimsSync = <T>(
+  rawPayload: any,
+  disclosures: Array<Disclosure<any>>,
+  hasher: HasherSync,
+): T => {
+  const { unpackedObj } = unpackSync(rawPayload, disclosures, hasher);
   return unpackedObj as T;
 };
 
@@ -215,6 +259,19 @@ export const createHashMapping = async (
   return map;
 };
 
+export const createHashMappingSync = (
+  disclosures: Array<Disclosure<any>>,
+  hash: HasherAndAlgSync,
+) => {
+  const map: Record<string, Disclosure<any>> = {};
+  for (let i = 0; i < disclosures.length; i++) {
+    const disclosure = disclosures[i];
+    const digest = disclosure.digestSync(hash);
+    map[digest] = disclosure;
+  }
+  return map;
+};
+
 // Extract _sd_alg. If it is not present, it is assumed to be sha-256
 export const getSDAlgAndPayload = (sdjwtPayload: any) => {
   const { _sd_alg, ...payload } = sdjwtPayload;
@@ -235,6 +292,18 @@ export const unpack = async (
   const { _sd_alg, payload } = getSDAlgAndPayload(sdjwtPayload);
   const hash = { hasher, alg: _sd_alg };
   const map = await createHashMapping(disclosures, hash);
+
+  return unpackObj(payload, map);
+};
+
+export const unpackSync = (
+  sdjwtPayload: any,
+  disclosures: Array<Disclosure<any>>,
+  hasher: HasherSync,
+) => {
+  const { _sd_alg, payload } = getSDAlgAndPayload(sdjwtPayload);
+  const hash = { hasher, alg: _sd_alg };
+  const map = createHashMappingSync(disclosures, hash);
 
   return unpackObj(payload, map);
 };
