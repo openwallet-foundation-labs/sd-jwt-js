@@ -13,22 +13,16 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
+    "lint": "eslint src/",
     "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:cov",
     "test:node": "vitest run ./src/test/*.spec.ts",
     "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [
-    "verifiable-credentials",
-    "digital-wallet",
     "sd-jwt",
     "sdjwt",
-    "sd-jwt-vc",
-    "decentralized-identity",
-    "ssi",
-    "oauth",
-    "oauth2",
-    "openid-connect"
+    "sd-jwt-vc"
   ],
   "repository": {
     "type": "git",
@@ -41,10 +35,10 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@hopae/sd-jwt-node-crypto": "workspace:*"
+    "@hopae/sd-jwt-node-crypto": "2.0.3"
   },
   "dependencies": {
-    "@hopae/sd-jwt-util": "workspace:*",
+    "@hopae/sd-jwt-util": "2.0.3",
     "@noble/hashes": "1.0.0"
   },
   "tsup": {
@@ -59,5 +53,6 @@
       "cjs",
       "esm"
     ]
-  }
+  },
+  "gitHead": "ded40e4551bde7ae93083181bf26bd1b38bbfcfb"
 }

@@ -107,43 +107,43 @@ importers:
   packages/core:
     dependencies:
       '@hopae/sd-jwt-decode':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../decode
       '@hopae/sd-jwt-type':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../types
       '@hopae/sd-jwt-util':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../utils
     devDependencies:
       '@hopae/sd-jwt-node-crypto':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../node-crypto
 
   packages/decode:
     dependencies:
       '@hopae/sd-jwt-type':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../types
       '@hopae/sd-jwt-util':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../utils
     devDependencies:
       '@hopae/sd-jwt-node-crypto':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../node-crypto
 
   packages/hash:
     dependencies:
       '@hopae/sd-jwt-util':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../utils
       '@noble/hashes':
         specifier: 1.0.0
         version: 1.0.0
     devDependencies:
       '@hopae/sd-jwt-node-crypto':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../node-crypto
 
   packages/node-crypto: {}
@@ -151,17 +151,17 @@ importers:
   packages/present:
     dependencies:
       '@hopae/sd-jwt-decode':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../decode
       '@hopae/sd-jwt-type':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../types
       '@hopae/sd-jwt-util':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../utils
     devDependencies:
       '@hopae/sd-jwt-node-crypto':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../node-crypto
 
   packages/types:
@@ -173,14 +173,14 @@ importers:
   packages/utils:
     dependencies:
       '@hopae/sd-jwt-type':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../types
       js-base64:
         specifier: ^3.7.6
         version: 3.7.6
     devDependencies:
       '@hopae/sd-jwt-node-crypto':
-        specifier: workspace:*
+        specifier: 2.0.3
         version: link:../node-crypto
 
 packages:

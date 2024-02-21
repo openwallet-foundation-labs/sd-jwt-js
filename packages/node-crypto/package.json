@@ -13,21 +13,15 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
+    "lint": "eslint src/",
     "test": "pnpm run test:node && pnpm run test:cov",
     "test:node": "vitest run ./src/test/*.spec.ts",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [
-    "verifiable-credentials",
-    "digital-wallet",
     "sd-jwt",
     "sdjwt",
-    "sd-jwt-vc",
-    "decentralized-identity",
-    "ssi",
-    "oauth",
-    "oauth2",
-    "openid-connect"
+    "sd-jwt-vc"
   ],
   "repository": {
     "type": "git",
@@ -51,5 +45,6 @@
       "cjs",
       "esm"
     ]
-  }
+  },
+  "gitHead": "ded40e4551bde7ae93083181bf26bd1b38bbfcfb"
 }
