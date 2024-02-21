@@ -1,6 +1,6 @@
 {
   "name": "@hopae/sd-jwt-type",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "description": "sd-jwt draft 7 implementation in typescript",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -13,21 +13,16 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
-    "test": "vitest run ./src/test/*.spec.ts",
+    "lint": "eslint src/**/*.ts",
+    "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:cov",
+    "test:node": "vitest run ./src/test/*.spec.ts",
     "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [
-    "verifiable-credentials",
-    "digital-wallet",
     "sd-jwt",
     "sdjwt",
-    "sd-jwt-vc",
-    "decentralized-identity",
-    "ssi",
-    "oauth",
-    "oauth2",
-    "openid-connect"
+    "sd-jwt-vc"
   ],
   "repository": {
     "type": "git",
@@ -39,17 +34,6 @@
     "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js/issues"
   },
   "license": "Apache-2.0",
-  "devDependencies": {
-    "@types/node": "^20.10.2",
-    "@vitest/coverage-v8": "^1.2.2",
-    "jsdom": "^24.0.0",
-    "lerna": "^8.1.2",
-    "ts-node": "^10.9.1",
-    "tsup": "^8.0.2",
-    "typescript": "^5.3.2",
-    "vite": "^5.1.1",
-    "vitest": "^1.2.2"
-  },
   "dependencies": {
     "js-base64": "^3.7.6"
   },
@@ -65,5 +49,6 @@
       "cjs",
       "esm"
     ]
-  }
+  },
+  "gitHead": "ded40e4551bde7ae93083181bf26bd1b38bbfcfb"
 }
