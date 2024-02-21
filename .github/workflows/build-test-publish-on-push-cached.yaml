@@ -77,13 +77,9 @@ jobs:
         with:
           name: coverage-artifacts
           path: coverage
-      # - name: Merge Code Coverage
-      #   run: npx nyc merge coverage/ coverage/coverage-final.json
-      # TODO: include once we have codecov token setup
-      # - uses: codecov/codecov-action@v3
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     fail_ci_if_error: false
+      - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
 
   # lint:
   #   needs: build
