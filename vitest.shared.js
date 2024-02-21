@@ -5,7 +5,7 @@ export const browserConfig = defineProject({
       exclude: ['**/*e2e.spec.ts'],      
       coverage: {        
         exclude: ['examples/**'],
-        reporter: ['text', 'json', 'html'],
+        reporter: ['json'],
       },
       environment: 'jsdom',
     },
@@ -18,7 +18,7 @@ export const browserConfig = defineProject({
       coverage: {
         //TODO: the exclude is not working, therefore the coverage result are not correct.
         exclude: ['examples/**'],
-        reporter: ['text', 'json', 'html'],
+        reporter: ['json'],
       },
       environment: 'node',
     },
