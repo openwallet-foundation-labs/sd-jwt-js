@@ -13,7 +13,7 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
-    "lint": "eslint src/**/*.ts",
+    "lint": "biome lint ./src",
     "test": "pnpm run test:node && pnpm run test:cov",
     "test:node": "vitest run ./src/test/*.spec.ts",
     "test:cov": "vitest run --coverage"
