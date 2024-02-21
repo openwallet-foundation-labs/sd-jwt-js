@@ -60,7 +60,7 @@ jobs:
           cache: 'pnpm'
       - name: 'Run node'
         run: pnpm test
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: coverage-artifacts
           path: coverage/
@@ -73,7 +73,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: coverage-artifacts
           path: coverage
