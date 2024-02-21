@@ -9,10 +9,10 @@ export const generateSalt = (length: number): string => {
   return salt.substring(0, length);
 };
 
-export const digest = async (
+export const digest = (
   data: string,
   algorithm: string = 'SHA-256',
-): Promise<Uint8Array> => {
+): Uint8Array => {
   const nodeAlg = toNodeCryptoAlg(algorithm);
   const hash = createHash(nodeAlg);
   hash.update(data);
