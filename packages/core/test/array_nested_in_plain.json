@@ -1,9 +1,6 @@
 {
   "claims": {
-    "nested_array": [
-      ["foo", "bar"],
-      ["baz", "qux"]
-    ]
+    "nested_array": [["foo", "bar"], ["baz", "qux"]]
   },
   "disclosureFrame": {
     "nested_array": {
