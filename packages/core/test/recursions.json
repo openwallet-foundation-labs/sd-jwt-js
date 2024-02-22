@@ -6,10 +6,7 @@
       "green": 2
     },
     "qux": [["blue", "yellow"]],
-    "baz": [
-      ["orange", "purple"],
-      ["black", "white"]
-    ],
+    "baz": [["orange", "purple"], ["black", "white"]],
     "animals": {
       "snake": {
         "name": "python",
@@ -76,10 +73,7 @@
       "green": 2
     },
     "qux": [["blue", "yellow"]],
-    "baz": [
-      ["orange", "purple"],
-      ["black", "white"]
-    ],
+    "baz": [["orange", "purple"], ["black", "white"]],
     "animals": {
       "snake": {
         "age": 10

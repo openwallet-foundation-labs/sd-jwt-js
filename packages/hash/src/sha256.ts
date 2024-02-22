@@ -16,7 +16,9 @@ export const hasher = (data: string, algorithm: string) => {
 
 const toCryptoAlg = (hashAlg: string): string =>
   // To cover sha-256, sha256, SHA-256, SHA256
-  hashAlg.replace('-', '').toLowerCase();
+  hashAlg
+    .replace('-', '')
+    .toLowerCase();
 
 function toUTF8Array(str: string) {
   const utf8: Array<number> = [];
