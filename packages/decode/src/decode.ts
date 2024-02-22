@@ -151,7 +151,7 @@ export const getClaimsSync = <T>(
 export const unpackArray = (
   arr: Array<any>,
   map: Record<string, Disclosure<any>>,
-  prefix: string = '',
+  prefix = '',
 ): { unpackedObj: any; disclosureKeymap: Record<string, string> } => {
   const keys: Record<string, string> = {};
   const unpackedArray: any[] = [];
@@ -192,11 +192,11 @@ export const unpackArray = (
 export const unpackObj = (
   obj: any,
   map: Record<string, Disclosure<any>>,
-  prefix: string = '',
+  prefix = '',
 ): { unpackedObj: any; disclosureKeymap: Record<string, string> } => {
   const keys: Record<string, string> = {};
   if (obj instanceof Object) {
-    if (obj instanceof Array) {
+    if (Array.isArray(obj)) {
       return unpackArray(obj, map, prefix);
     }
 
@@ -220,9 +220,9 @@ export const unpackObj = (
     const { _sd, ...payload } = obj;
     const claims: any = {};
     if (_sd) {
-      _sd.forEach((hash: string) => {
+      for (const hash of _sd) {
         const disclosed = map[hash];
-        if (disclosed && disclosed.key) {
+        if (disclosed?.key) {
           const presentKey = prefix
             ? `${prefix}.${disclosed.key}`
             : disclosed.key;
@@ -236,7 +236,7 @@ export const unpackObj = (
           claims[disclosed.key] = unpackedObj;
           Object.assign(keys, disclosureKeys);
         }
-      });
+      }
     }
 
     const unpackedObj = Object.assign(payload, claims);

@@ -253,8 +253,8 @@ describe('KB JWT', () => {
       },
     });
 
-    (kbJwt.payload as any)!['_sd_hash'] = 'hash';
-    delete (kbJwt.payload as any)!.sd_hash;
+    (kbJwt.payload as any)._sd_hash = 'hash';
+    (kbJwt.payload as any).sd_hash = undefined;
 
     const encodedKbJwt = await kbJwt.sign(testSigner);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);

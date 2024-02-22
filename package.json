@@ -4,12 +4,13 @@
   "description": "sd-jwt draft 7 implementation in typescript",
   "scripts": {
     "build": "lerna run build --stream",
-    "lint": "lerna run lint --stream",
+    "lint": "biome lint ./packages",
     "test": "vitest run --coverage",
     "clean": "lerna clean -y",
     "publish:latest": "lerna publish --conventional-commits --include-merged-tags --create-release github --yes --dist-tag latest",
     "publish:next": "lerna publish --conventional-prerelease --force-publish --canary --no-git-tag-version --include-merged-tags --preid next --pre-dist-tag next --yes",
-    "publish:unstable": "lerna publish --conventional-prerelease --force-publish --canary --no-git-tag-version --include-merged-tags --preid unstable --pre-dist-tag unstable --yes"
+    "publish:unstable": "lerna publish --conventional-prerelease --force-publish --canary --no-git-tag-version --include-merged-tags --preid unstable --pre-dist-tag unstable --yes",
+    "biome": "biome"
   },
   "keywords": [
     "sd-jwt",
@@ -27,6 +28,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "@biomejs/biome": "1.5.3",
     "@types/node": "^20.10.2",
     "@vitest/coverage-v8": "^1.2.2",
     "jsdom": "^24.0.0",
@@ -36,13 +38,5 @@
     "typescript": "^5.3.2",
     "vite": "^5.1.1",
     "vitest": "^1.2.2"
-  },
-  "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.4.0",
-    "eslint": "^8.0.1",
-    "eslint-config-standard-with-typescript": "^43.0.1",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^16.0.0",
-    "eslint-plugin-promise": "^6.0.0"
   }
 }
