@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'vitest';
-import { digest } from '@hopae/sd-jwt-node-crypto';
+import { digest } from '@sd-jwt/crypto-nodejs';
 import {
   present,
   presentSync,
   presentableKeys,
   presentableKeysSync,
 } from '../present';
-import { decodeSdJwt, decodeSdJwtSync } from '@hopae/sd-jwt-decode';
+import { decodeSdJwt, decodeSdJwtSync } from '@sd-jwt/decode';
 
 describe('Present tests', () => {
   test('presentableKeys', async () => {

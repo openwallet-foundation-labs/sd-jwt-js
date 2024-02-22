@@ -16,9 +16,9 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@hopae/sd-jwt-present": "workspace:*",
-    "@hopae/sd-jwt-decode": "workspace:*",
-    "@hopae/sd-jwt-type": "workspace:*",
-    "@hopae/sd-jwt-node-crypto": "workspace:*"
+    "@sd-jwt/present": "workspace:*",
+    "@sd-jwt/decode": "workspace:*",
+    "@sd-jwt/types": "workspace:*",
+    "@sd-jwt/crypto-nodejs": "workspace:*"
   }
 }

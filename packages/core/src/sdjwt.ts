@@ -1,5 +1,5 @@
 import { createDecoy } from './decoy';
-import { SDJWTException, Disclosure } from '@hopae/sd-jwt-util';
+import { SDJWTException, Disclosure } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import {
@@ -14,12 +14,8 @@ import {
   SaltGenerator,
   kbHeader,
   kbPayload,
-} from '@hopae/sd-jwt-type';
-import {
-  createHashMapping,
-  getSDAlgAndPayload,
-  unpack,
-} from '@hopae/sd-jwt-decode';
+} from '@sd-jwt/types';
+import { createHashMapping, getSDAlgAndPayload, unpack } from '@sd-jwt/decode';
 
 export type SDJwtData<
   Header extends Record<string, unknown>,

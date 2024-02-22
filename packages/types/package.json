@@ -1,6 +1,6 @@
 {
-  "name": "@hopae/sd-jwt-type",
-  "version": "2.0.3",
+  "name": "@sd-jwt/types",
+  "version": "0.3.0",
   "description": "sd-jwt draft 7 implementation in typescript",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -34,9 +34,6 @@
     "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js/issues"
   },
   "license": "Apache-2.0",
-  "dependencies": {
-    "js-base64": "^3.7.6"
-  },
   "tsup": {
     "entry": [
       "./src/index.ts"
