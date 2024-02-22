@@ -10,7 +10,7 @@ import {
   HasherAndAlgSync,
 } from '@hopae/sd-jwt-type';
 
-export class Disclosure<T> {
+export class Disclosure<T = unknown> {
   public salt: string;
   public key?: string;
   public value: T;

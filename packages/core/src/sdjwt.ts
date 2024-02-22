@@ -22,24 +22,24 @@ import {
 } from '@hopae/sd-jwt-decode';
 
 export type SDJwtData<
-  Header extends Record<string, any>,
-  Payload extends Record<string, any>,
+  Header extends Record<string, unknown>,
+  Payload extends Record<string, unknown>,
   KBHeader extends kbHeader = kbHeader,
   KBPayload extends kbPayload = kbPayload,
 > = {
   jwt?: Jwt<Header, Payload>;
-  disclosures?: Array<Disclosure<any>>;
+  disclosures?: Array<Disclosure>;
   kbJwt?: KBJwt<KBHeader, KBPayload>;
 };
 
 export class SDJwt<
-  Header extends Record<string, any> = Record<string, any>,
-  Payload extends Record<string, any> = Record<string, any>,
+  Header extends Record<string, unknown> = Record<string, unknown>,
+  Payload extends Record<string, unknown> = Record<string, unknown>,
   KBHeader extends kbHeader = kbHeader,
   KBPayload extends kbPayload = kbPayload,
 > {
   public jwt?: Jwt<Header, Payload>;
-  public disclosures?: Array<Disclosure<any>>;
+  public disclosures?: Array<Disclosure>;
   public kbJwt?: KBJwt<KBHeader, KBPayload>;
 
   constructor(data?: SDJwtData<Header, Payload, KBHeader, KBPayload>) {
@@ -49,8 +49,8 @@ export class SDJwt<
   }
 
   public static async decodeSDJwt<
-    Header extends Record<string, any> = Record<string, any>,
-    Payload extends Record<string, any> = Record<string, any>,
+    Header extends Record<string, unknown> = Record<string, unknown>,
+    Payload extends Record<string, unknown> = Record<string, unknown>,
     KBHeader extends kbHeader = kbHeader,
     KBPayload extends kbPayload = kbPayload,
   >(
@@ -58,7 +58,7 @@ export class SDJwt<
     hasher: Hasher,
   ): Promise<{
     jwt: Jwt<Header, Payload>;
-    disclosures: Array<Disclosure<any>>;
+    disclosures: Array<Disclosure>;
     kbJwt?: KBJwt<KBHeader, KBPayload>;
   }> {
     const [encodedJwt, ...encodedDisclosures] = sdjwt.split(SD_SEPARATOR);
@@ -79,7 +79,7 @@ export class SDJwt<
     const { _sd_alg } = getSDAlgAndPayload(jwt.payload);
 
     const disclosures = await Promise.all(
-      encodedDisclosures.map((ed) =>
+      (encodedDisclosures as Array<string>).map((ed) =>
         Disclosure.fromEncode(ed, { alg: _sd_alg, hasher }),
       ),
     );
@@ -92,8 +92,8 @@ export class SDJwt<
   }
 
   public static async fromEncode<
-    Header extends Record<string, any> = Record<string, any>,
-    Payload extends Record<string, any> = Record<string, any>,
+    Header extends Record<string, unknown> = Record<string, unknown>,
+    Payload extends Record<string, unknown> = Record<string, unknown>,
     KBHeader extends kbHeader = kbHeader,
     KBPayload extends kbPayload = kbPayload,
   >(
@@ -194,7 +194,7 @@ export class SDJwt<
   }
 }
 
-export const listKeys = (obj: any, prefix = '') => {
+export const listKeys = (obj: Record<string, unknown>, prefix = '') => {
   const keys: string[] = [];
   for (const key in obj) {
     if (obj[key] === undefined) continue;
@@ -202,18 +202,18 @@ export const listKeys = (obj: any, prefix = '') => {
     keys.push(newKey);
 
     if (obj[key] && typeof obj[key] === 'object' && obj[key] !== null) {
-      keys.push(...listKeys(obj[key], newKey));
+      keys.push(...listKeys(obj[key] as Record<string, unknown>, newKey));
     }
   }
   return keys;
 };
 
-export const pack = async <T extends object>(
+export const pack = async <T extends Record<string, unknown>>(
   claims: T,
   disclosureFrame: DisclosureFrame<T> | undefined,
   hash: HasherAndAlg,
   saltGenerator: SaltGenerator,
-): Promise<{ packedClaims: any; disclosures: Array<Disclosure<any>> }> => {
+): Promise<{ packedClaims: unknown; disclosures: Array<Disclosure> }> => {
   if (!disclosureFrame) {
     return {
       packedClaims: claims,
@@ -225,16 +225,15 @@ export const pack = async <T extends object>(
   const decoyCount = disclosureFrame[SD_DECOY] ?? 0;
 
   if (Array.isArray(claims)) {
-    const packedClaims: any[] = [];
-    const disclosures: any[] = [];
-    const recursivePackedClaims: any = {};
+    const packedClaims: Array<Record<typeof SD_LIST_KEY, string>> = [];
+    const disclosures: Array<Disclosure> = [];
+    const recursivePackedClaims: Record<number, unknown> = {};
 
     for (const key in disclosureFrame) {
       if (key !== SD_DIGEST) {
         const idx = parseInt(key);
         const packed = await pack(
           claims[idx],
-          // @ts-ignore
           disclosureFrame[idx],
           hash,
           saltGenerator,
@@ -244,11 +243,10 @@ export const pack = async <T extends object>(
       }
     }
 
-    for (let i = 0; i < (claims as any[]).length; i++) {
+    for (let i = 0; i < claims.length; i++) {
       const claim = recursivePackedClaims[i]
         ? recursivePackedClaims[i]
         : claims[i];
-      // @ts-ignore
       if (sd.includes(i)) {
         const salt = await saltGenerator(16);
         const disclosure = new Disclosure([salt, claim]);
@@ -266,9 +264,10 @@ export const pack = async <T extends object>(
     return { packedClaims, disclosures };
   }
 
-  const packedClaims: any = {};
-  const disclosures: any[] = [];
-  const recursivePackedClaims: any = {};
+  const packedClaims: Record<string, unknown> = {};
+  const disclosures: Array<Disclosure> = [];
+  const recursivePackedClaims: Record<string, unknown> = {};
+
   for (const key in disclosureFrame) {
     if (key !== SD_DIGEST) {
       const packed = await pack(

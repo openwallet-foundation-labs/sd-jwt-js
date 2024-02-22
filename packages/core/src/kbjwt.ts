@@ -15,7 +15,7 @@ export class KBJwt<
       !this.payload?.aud ||
       !this.payload?.nonce ||
       // this is for backward compatibility with version 06
-      !(this.payload?.sd_hash || (this.payload as any)?._sd_hash)
+      !(this.payload?.sd_hash || this.payload?._sd_hash)
     ) {
       throw new SDJWTException('Invalid Key Binding Jwt');
     }
