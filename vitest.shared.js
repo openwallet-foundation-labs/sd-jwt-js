@@ -1,8 +1,7 @@
 import { defineProject, mergeConfig } from 'vitest/config';
 export const browserConfig = defineProject({
   test: {
-    globals: true,
-    exclude: ['**/*e2e.spec.ts'],
+    globals: true,    
     coverage: {
       exclude: ['examples/**'],
       reporter: ['json'],
@@ -13,8 +12,7 @@ export const browserConfig = defineProject({
 
 export const nodeConfig = defineProject({
   test: {
-    globals: true,
-    exclude: ['**/*e2e.spec.ts'],
+    globals: true,    
     coverage: {
       //TODO: the exclude is not working, therefore the coverage result are not correct.
       exclude: ['examples/**'],
