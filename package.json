@@ -5,7 +5,7 @@
   "scripts": {
     "build": "lerna run build --stream",
     "lint": "biome lint ./packages",
-    "format": "biome format ./packages",
+    "format": "biome format . --write",
     "test": "vitest run --coverage.enabled=true --coverage.include=packages/*",
     "clean": "lerna clean -y",
     "publish:latest": "lerna publish --conventional-commits --include-merged-tags --create-release github --yes --dist-tag latest",
