@@ -6,7 +6,7 @@ import {
 import { SDJWTException } from './error';
 import { HasherAndAlg, DisclosureData, HasherAndAlgSync } from '@sd-jwt/types';
 
-export class Disclosure<T> {
+export class Disclosure<T = unknown> {
   public salt: string;
   public key?: string;
   public value: T;

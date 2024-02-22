@@ -30,8 +30,8 @@ import { HasherSync } from '@sd-jwt/types/src/type';
 // }
 // The presentable keys are: ["arr", "arr.0", "arr.2.a", "foo", "test.zzz"]
 export const presentableKeys = async (
-  rawPayload: any,
-  disclosures: Array<Disclosure<any>>,
+  rawPayload: Record<string, unknown>,
+  disclosures: Array<Disclosure>,
   hasher: Hasher,
 ): Promise<string[]> => {
   const { disclosureKeymap } = await unpack(rawPayload, disclosures, hasher);
@@ -39,8 +39,8 @@ export const presentableKeys = async (
 };
 
 export const presentableKeysSync = (
-  rawPayload: any,
-  disclosures: Array<Disclosure<any>>,
+  rawPayload: Record<string, unknown>,
+  disclosures: Array<Disclosure>,
   hasher: HasherSync,
 ): string[] => {
   const { disclosureKeymap } = unpackSync(rawPayload, disclosures, hasher);

@@ -20,10 +20,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "suspicious": {
-        "noExplicitAny": "off"
-      }
+      "recommended": true
     }
   }
 }
