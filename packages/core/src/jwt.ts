@@ -1,10 +1,10 @@
-import { Base64urlEncode, SDJWTException } from '@hopae/sd-jwt-util';
-import { Base64urlString, Signer, Verifier } from '@hopae/sd-jwt-type';
-import { decodeJwt } from '@hopae/sd-jwt-decode';
+import { Base64urlEncode, SDJWTException } from '@sd-jwt/utils';
+import { Base64urlString, Signer, Verifier } from '@sd-jwt/types';
+import { decodeJwt } from '@sd-jwt/decode';
 
 export type JwtData<
-  Header extends Record<string, any>,
-  Payload extends Record<string, any>,
+  Header extends Record<string, unknown>,
+  Payload extends Record<string, unknown>,
 > = {
   header?: Header;
   payload?: Payload;
@@ -14,8 +14,8 @@ export type JwtData<
 // This class is used to create and verify JWT
 // Contains header, payload, and signature
 export class Jwt<
-  Header extends Record<string, any> = Record<string, any>,
-  Payload extends Record<string, any> = Record<string, any>,
+  Header extends Record<string, unknown> = Record<string, unknown>,
+  Payload extends Record<string, unknown> = Record<string, unknown>,
 > {
   public header?: Header;
   public payload?: Payload;
@@ -28,8 +28,8 @@ export class Jwt<
   }
 
   public static decodeJWT<
-    Header extends Record<string, any> = Record<string, any>,
-    Payload extends Record<string, any> = Record<string, any>,
+    Header extends Record<string, unknown> = Record<string, unknown>,
+    Payload extends Record<string, unknown> = Record<string, unknown>,
   >(
     jwt: string,
   ): { header: Header; payload: Payload; signature: Base64urlString } {
@@ -37,8 +37,8 @@ export class Jwt<
   }
 
   public static fromEncode<
-    Header extends Record<string, any> = Record<string, any>,
-    Payload extends Record<string, any> = Record<string, any>,
+    Header extends Record<string, unknown> = Record<string, unknown>,
+    Payload extends Record<string, unknown> = Record<string, unknown>,
   >(encodedJwt: string): Jwt<Header, Payload> {
     const { header, payload, signature } = Jwt.decodeJWT<Header, Payload>(
       encodedJwt,

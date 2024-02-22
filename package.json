@@ -1,6 +1,6 @@
 {
-  "name": "@hopae/sd-jwt",
-  "version": "2.0.1",
+  "name": "@sd-jwt/sd-jwt",
+  "version": "0.3.0",
   "description": "sd-jwt draft 7 implementation in typescript",
   "scripts": {
     "build": "lerna run build --stream",

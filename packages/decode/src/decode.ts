@@ -1,20 +1,16 @@
-import {
-  Base64urlDecode,
-  SDJWTException,
-  Disclosure,
-} from '@hopae/sd-jwt-util';
+import { Base64urlDecode, SDJWTException, Disclosure } from '@sd-jwt/utils';
 import {
   Hasher,
   HasherAndAlg,
   SD_DIGEST,
   SD_LIST_KEY,
   SD_SEPARATOR,
-} from '@hopae/sd-jwt-type';
-import { HasherAndAlgSync, HasherSync } from '@hopae/sd-jwt-type/src/type';
+} from '@sd-jwt/types';
+import { HasherAndAlgSync, HasherSync } from '@sd-jwt/types/src/type';
 
 export const decodeJwt = <
-  H extends Record<string, any>,
-  T extends Record<string, any>,
+  H extends Record<string, unknown>,
+  T extends Record<string, unknown>,
 >(
   jwt: string,
 ): { header: H; payload: T; signature: string } => {
@@ -131,8 +127,8 @@ export const decodeSdJwtSync = (
 // Get the claims from jwt and disclosures
 // The digested values are matched with the disclosures and the claims are extracted
 export const getClaims = async <T>(
-  rawPayload: any,
-  disclosures: Array<Disclosure<any>>,
+  rawPayload: Record<string, unknown>,
+  disclosures: Array<Disclosure>,
   hasher: Hasher,
 ): Promise<T> => {
   const { unpackedObj } = await unpack(rawPayload, disclosures, hasher);
@@ -140,8 +136,8 @@ export const getClaims = async <T>(
 };
 
 export const getClaimsSync = <T>(
-  rawPayload: any,
-  disclosures: Array<Disclosure<any>>,
+  rawPayload: Record<string, unknown>,
+  disclosures: Array<Disclosure>,
   hasher: HasherSync,
 ): T => {
   const { unpackedObj } = unpackSync(rawPayload, disclosures, hasher);
@@ -149,16 +145,16 @@ export const getClaimsSync = <T>(
 };
 
 export const unpackArray = (
-  arr: Array<any>,
-  map: Record<string, Disclosure<any>>,
+  arr: Array<unknown>,
+  map: Record<string, Disclosure>,
   prefix = '',
-): { unpackedObj: any; disclosureKeymap: Record<string, string> } => {
+): { unpackedObj: unknown; disclosureKeymap: Record<string, string> } => {
   const keys: Record<string, string> = {};
-  const unpackedArray: any[] = [];
+  const unpackedArray: unknown[] = [];
   arr.forEach((item, idx) => {
-    if (item instanceof Object) {
-      if (item[SD_LIST_KEY]) {
-        const hash = item[SD_LIST_KEY];
+    if (typeof item === 'object' && item !== null) {
+      const hash = (item as Record<string, string>)[SD_LIST_KEY];
+      if (hash) {
         const disclosed = map[hash];
         if (disclosed) {
           const presentKey = prefix ? `${prefix}.${idx}` : `${idx}`;
@@ -190,12 +186,12 @@ export const unpackArray = (
 };
 
 export const unpackObj = (
-  obj: any,
-  map: Record<string, Disclosure<any>>,
+  obj: unknown,
+  map: Record<string, Disclosure>,
   prefix = '',
-): { unpackedObj: any; disclosureKeymap: Record<string, string> } => {
+): { unpackedObj: unknown; disclosureKeymap: Record<string, string> } => {
   const keys: Record<string, string> = {};
-  if (obj instanceof Object) {
+  if (typeof obj === 'object') {
     if (Array.isArray(obj)) {
       return unpackArray(obj, map, prefix);
     }
@@ -204,21 +200,23 @@ export const unpackObj = (
       if (
         key !== SD_DIGEST &&
         key !== SD_LIST_KEY &&
-        obj[key] instanceof Object
+        typeof (obj as Record<string, unknown>)[key] === 'object'
       ) {
         const newKey = prefix ? `${prefix}.${key}` : key;
         const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
-          obj[key],
+          (obj as Record<string, unknown>)[key],
           map,
           newKey,
         );
-        obj[key] = unpackedObj;
+        (obj as Record<string, unknown>)[key] = unpackedObj;
         Object.assign(keys, disclosureKeys);
       }
     }
 
-    const { _sd, ...payload } = obj;
-    const claims: any = {};
+    const { _sd, ...payload } = obj as Record<string, unknown> & {
+      _sd?: Array<string>;
+    };
+    const claims: Record<string, unknown> = {};
     if (_sd) {
       for (const hash of _sd) {
         const disclosed = map[hash];
@@ -247,10 +245,10 @@ export const unpackObj = (
 
 // Creates a mapping of the digests of the disclosures to the actual disclosures
 export const createHashMapping = async (
-  disclosures: Array<Disclosure<any>>,
+  disclosures: Array<Disclosure>,
   hash: HasherAndAlg,
 ) => {
-  const map: Record<string, Disclosure<any>> = {};
+  const map: Record<string, Disclosure> = {};
   for (let i = 0; i < disclosures.length; i++) {
     const disclosure = disclosures[i];
     const digest = await disclosure.digest(hash);
@@ -260,10 +258,10 @@ export const createHashMapping = async (
 };
 
 export const createHashMappingSync = (
-  disclosures: Array<Disclosure<any>>,
+  disclosures: Array<Disclosure>,
   hash: HasherAndAlgSync,
 ) => {
-  const map: Record<string, Disclosure<any>> = {};
+  const map: Record<string, Disclosure> = {};
   for (let i = 0; i < disclosures.length; i++) {
     const disclosure = disclosures[i];
     const digest = disclosure.digestSync(hash);
@@ -273,7 +271,7 @@ export const createHashMappingSync = (
 };
 
 // Extract _sd_alg. If it is not present, it is assumed to be sha-256
-export const getSDAlgAndPayload = (sdjwtPayload: any) => {
+export const getSDAlgAndPayload = (sdjwtPayload: Record<string, unknown>) => {
   const { _sd_alg, ...payload } = sdjwtPayload;
   if (typeof _sd_alg !== 'string') {
     // This is for compatibility
@@ -285,8 +283,8 @@ export const getSDAlgAndPayload = (sdjwtPayload: any) => {
 // Match the digests of the disclosures with the claims and extract the claims
 // unpack function use unpackObj and unpackArray to recursively unpack the claims
 export const unpack = async (
-  sdjwtPayload: any,
-  disclosures: Array<Disclosure<any>>,
+  sdjwtPayload: Record<string, unknown>,
+  disclosures: Array<Disclosure>,
   hasher: Hasher,
 ) => {
   const { _sd_alg, payload } = getSDAlgAndPayload(sdjwtPayload);
@@ -297,8 +295,8 @@ export const unpack = async (
 };
 
 export const unpackSync = (
-  sdjwtPayload: any,
-  disclosures: Array<Disclosure<any>>,
+  sdjwtPayload: Record<string, unknown>,
+  disclosures: Array<Disclosure>,
   hasher: HasherSync,
 ) => {
   const { _sd_alg, payload } = getSDAlgAndPayload(sdjwtPayload);
@@ -312,14 +310,14 @@ export const unpackSync = (
 // It is a combination of the decoded jwt, the disclosures and the keybinding jwt
 export type DecodedSDJwt = {
   jwt: {
-    header: Record<string, any>;
-    payload: Record<string, any>; // raw payload of sd-jwt
+    header: Record<string, unknown>;
+    payload: Record<string, unknown>; // raw payload of sd-jwt
     signature: string;
   };
-  disclosures: Array<Disclosure<any>>;
+  disclosures: Array<Disclosure>;
   kbJwt?: {
-    header: Record<string, any>;
-    payload: Record<string, any>;
+    header: Record<string, unknown>;
+    payload: Record<string, unknown>;
     signature: string;
   };
 };

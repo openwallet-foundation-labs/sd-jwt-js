@@ -1,5 +1,5 @@
-import { Hasher, SD_SEPARATOR } from '@hopae/sd-jwt-type';
-import { Disclosure, SDJWTException } from '@hopae/sd-jwt-util';
+import { Hasher, SD_SEPARATOR } from '@sd-jwt/types';
+import { Disclosure, SDJWTException } from '@sd-jwt/utils';
 import {
   createHashMapping,
   decodeSdJwt,
@@ -9,8 +9,8 @@ import {
   createHashMappingSync,
   decodeSdJwtSync,
   unpackSync,
-} from '@hopae/sd-jwt-decode';
-import { HasherSync } from '@hopae/sd-jwt-type/src/type';
+} from '@sd-jwt/decode';
+import { HasherSync } from '@sd-jwt/types/src/type';
 
 // Presentable keys
 // The presentable keys are the path of JSON object that are presentable in the SD JWT
@@ -30,8 +30,8 @@ import { HasherSync } from '@hopae/sd-jwt-type/src/type';
 // }
 // The presentable keys are: ["arr", "arr.0", "arr.2.a", "foo", "test.zzz"]
 export const presentableKeys = async (
-  rawPayload: any,
-  disclosures: Array<Disclosure<any>>,
+  rawPayload: Record<string, unknown>,
+  disclosures: Array<Disclosure>,
   hasher: Hasher,
 ): Promise<string[]> => {
   const { disclosureKeymap } = await unpack(rawPayload, disclosures, hasher);
@@ -39,8 +39,8 @@ export const presentableKeys = async (
 };
 
 export const presentableKeysSync = (
-  rawPayload: any,
-  disclosures: Array<Disclosure<any>>,
+  rawPayload: Record<string, unknown>,
+  disclosures: Array<Disclosure>,
   hasher: HasherSync,
 ): string[] => {
   const { disclosureKeymap } = unpackSync(rawPayload, disclosures, hasher);

@@ -1,6 +1,6 @@
-import { SDJWTException } from '@hopae/sd-jwt-util';
+import { SDJWTException } from '@sd-jwt/utils';
 import { KBJwt } from '../kbjwt';
-import { KB_JWT_TYP, Signer, Verifier } from '@hopae/sd-jwt-type';
+import { KB_JWT_TYP, Signer, Verifier } from '@sd-jwt/types';
 import Crypto from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 
@@ -253,8 +253,8 @@ describe('KB JWT', () => {
       },
     });
 
-    (kbJwt.payload as any)._sd_hash = 'hash';
-    (kbJwt.payload as any).sd_hash = undefined;
+    (kbJwt.payload as Record<string, unknown>)._sd_hash = 'hash';
+    (kbJwt.payload as Record<string, unknown>).sd_hash = undefined;
 
     const encodedKbJwt = await kbJwt.sign(testSigner);
     const decoded = KBJwt.fromKBEncode(encodedKbJwt);

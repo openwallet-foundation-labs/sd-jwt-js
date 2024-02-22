@@ -1,4 +1,4 @@
-import { SDJWTException } from '@hopae/sd-jwt-util';
+import { SDJWTException } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
@@ -9,7 +9,7 @@ import {
   SDJWTCompact,
   SDJWTConfig,
   SD_JWT_TYP,
-} from '@hopae/sd-jwt-type';
+} from '@sd-jwt/types';
 
 export * from './sdjwt';
 export * from './kbjwt';
@@ -62,7 +62,7 @@ export class SDJwtInstance {
     return jwt.verify(this.userConfig.verifier);
   }
 
-  public async issue<Payload extends object>(
+  public async issue<Payload extends Record<string, unknown>>(
     payload: Payload,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
