@@ -23,7 +23,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@hopae/sd-jwt-core": "workspace:*",
-    "@hopae/sd-jwt-type": "workspace:*"
+    "@sd-jwt/core": "workspace:*",
+    "@sd-jwt/types": "workspace:*"
   }
 }

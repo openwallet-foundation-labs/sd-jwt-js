@@ -1,6 +1,6 @@
-import { SDJWTException } from '@hopae/sd-jwt-util';
+import { SDJWTException } from '@sd-jwt/utils';
 import { KBJwt } from '../kbjwt';
-import { KB_JWT_TYP, Signer, Verifier } from '@hopae/sd-jwt-type';
+import { KB_JWT_TYP, Signer, Verifier } from '@sd-jwt/types';
 import Crypto from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 
