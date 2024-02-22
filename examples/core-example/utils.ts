@@ -26,7 +26,7 @@ export const generateSalt = (length: number): string => {
 
 export const digest = async (
   data: string,
-  algorithm: string = 'SHA-256',
+  algorithm = 'SHA-256',
 ): Promise<Uint8Array> => {
   const nodeAlg = toNodeCryptoAlg(algorithm);
   const hash = Crypto.createHash(nodeAlg);
