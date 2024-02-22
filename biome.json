@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
   "organizeImports": {
-    "enabled": true
+    "enabled": false
   },
   "files": {
     "ignore": ["**/dist/**", "**/coverage/**"]
@@ -9,12 +9,12 @@
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "lineEnding": "lf"
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
-      "lineEnding": "lf"
+      "quoteStyle": "single"
     }
   },
   "linter": {

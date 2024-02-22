@@ -102,8 +102,12 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - name: 'Run lint'
-        run: pnpm run lint
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
+      - name: Run Biome
+        run: biome ci .
 
   # Only run this job when the push is on main, next or unstable
   publish:
@@ -111,7 +115,7 @@ jobs:
     needs:
       - build
       - test
-      # - lint
+      - lint
     env:
       NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
