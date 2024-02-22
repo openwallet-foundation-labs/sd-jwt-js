@@ -9,12 +9,12 @@
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "lineEnding": "crlf"
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
-      "lineEnding": "lf"
+      "quoteStyle": "single"
     }
   },
   "linter": {
