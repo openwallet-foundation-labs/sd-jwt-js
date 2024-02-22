@@ -194,9 +194,9 @@ export class SDJwt<
   }
 }
 
-export const listKeys = (obj: any, prefix: string = '') => {
+export const listKeys = (obj: any, prefix = '') => {
   const keys: string[] = [];
-  for (let key in obj) {
+  for (const key in obj) {
     if (obj[key] === undefined) continue;
     const newKey = prefix ? `${prefix}.${key}` : key;
     keys.push(newKey);
@@ -224,7 +224,7 @@ export const pack = async <T extends object>(
   const sd = disclosureFrame[SD_DIGEST] ?? [];
   const decoyCount = disclosureFrame[SD_DECOY] ?? 0;
 
-  if (claims instanceof Array) {
+  if (Array.isArray(claims)) {
     const packedClaims: any[] = [];
     const disclosures: any[] = [];
     const recursivePackedClaims: any = {};
@@ -244,7 +244,7 @@ export const pack = async <T extends object>(
       }
     }
 
-    for (let i = 0; i < (claims as Array<any>).length; i++) {
+    for (let i = 0; i < (claims as any[]).length; i++) {
       const claim = recursivePackedClaims[i]
         ? recursivePackedClaims[i]
         : claims[i];

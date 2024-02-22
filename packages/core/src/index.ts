@@ -157,7 +157,7 @@ export class SDJwtInstance {
       const missingKeys = requiredClaimKeys.filter((k) => !keys.includes(k));
       if (missingKeys.length > 0) {
         throw new SDJWTException(
-          'Missing required claim keys: ' + missingKeys.join(', '),
+          `Missing required claim keys: ${missingKeys.join(', ')}`,
         );
       }
     }

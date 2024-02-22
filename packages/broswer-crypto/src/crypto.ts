@@ -15,7 +15,7 @@ export const generateSalt = (length: number): string => {
 
 export async function digest(
   data: string,
-  algorithm: string = 'SHA-256',
+  algorithm = 'SHA-256',
 ): Promise<Uint8Array> {
   const { subtle } = globalThis.crypto;
   const ec = new TextEncoder();
@@ -23,6 +23,6 @@ export async function digest(
   return new Uint8Array(digest);
 }
 
-export const getHasher = (algorithm: string = 'SHA-256') => {
+export const getHasher = (algorithm = 'SHA-256') => {
   return (data: string) => digest(data, algorithm);
 };
