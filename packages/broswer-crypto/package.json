@@ -1,6 +1,6 @@
 {
-  "name": "@hopae/sd-jwt-browser-crypto",
-  "version": "2.0.3",
+  "name": "@sd-jwt/crypto-browser",
+  "version": "0.3.0",
   "description": "sd-jwt draft 7 implementation in typescript",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

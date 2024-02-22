@@ -1,6 +1,6 @@
-import { present, presentableKeys } from '@hopae/sd-jwt-present';
-import { decodeSdJwt, getClaims } from '@hopae/sd-jwt-decode';
-import { digest } from '@hopae/sd-jwt-node-crypto';
+import { present, presentableKeys } from '@sd-jwt/present';
+import { decodeSdJwt, getClaims } from '@sd-jwt/decode';
+import { digest } from '@sd-jwt/crypto-nodejs';
 
 (async () => {
   const sdjwt =

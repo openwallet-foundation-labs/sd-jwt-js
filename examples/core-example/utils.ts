@@ -1,5 +1,5 @@
 import Crypto from 'crypto';
-import { Signer, Verifier } from '@hopae/sd-jwt-type';
+import { Signer, Verifier } from '@sd-jwt/types';
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');

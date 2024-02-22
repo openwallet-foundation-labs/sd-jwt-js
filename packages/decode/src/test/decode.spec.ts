@@ -7,7 +7,7 @@ import {
   getClaimsSync,
   splitSdJwt,
 } from '../decode';
-import { digest } from '@hopae/sd-jwt-node-crypto';
+import { digest } from '@sd-jwt/crypto-nodejs';
 
 describe('decode tests', () => {
   test('decode jwt', () => {

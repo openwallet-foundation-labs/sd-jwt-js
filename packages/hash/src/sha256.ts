@@ -1,5 +1,5 @@
 import { sha256 as nobleSha256 } from '@noble/hashes/sha256';
-import { SDJWTException } from '@hopae/sd-jwt-util';
+import { SDJWTException } from '@sd-jwt/utils';
 
 export const sha256 = (text: string): Uint8Array => {
   const uint8Array = toUTF8Array(text);

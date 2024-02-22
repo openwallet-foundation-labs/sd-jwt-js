@@ -1,8 +1,8 @@
 import { SDJwtInstance } from '../index';
-import { Signer, Verifier } from '@hopae/sd-jwt-type';
+import { Signer, Verifier } from '@sd-jwt/types';
 import Crypto from 'node:crypto';
 import { describe, expect, test } from 'vitest';
-import { digest, generateSalt } from '@hopae/sd-jwt-node-crypto';
+import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
