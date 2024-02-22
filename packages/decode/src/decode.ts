@@ -156,9 +156,9 @@ export const unpackArray = (
   const keys: Record<string, string> = {};
   const unpackedArray: unknown[] = [];
   arr.forEach((item, idx) => {
-    if (item instanceof Object) {
-      if (item[SD_LIST_KEY]) {
-        const hash = item[SD_LIST_KEY];
+    if (typeof item === 'object' && item !== null) {
+      const hash = (item as Record<string, string>)[SD_LIST_KEY];
+      if (hash) {
         const disclosed = map[hash];
         if (disclosed) {
           const presentKey = prefix ? `${prefix}.${idx}` : `${idx}`;
@@ -195,7 +195,7 @@ export const unpackObj = (
   prefix = '',
 ): { unpackedObj: unknown; disclosureKeymap: Record<string, string> } => {
   const keys: Record<string, string> = {};
-  if (obj instanceof Object) {
+  if (typeof obj === 'object') {
     if (Array.isArray(obj)) {
       return unpackArray(obj, map, prefix);
     }
@@ -204,15 +204,15 @@ export const unpackObj = (
       if (
         key !== SD_DIGEST &&
         key !== SD_LIST_KEY &&
-        obj[key] instanceof Object
+        typeof (obj as Record<string, unknown>)[key] === 'object'
       ) {
         const newKey = prefix ? `${prefix}.${key}` : key;
         const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
-          obj[key],
+          (obj as Record<string, unknown>)[key],
           map,
           newKey,
         );
-        obj[key] = unpackedObj;
+        (obj as Record<string, unknown>)[key] = unpackedObj;
         Object.assign(keys, disclosureKeys);
       }
     }
@@ -220,7 +220,7 @@ export const unpackObj = (
     const { _sd, ...payload } = obj as Record<string, unknown> & {
       _sd?: Array<string>;
     };
-    const claims = {};
+    const claims: Record<string, unknown> = {};
     if (_sd) {
       for (const hash of _sd) {
         const disclosed = map[hash];

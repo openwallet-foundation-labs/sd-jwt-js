@@ -64,6 +64,10 @@ export class SDJwt<
     const [encodedJwt, ...encodedDisclosures] = sdjwt.split(SD_SEPARATOR);
     const jwt = Jwt.fromEncode<Header, Payload>(encodedJwt);
 
+    if (!jwt.payload) {
+      throw new Error('Payload is undefined on the JWT. Invalid state reached');
+    }
+
     if (encodedDisclosures.length === 0) {
       return {
         jwt,
@@ -213,7 +217,10 @@ export const pack = async <T extends Record<string, unknown>>(
   disclosureFrame: DisclosureFrame<T> | undefined,
   hash: HasherAndAlg,
   saltGenerator: SaltGenerator,
-): Promise<{ packedClaims: unknown; disclosures: Array<Disclosure> }> => {
+): Promise<{
+  packedClaims: Record<string, unknown> | Array<Record<string, unknown>>;
+  disclosures: Array<Disclosure>;
+}> => {
   if (!disclosureFrame) {
     return {
       packedClaims: claims,
@@ -247,6 +254,8 @@ export const pack = async <T extends Record<string, unknown>>(
       const claim = recursivePackedClaims[i]
         ? recursivePackedClaims[i]
         : claims[i];
+      // TODO: should this actually be the `i` or `claim`?
+      // @ts-ignore
       if (sd.includes(i)) {
         const salt = await saltGenerator(16);
         const disclosure = new Disclosure([salt, claim]);

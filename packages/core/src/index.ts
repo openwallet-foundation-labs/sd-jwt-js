@@ -62,7 +62,7 @@ export class SDJwtInstance {
     return jwt.verify(this.userConfig.verifier);
   }
 
-  public async issue<Payload extends object>(
+  public async issue<Payload extends Record<string, unknown>>(
     payload: Payload,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {

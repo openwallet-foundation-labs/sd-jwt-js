@@ -30,7 +30,7 @@ import { HasherSync } from '@hopae/sd-jwt-type/src/type';
 // }
 // The presentable keys are: ["arr", "arr.0", "arr.2.a", "foo", "test.zzz"]
 export const presentableKeys = async (
-  rawPayload: unknown,
+  rawPayload: Record<string, unknown>,
   disclosures: Array<Disclosure>,
   hasher: Hasher,
 ): Promise<string[]> => {
@@ -39,7 +39,7 @@ export const presentableKeys = async (
 };
 
 export const presentableKeysSync = (
-  rawPayload: unknown,
+  rawPayload: Record<string, unknown>,
   disclosures: Array<Disclosure>,
   hasher: HasherSync,
 ): string[] => {
