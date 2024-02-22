@@ -191,7 +191,7 @@ export const unpackObj = (
   prefix = '',
 ): { unpackedObj: unknown; disclosureKeymap: Record<string, string> } => {
   const keys: Record<string, string> = {};
-  if (typeof obj === 'object') {
+  if (typeof obj === 'object' && obj !== null) {
     if (Array.isArray(obj)) {
       return unpackArray(obj, map, prefix);
     }
