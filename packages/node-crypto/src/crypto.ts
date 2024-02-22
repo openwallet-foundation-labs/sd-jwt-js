@@ -11,7 +11,7 @@ export const generateSalt = (length: number): string => {
 
 export const digest = (
   data: string,
-  algorithm: string = 'SHA-256',
+  algorithm = 'SHA-256',
 ): Uint8Array => {
   const nodeAlg = toNodeCryptoAlg(algorithm);
   const hash = createHash(nodeAlg);

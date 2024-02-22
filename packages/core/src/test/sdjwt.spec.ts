@@ -306,8 +306,8 @@ describe('SD JWT', () => {
       firstname: 'John',
       lastname: 'Doe',
     });
-    expect(disclosureKeymap['firstname']).toBeDefined();
-    expect(typeof disclosureKeymap['firstname']).toEqual('string');
+    expect(disclosureKeymap.firstname).toBeDefined();
+    expect(typeof disclosureKeymap.firstname).toEqual('string');
   });
 
   test('pack and unpack', async () => {
