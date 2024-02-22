@@ -10,7 +10,7 @@
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineEnding": "crlf"
+    "lineEnding": "lf"
   },
   "javascript": {
     "formatter": {
