@@ -1,4 +1,4 @@
-![Coverage](https://img.shields.io/badge/coverage-93%25-green)
+![Coverage](https://img.shields.io/codecov/c/github/openwallet-foundation-labs/sd-jwt-js)
 ![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
 ![NPM](https://img.shields.io/npm/v/%40hopae%2Fsd-jwt)
 ![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
@@ -87,7 +87,7 @@ const presentation = await sdjwt.present(credential, presentationFrame);
 const verified = await sdjwt.verify(presentation, publicKey);
 ```
 
-Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki) or [examples](./examples/)
+Check out more details in our [documentation](./docs/) or [examples](./examples/)
 
 ## Dependencies
 
