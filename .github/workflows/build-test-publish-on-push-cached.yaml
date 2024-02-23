@@ -117,18 +117,18 @@ jobs:
       - test
       - lint
     env:
-      NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-      NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-      GH_TOKEN: ${{secrets.GH_TOKEN}}
-      GITHUB_TOKEN: ${{secrets.GH_TOKEN}}
-      GH_USER: ${{secrets.GH_USER}}
-      GH_EMAIL: ${{secrets.GH_EMAIL}}
+      NPM_TOKEN: ${{secrets.NPM_TOKEN }}
+      NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN }}
+      GH_TOKEN: ${{secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN }}
+      GH_USER: github-actions
+      GH_EMAIL: github-actions@github.com
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{secrets.GH_TOKEN}}
+          token: ${{secrets.GITHUB_TOKEN }}
       - uses: pnpm/action-setup@v3
         with:
           version: 8
@@ -149,13 +149,13 @@ jobs:
 
       - name: 'Setup git coordinates'
         run: |
-          git remote set-url origin https://${{secrets.GH_USER}}:${{secrets.GH_TOKEN}}@github.com/${{ github.repository }}.git
+          git remote set-url origin https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{ github.repository }}.git
           git config user.name $GH_USER
           git config user.email $GH_EMAIL
 
       - name: 'Setup npm registry'
         run: |
-          echo "@veramo:registry=https://registry.npmjs.org/" > .npmrc
+          echo "@sd-jwt:registry=https://registry.npmjs.org/" > .npmrc
           echo "registry=https://registry.npmjs.org/" >> .npmrc
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
           npm whoami
