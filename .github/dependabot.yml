@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    # Look for `package.json` and `pnpm-lock.yaml` files in the root directory
+    directory: "/"
+    # Check the npm registry for updates every day (you can choose your own schedule)
+    schedule:
+      interval: "daily"
+  # Lerna-specific configuration
+  - package-ecosystem: "npm"
+    # Assuming Lerna packages are in the 'packages' directory, adjust if different
+    directory: "/packages/*"
+    schedule:
+      interval: "daily"
+    # Additional configuration for monorepos
+    allow:
+      # Allow updates to devDependencies, runtime dependencies, etc.
+      - dependency-type: "all"
