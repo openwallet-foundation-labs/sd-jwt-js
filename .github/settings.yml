@@ -6,7 +6,7 @@
 
 repository:
   # Repository name
-  name: sd.jwt-js
+  name: sd-jwt-js
   # description: A JavaScript implementation of the Selective Disclosure JWT (SD-JWT) spec.
   description:
     A JavaScript implementation of the Selective Disclosure JWT (SD-JWT) spec.
