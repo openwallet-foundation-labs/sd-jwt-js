@@ -41,6 +41,9 @@
     "@sd-jwt/types": "workspace:*",
     "js-base64": "^3.7.6"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "tsup": {
     "entry": [
       "./src/index.ts"
