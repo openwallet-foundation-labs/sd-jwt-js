@@ -40,6 +40,9 @@
     "@sd-jwt/types": "workspace:*",
     "@sd-jwt/utils": "workspace:*"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "tsup": {
     "entry": [
       "./src/index.ts"

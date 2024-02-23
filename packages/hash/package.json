@@ -41,6 +41,9 @@
     "@sd-jwt/utils": "workspace:*",
     "@noble/hashes": "1.0.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "tsup": {
     "entry": [
       "./src/index.ts"
