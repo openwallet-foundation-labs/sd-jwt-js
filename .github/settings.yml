@@ -1,0 +1,32 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Documentation: https://github.com/apps/settings
+
+repository:
+  # Repository name
+  name: sd-jwt-js
+  # description: A JavaScript implementation of the Selective Disclosure JWT (SD-JWT) spec.
+  description:
+    A JavaScript implementation of the Selective Disclosure JWT (SD-JWT) spec.
+  # A URL with more information about the repository
+  homepage: https://sdjwt.js.org/
+  # A comma-separated list of topics to set on the repository
+  topics: sd-jwt, jwt
+  default_branch: next
+
+# Labels: define labels for Issues and Pull Requests
+labels:
+  - name: bug
+    color: CC0000
+    description: An issue with the system 🐛.
+
+  - name: feature
+    # If including a `#`, make sure to wrap it with quotes!
+    color: '#336699'
+    description: New functionality.
+
+  - name: Help Wanted
+    # Provide a new name to rename an existing label
+    new_name: first-timers-only
