@@ -155,7 +155,7 @@ jobs:
 
       - name: 'Setup npm registry'
         run: |
-          echo "@veramo:registry=https://registry.npmjs.org/" > .npmrc
+          echo "@sd-jwt:registry=https://registry.npmjs.org/" > .npmrc
           echo "registry=https://registry.npmjs.org/" >> .npmrc
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
           npm whoami
