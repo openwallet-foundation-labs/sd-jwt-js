@@ -6,6 +6,7 @@
 | Gavin             | zustkeeper       | -         | Gavin@hopae.io        | Gavin       | Hopae Inc.          | sd-jwt-js |
 | Lukas             | lukasjhan        | Lukas.Han | lukas.j.han@gmail.com | lukas.j.han | Hopae Inc.          | sd-jwt-js |
 | Berend Sliedrecht | berendsliedrecht | beri14    | sliedrecht@berend.io  | -           | Animo Solutions     | sd-jwt-js |
+| Mirko Mollik      | cre8             | -         | mirkomollik@gmail.com | Mirko       | Fraunhofer FIT      | sd-jwt-js |
 
 ## 1. What Does Being a Maintainer Entail
 
