@@ -19,7 +19,14 @@ Check the detail description in our github [repo](https://github.com/openwallet-
 To install this project, run the following command:
 
 ```bash
+# using npm
 npm install @sd-jwt/crypto-browser
+
+# using yarn
+yarn add @sd-jwt/crypto-browser
+
+# using pnpm
+pnpm install @sd-jwt/crypto-browser
 ```
 
 Ensure you have Node.js installed as a prerequisite.
