@@ -1,6 +1,6 @@
 ![Coverage](https://img.shields.io/codecov/c/github/openwallet-foundation-labs/sd-jwt-js)
 ![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
-![NPM](https://img.shields.io/npm/v/%40hopae%2Fsd-jwt)
+![NPM](https://img.shields.io/npm/v/%40sd-jwt%2Fcore)
 ![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
 ![Stars](https://img.shields.io/github/stars/openwallet-foundation-labs/sd-jwt-js)
 
@@ -43,7 +43,7 @@ By adhering to these design principles, "Selective Disclosure for JWT" aims to s
 To install this project, run the following command:
 
 ```bash
-npm install @hopae/sd-jwt
+npm install @sd-jwt/core
 ```
 
 Ensure you have Node.js installed as a prerequisite.
