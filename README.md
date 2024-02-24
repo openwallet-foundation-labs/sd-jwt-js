@@ -49,13 +49,6 @@ By adhering to these design principles, "Selective Disclosure for JWT" aims to s
 - **[@sd-jwt/crypto-nodejs](./packages/node-crypto/README.md)**: Nodejs Crypto support for SD JWT
 - **[@sd-jwt/crypto-browser](./packages/browser-crypto/README.md)**: Browser Crypto support for SD JWT
 
-## Dependencies
-
-- "@noble/hashes": "1.0.0",
-  - pure js hash algorithm implementation with security audit (v1.0.0)
-- "js-base64": "^3.7.6"
-  - pure js base64 implementation
-
 # Development
 
 ## Build
