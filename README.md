@@ -77,6 +77,8 @@ pnpm test
 
 We use [Vitest](https://vitest.dev/) for our testing framework. Ensure you have written tests for all new features.
 
+We also use [CodeCov](https://app.codecov.io/gh/openwallet-foundation-labs/sd-jwt-js) for our testing coverage. You can check the details of coverage of each package
+
 ## Security
 
 - [x] [Mandatory Signing of the Issuer-signed JWT](https://www.ietf.org/archive/id/draft-ietf-oauth-selective-disclosure-jwt-06.html#name-mandatory-signing-of-the-is)
