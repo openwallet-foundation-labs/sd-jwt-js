@@ -1,6 +1,6 @@
-![Coverage](https://img.shields.io/badge/coverage-93%25-green)
+![Coverage](https://img.shields.io/codecov/c/github/openwallet-foundation-labs/sd-jwt-js)
 ![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
-![NPM](https://img.shields.io/npm/v/%40hopae%2Fsd-jwt)
+![NPM](https://img.shields.io/npm/v/%40sd-jwt%2Fcore)
 ![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
 ![Stars](https://img.shields.io/github/stars/openwallet-foundation-labs/sd-jwt-js)
 
@@ -38,63 +38,24 @@ By adhering to these design principles, "Selective Disclosure for JWT" aims to s
 
 # How to use
 
-## Installation
+## Packages
 
-To install this project, run the following command:
+- **[@sd-jwt/core](./packages/core/README.md)**: Core library for selective disclosure JWTs
+- **[@sd-jwt/decode](./packages/decode/README.md)**: Decode SD JWT into objects
+- **[@sd-jwt/present](./packages/present/README.md)**: Present SD JWT
+- **[@sd-jwt/utils](./packages/utils/README.md)**: Utility functions for SD JWT
+- **[@sd-jwt/types](./packages/types/README.md)**: Types for SD JWT
+- **[@sd-jwt/hash](./packages/hash/README.md)**: SHA-256 support for SD JWT
+- **[@sd-jwt/crypto-nodejs](./packages/node-crypto/README.md)**: Nodejs Crypto support for SD JWT
+- **[@sd-jwt/crypto-browser](./packages/browser-crypto/README.md)**: Browser Crypto support for SD JWT
 
-```bash
-npm install @hopae/sd-jwt
-```
+## Version
 
-Ensure you have Node.js installed as a prerequisite.
+We keep all the versions of our packages in sync.
 
-## Usage
+It means for example, that if you are using `@sd-jwt/core@1.0.0`, you should use `@sd-jwt/decode@1.0.0`, `@sd-jwt/present@1.0.0` and so on.
 
-Here's a basic example of how to use this library:
-
-```jsx
-import sdjwt, { DisclosureFrame } from '@hopae/sd-jwt';
-
-// Issuer defines the claims object with the user's information
-const claims = {
-  firstname: 'John',
-  lastname: 'Doe',
-  ssn: '123-45-6789',
-  id: '1234',
-};
-
-// Issuer defines the disclosure frame to specify which claims can be disclosed/undisclosed
-const disclosureFrame: DisclosureFrame<typeof claims> = {
-  _sd: ['firstname', 'lastname', 'ssn'],
-};
-
-// Issuer issues a signed JWT credential with the specified claims and disclosure frame
-// returns an encoded JWT
-const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
-
-// Holder may validate the credential from the issuer
-const valid = await sdjwt.validate(credential, publicKey);
-
-// Holder defines the presentation frame to specify which claims should be presented
-// The list of presented claims must be a subset of the disclosed claims
-const presentationFrame = ['firstname', 'ssn'];
-
-// Holder creates a presentation using the issued credential and the presentation frame
-// returns an encoded SD JWT.
-const presentation = await sdjwt.present(credential, presentationFrame);
-
-// Verifier can verify the presentation using the Issuer's public key
-const verified = await sdjwt.verify(presentation, publicKey);
-```
-
-Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki) or [examples](./examples/)
-
-## Dependencies
-
-- "@noble/hashes": "1.0.0",
-  - pure js hash algorithm implementation with security audit (v1.0.0)
-- "js-base64": "^3.7.6"
-  - pure js base64 implementation
+# Development
 
 ## Build
 
@@ -111,14 +72,12 @@ pnpm run build
 To run the test suite, execute:
 
 ```bash
-# Unit tests
 pnpm test
-
-# E2E tests
-pnpm test:e2e
 ```
 
 We use [Vitest](https://vitest.dev/) for our testing framework. Ensure you have written tests for all new features.
+
+We also use [CodeCov](https://app.codecov.io/gh/openwallet-foundation-labs/sd-jwt-js) for our testing coverage. You can check the details of coverage of each package
 
 ## Security
 
