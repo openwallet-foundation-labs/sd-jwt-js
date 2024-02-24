@@ -19,7 +19,14 @@ Check the detail description in our github [repo](https://github.com/openwallet-
 To install this project, run the following command:
 
 ```bash
+# using npm
 npm install @sd-jwt/decode
+
+# using yarn
+yarn add @sd-jwt/decode
+
+# using pnpm
+pnpm install @sd-jwt/decode
 ```
 
 Ensure you have Node.js installed as a prerequisite.
