@@ -49,6 +49,12 @@ By adhering to these design principles, "Selective Disclosure for JWT" aims to s
 - **[@sd-jwt/crypto-nodejs](./packages/node-crypto/README.md)**: Nodejs Crypto support for SD JWT
 - **[@sd-jwt/crypto-browser](./packages/browser-crypto/README.md)**: Browser Crypto support for SD JWT
 
+## Version
+
+We keep all the versions of our packages in sync.
+
+It means for example, that if you are using `@sd-jwt/core@1.0.0`, you should use `@sd-jwt/decode@1.0.0`, `@sd-jwt/present@1.0.0` and so on.
+
 # Development
 
 ## Build
