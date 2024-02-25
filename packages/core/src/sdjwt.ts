@@ -250,7 +250,23 @@ export const pack = async <T extends Record<string, unknown>>(
       const claim = recursivePackedClaims[i]
         ? recursivePackedClaims[i]
         : claims[i];
-      // TODO: should this actually be the `i` or `claim`?
+      /** This part is set discloure for array items.
+       *  The example of disclosureFrame of an Array is
+       *
+       *  const claims = {
+       *    array: ['a', 'b', 'c']
+       *  }
+       *
+       *  diclosureFrame: DisclosureFrame<typeof claims> = {
+       *    array: {
+       *      _sd: [0, 2]
+       *    }
+       *  }
+       *
+       *  It means that we want to disclose the first and the third item of the array
+       *
+       *  So If the index `i` is in the disclosure list(sd), then we create a disclosure for the claim
+       */
       // @ts-ignore
       if (sd.includes(i)) {
         const salt = await saltGenerator(16);
