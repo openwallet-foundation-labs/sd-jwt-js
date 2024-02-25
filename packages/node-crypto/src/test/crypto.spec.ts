@@ -2,10 +2,6 @@ import { describe, expect, test } from 'vitest';
 import { generateSalt, digest, ES256, Ed25519 } from '../index';
 
 describe('This file is for utility functions', () => {
-  test('crypto', () => {
-    expect('1').toStrictEqual('1');
-  });
-
   test('generateSalt', async () => {
     const salt = generateSalt(8);
     expect(salt).toBeDefined();
