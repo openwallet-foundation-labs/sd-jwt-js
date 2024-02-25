@@ -53,7 +53,7 @@ export const ES256 = {
     return { publicKey: publicKeyJWK, privateKey: privateKeyJWK };
   },
 
-  async getSigner(privateKeyJWK) {
+  async getSigner(privateKeyJWK: object) {
     const privateKey = await window.crypto.subtle.importKey(
       'jwk',
       privateKeyJWK,
@@ -84,7 +84,7 @@ export const ES256 = {
     };
   },
 
-  async getVerifier(publicKeyJWK) {
+  async getVerifier(publicKeyJWK: object) {
     const publicKey = await window.crypto.subtle.importKey(
       'jwk',
       publicKeyJWK,
