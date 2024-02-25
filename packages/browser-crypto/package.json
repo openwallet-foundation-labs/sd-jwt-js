@@ -13,7 +13,10 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
-    "lint": "biome lint ./src"
+    "lint": "biome lint ./src",
+    "test": "pnpm run test:browser && pnpm run test:cov",
+    "test:browser": "vitest run ./src/test/*.spec.ts",
+    "test:cov": "vitest run --coverage"
   },
   "keywords": [
     "sd-jwt",
