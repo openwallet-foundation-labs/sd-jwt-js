@@ -43,7 +43,6 @@ describe('This file is for utility functions', () => {
 
   test('ES256', async () => {
     const { privateKey, publicKey } = await ES256.generateKeyPair();
-    console.log(privateKey, publicKey);
     expect(privateKey).toBeDefined();
     expect(publicKey).toBeDefined();
     expect(typeof privateKey).toBe('object');
