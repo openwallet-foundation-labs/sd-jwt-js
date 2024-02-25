@@ -92,6 +92,21 @@ describe('Disclosure', () => {
     expect(newDisclosure.salt).toBe(salt);
   });
 
+  test('decode disclosure sync', () => {
+    const salt = generateSalt(16);
+    const disclosure = new Disclosure([salt, 'name', 'James']);
+    const encodedDisclosure = disclosure.encode();
+    const newDisclosure = Disclosure.fromEncodeSync(encodedDisclosure, {
+      alg: 'SHA256',
+      hasher,
+    });
+
+    expect(newDisclosure).toBeDefined();
+    expect(newDisclosure.key).toBe('name');
+    expect(newDisclosure.value).toBe('James');
+    expect(newDisclosure.salt).toBe(salt);
+  });
+
   test('digest disclosure #1', async () => {
     const salt = generateSalt(16);
     const disclosure = new Disclosure([salt, 'name', 'James']);
@@ -114,7 +129,21 @@ describe('Disclosure', () => {
     expect(digest).toBe('8VHiz7qTXavxvpiTYDCSr_shkUO6qRcVXjkhEnt1os4');
   });
 
-  test('digest disclosure #2', async () => {
+  test('digest disclosure #2 sync', () => {
+    const disclosure = new Disclosure([
+      '2GLC42sKQveCfGfryNRN9w',
+      'given_name',
+      'John',
+    ]);
+    const encode = disclosure.encode();
+    expect(encode).toBe(
+      'WyIyR0xDNDJzS1F2ZUNmR2ZyeU5STjl3IiwiZ2l2ZW5fbmFtZSIsIkpvaG4iXQ',
+    );
+    const digest = disclosure.digestSync(hash);
+    expect(digest).toBe('8VHiz7qTXavxvpiTYDCSr_shkUO6qRcVXjkhEnt1os4');
+  });
+
+  test('digest disclosure #3', async () => {
     const encoded = Base64urlEncode(TestDataDraft7.claimTests[0].contents);
     expect(encoded).toStrictEqual(TestDataDraft7.claimTests[0].disclosure);
 
@@ -127,7 +156,7 @@ describe('Disclosure', () => {
     expect(digest).toBe(TestDataDraft7.claimTests[0].digest);
   });
 
-  test('digest disclosure #3', async () => {
+  test('digest disclosure #4', async () => {
     for (const sha256Test of TestDataDraft7.sha256Tests) {
       const disclosure = await Disclosure.fromEncode(
         sha256Test.disclosure,

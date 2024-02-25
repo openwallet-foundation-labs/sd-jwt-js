@@ -2,9 +2,9 @@ export const generateSalt = (length: number): string => {
   if (length <= 0) {
     return '';
   }
-
-  const array = new Uint8Array(length);
-  globalThis.crypto.getRandomValues(array);
+  // a hex is represented by 2 characters, so we split the length by 2
+  const array = new Uint8Array(length / 2);
+  window.crypto.getRandomValues(array);
 
   const salt = Array.from(array, (byte) =>
     byte.toString(16).padStart(2, '0'),
