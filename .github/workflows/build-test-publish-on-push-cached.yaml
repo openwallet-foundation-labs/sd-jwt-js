@@ -65,7 +65,7 @@ jobs:
         run: pnpm test
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage-artifacts
+          name: coverage-artifacts-${{ matrix.node-version }}
           path: coverage/
 
   report-coverage:
