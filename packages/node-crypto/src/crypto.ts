@@ -17,6 +17,8 @@ import {
   KeyLike,
 } from 'jose';
 
+const { subtle } = globalThis.crypto;
+
 export const generateSalt = (length: number): string => {
   if (length <= 0) {
     return '';
@@ -37,91 +39,162 @@ export const digest = (data: string, algorithm = 'SHA-256'): Uint8Array => {
 const toNodeCryptoAlg = (hashAlg: string): string =>
   hashAlg.replace('-', '').toLowerCase();
 
-async function jwkToPem(jwk: JWK) {
-  const key = (await importJWK(jwk, jwk.alg)) as KeyLike;
-
-  if (jwk.d) {
-    // Private Key
-    return await exportPKCS8(key);
-  } else {
-    // Public Key
-    return await exportSPKI(key);
-  }
-}
-
-async function pemToJwk(pem: string) {
-  let keyObj: KeyObject;
-  try {
-    keyObj = createPublicKey(pem);
-  } catch {
-    keyObj = createPrivateKey(pem);
-  }
-
-  const jwk = await exportJWK(keyObj);
-  return jwk;
-}
-
-const getSigner = async (privateKeyJWK: JWK) => {
-  const ecPrivateKey = await jwkToPem(privateKeyJWK);
-  return async (data: string) => {
-    const sig = sign(null, Buffer.from(data), ecPrivateKey);
-    return Buffer.from(sig).toString('base64url');
-  };
-};
-
-const getVerifier = async (publicKeyJWK: JWK) => {
-  const ecPublicKey = await jwkToPem(publicKeyJWK);
-  return async (data: string, sig: string) => {
-    return verify(
-      null,
-      Buffer.from(data),
-      ecPublicKey,
-      Buffer.from(sig, 'base64url'),
-    );
-  };
-};
-
 export const Ed25519 = {
   alg: 'EdDSA',
-  generateKeyPair: async () => {
-    const { privateKey, publicKey } = generateKeyPairSync('ed25519', {
-      publicKeyEncoding: {
-        type: 'spki', // Recommended format for public key
-        format: 'pem',
+  async generateKeyPair() {
+    const keyPair = (await subtle.generateKey(
+      {
+        name: 'Ed25519',
       },
-      privateKeyEncoding: {
-        type: 'pkcs8', // Recommended format for private key
-        format: 'pem',
+      true, // whether the key is extractable (i.e., can be used in exportKey)
+      ['sign', 'verify'], // can be used to sign and verify signatures
+    )) as CryptoKeyPair;
+
+    // Export the public and private keys in JWK format
+    const publicKeyJWK = await subtle.exportKey('jwk', keyPair.publicKey);
+    const privateKeyJWK = await subtle.exportKey('jwk', keyPair.privateKey);
+
+    return { publicKey: publicKeyJWK, privateKey: privateKeyJWK };
+  },
+
+  async getSigner(privateKeyJWK: object) {
+    const privateKey = await subtle.importKey(
+      'jwk',
+      privateKeyJWK,
+      {
+        name: 'Ed25519',
       },
-    });
-    return {
-      privateKey: await pemToJwk(privateKey),
-      publicKey: await pemToJwk(publicKey),
+      true, // whether the key is extractable (i.e., can be used in exportKey)
+      ['sign'],
+    );
+
+    return async (data: string) => {
+      const encoder = new TextEncoder();
+      const signature = await subtle.sign(
+        {
+          name: 'Ed25519',
+        },
+        privateKey,
+        encoder.encode(data),
+      );
+
+      return btoa(String.fromCharCode(...new Uint8Array(signature)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, ''); // Convert to base64url format
     };
   },
-  getSigner,
-  getVerifier,
+
+  async getVerifier(publicKeyJWK: object) {
+    const publicKey = await subtle.importKey(
+      'jwk',
+      publicKeyJWK,
+      {
+        name: 'Ed25519',
+      },
+      true, // whether the key is extractable (i.e., can be used in exportKey)
+      ['verify'],
+    );
+
+    return async (data: string, signatureBase64url: string) => {
+      const encoder = new TextEncoder();
+      const signature = Uint8Array.from(
+        atob(signatureBase64url.replace(/-/g, '+').replace(/_/g, '/')),
+        (c) => c.charCodeAt(0),
+      );
+      const isValid = await subtle.verify(
+        {
+          name: 'Ed25519',
+        },
+        publicKey,
+        signature,
+        encoder.encode(data),
+      );
+
+      return isValid;
+    };
+  },
 };
 
 export const ES256 = {
   alg: 'ES256',
-  generateKeyPair: async () => {
-    const { privateKey, publicKey } = generateKeyPairSync('ec', {
-      namedCurve: 'P-256',
-      publicKeyEncoding: {
-        type: 'spki', // Recommended format for public key
-        format: 'pem',
+
+  async generateKeyPair() {
+    const keyPair = await subtle.generateKey(
+      {
+        name: 'ECDSA',
+        namedCurve: 'P-256', // ES256
       },
-      privateKeyEncoding: {
-        type: 'pkcs8', // Recommended format for private key
-        format: 'pem',
+      true, // whether the key is extractable (i.e., can be used in exportKey)
+      ['sign', 'verify'], // can be used to sign and verify signatures
+    );
+
+    // Export the public and private keys in JWK format
+    const publicKeyJWK = await subtle.exportKey('jwk', keyPair.publicKey);
+    const privateKeyJWK = await subtle.exportKey('jwk', keyPair.privateKey);
+
+    return { publicKey: publicKeyJWK, privateKey: privateKeyJWK };
+  },
+
+  async getSigner(privateKeyJWK: object) {
+    const privateKey = await subtle.importKey(
+      'jwk',
+      privateKeyJWK,
+      {
+        name: 'ECDSA',
+        namedCurve: 'P-256', // Must match the curve used to generate the key
       },
-    });
-    return {
-      privateKey: await pemToJwk(privateKey),
-      publicKey: await pemToJwk(publicKey),
+      true, // whether the key is extractable (i.e., can be used in exportKey)
+      ['sign'],
+    );
+
+    return async (data: string) => {
+      const encoder = new TextEncoder();
+      const signature = await subtle.sign(
+        {
+          name: 'ECDSA',
+          hash: { name: 'SHA-256' }, // Required for ES256
+        },
+        privateKey,
+        encoder.encode(data),
+      );
+
+      return btoa(String.fromCharCode(...new Uint8Array(signature)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, ''); // Convert to base64url format
     };
   },
-  getSigner,
-  getVerifier,
+
+  async getVerifier(publicKeyJWK: object) {
+    const publicKey = await subtle.importKey(
+      'jwk',
+      publicKeyJWK,
+      {
+        name: 'ECDSA',
+        namedCurve: 'P-256', // Must match the curve used to generate the key
+      },
+      true, // whether the key is extractable (i.e., can be used in exportKey)
+      ['verify'],
+    );
+
+    return async (data: string, signatureBase64url: string) => {
+      const encoder = new TextEncoder();
+      const signature = Uint8Array.from(
+        atob(signatureBase64url.replace(/-/g, '+').replace(/_/g, '/')),
+        (c) => c.charCodeAt(0),
+      );
+      const isValid = await subtle.verify(
+        {
+          name: 'ECDSA',
+          hash: { name: 'SHA-256' }, // Required for ES256
+        },
+        publicKey,
+        signature,
+        encoder.encode(data),
+      );
+
+      return isValid;
+    };
+  },
 };
