@@ -41,6 +41,9 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['16.x', '18.x', '20.x']
     steps:
       - uses: pnpm/action-setup@v3
         with:
@@ -56,11 +59,13 @@ jobs:
       - name: 'Setup Node.js with pnpm cache'
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
       - name: 'Run node'
         run: pnpm test
       - uses: actions/upload-artifact@v4
+        # we are only uploading the 20 coverage report so we do not have to merge them in the next step.
+        if: matrix.node-version == '20.x'
         with:
           name: coverage-artifacts
           path: coverage/
