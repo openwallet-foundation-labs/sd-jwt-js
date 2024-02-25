@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { generateSalt, digest, getHasher } from '../index';
+import { generateSalt, digest, getHasher, ES256 } from '../index';
 
 describe('This file is for utility functions', () => {
   test('crypto', () => {
@@ -35,5 +35,27 @@ describe('This file is for utility functions', () => {
   test('get hasher', async () => {
     const hash = await getHasher('SHA-512')('test1');
     expect(hash).toBeDefined();
+  });
+
+  test('ES256 alg', () => {
+    expect(ES256.alg).toBe('ES256');
+  });
+
+  test('ES256', async () => {
+    const { privateKey, publicKey } = await ES256.generateKeyPair();
+    console.log(privateKey, publicKey);
+    expect(privateKey).toBeDefined();
+    expect(publicKey).toBeDefined();
+    expect(typeof privateKey).toBe('object');
+    expect(typeof publicKey).toBe('object');
+
+    const data =
+      'In cryptography, a salt is random data that is used as an additional input to a one-way function that hashes data, a password or passphrase.';
+    const signature = await (await ES256.getSigner(privateKey))(data);
+    expect(signature).toBeDefined();
+    expect(typeof signature).toBe('string');
+
+    const result = await (await ES256.getVerifier(publicKey))(data, signature);
+    expect(result).toBe(true);
   });
 });
