@@ -38,7 +38,6 @@ describe('This file is for utility functions', () => {
     expect(publicKey).toBeDefined();
     expect(typeof privateKey).toBe('object');
     expect(typeof publicKey).toBe('object');
-    console.log(privateKey, publicKey);
 
     const data =
       'In cryptography, a salt is random data that is used as an additional input to a one-way function that hashes data, a password or passphrase.';
