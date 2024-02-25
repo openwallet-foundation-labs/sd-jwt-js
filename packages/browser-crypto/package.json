@@ -13,8 +13,7 @@
   },
   "scripts": {
     "build": "rm -rf **/dist && tsup",
-    "lint": "biome lint ./src",
-    "test": "vitest run ./src/test/*.spec.ts --coverage"
+    "lint": "biome lint ./src"
   },
   "keywords": [
     "sd-jwt",
