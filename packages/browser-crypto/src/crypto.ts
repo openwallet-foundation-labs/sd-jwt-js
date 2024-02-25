@@ -17,9 +17,8 @@ export async function digest(
   data: string,
   algorithm = 'SHA-256',
 ): Promise<Uint8Array> {
-  const { subtle } = globalThis.crypto;
   const ec = new TextEncoder();
-  const digest = await subtle.digest(algorithm, ec.encode(data));
+  const digest = await window.crypto.subtle.digest(algorithm, ec.encode(data));
   return new Uint8Array(digest);
 }
 
