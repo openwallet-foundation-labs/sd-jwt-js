@@ -41,13 +41,13 @@ describe('This file is for utility functions', () => {
 
     const data =
       'In cryptography, a salt is random data that is used as an additional input to a one-way function that hashes data, a password or passphrase.';
-    const signature = await (await Ed25519.getSigner(privateKey))(data);
+    const signer = await Ed25519.getSigner(privateKey);
+    const signature = await signer(data);
     expect(signature).toBeDefined();
     expect(typeof signature).toBe('string');
 
-    const result = await (
-      await Ed25519.getVerifier(publicKey)
-    )(data, signature);
+    const verifier = await Ed25519.getVerifier(publicKey);
+    const result = await verifier(data, signature);
     expect(result).toBe(true);
   });
 
@@ -60,11 +60,13 @@ describe('This file is for utility functions', () => {
 
     const data =
       'In cryptography, a salt is random data that is used as an additional input to a one-way function that hashes data, a password or passphrase.';
-    const signature = await (await ES256.getSigner(privateKey))(data);
+    const signer = await ES256.getSigner(privateKey);
+    const signature = await signer(data);
     expect(signature).toBeDefined();
     expect(typeof signature).toBe('string');
 
-    const result = await (await ES256.getVerifier(publicKey))(data, signature);
+    const verifier = await ES256.getVerifier(publicKey);
+    const result = await verifier(data, signature);
     expect(result).toBe(true);
   });
 });
