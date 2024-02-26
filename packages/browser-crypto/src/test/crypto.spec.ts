@@ -1,4 +1,4 @@
-import { describe, expect, test, it } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { generateSalt, digest, getHasher, ES256 } from '../index';
 
 // Extract the major version as a number
