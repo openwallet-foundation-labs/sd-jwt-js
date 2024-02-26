@@ -42,11 +42,11 @@ describe('This file is for utility functions', () => {
     expect(hash).toBeDefined();
   });
 
-  test('ES256 alg', () => {
+  (nodeVersionMajor < 20 ? test.skip : test)('ES256 alg', () => {
     expect(ES256.alg).toBe('ES256');
   });
 
-  test('ES256', async () => {
+  (nodeVersionMajor < 20 ? test.skip : test)('ES256', async () => {
     const { privateKey, publicKey } = await ES256.generateKeyPair();
     expect(privateKey).toBeDefined();
     expect(publicKey).toBeDefined();
