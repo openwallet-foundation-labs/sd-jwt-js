@@ -30,7 +30,15 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
 
   // Issue a signed JWT credential with the specified claims and disclosures
   // Return a Encoded SD JWT. Issuer send the credential to the holder
-  const credential = await sdjwt.issue(claims, disclosureFrame);
+  const credential = await sdjwt.issue(
+    {
+      iss: 'Issuer',
+      iat: new Date().getTime(),
+      vct: 'https://example.com',
+      ...claims,
+    },
+    disclosureFrame,
+  );
   console.log('encodedJwt:', credential);
 
   // Holder Receive the credential from the issuer and validate it
