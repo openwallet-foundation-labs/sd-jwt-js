@@ -1,7 +1,7 @@
 export const SD_SEPARATOR = '~';
 export const SD_LIST_KEY = '...';
 export const SD_DIGEST = '_sd';
-export const SD_JWT_TYP = 'sd-jwt';
+export const SD_JWT_TYP = 'sd-jwt-vc';
 export const SD_DECOY = '_sd_decoy';
 export const KB_JWT_TYP = 'kb+jwt';
 
@@ -104,14 +104,14 @@ type Frame<Payload> = Payload extends Array<infer U>
     ? Record<number, Frame<U>> & SD<Payload> & DECOY
     : SD<Payload> & DECOY
   : Payload extends Record<string, unknown>
-    ? NonNever<
-        {
-          [K in keyof Payload]?: Payload[K] extends object
-            ? Frame<Payload[K]>
-            : never;
-        } & SD<Payload> &
-          DECOY
-      >
-    : SD<Payload> & DECOY;
+  ? NonNever<
+      {
+        [K in keyof Payload]?: Payload[K] extends object
+          ? Frame<Payload[K]>
+          : never;
+      } & SD<Payload> &
+        DECOY
+    >
+  : SD<Payload> & DECOY;
 
 export type DisclosureFrame<T extends object> = Frame<T>;
