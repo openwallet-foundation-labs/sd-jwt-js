@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { generateSalt, digest } from '../crypto';
+import { generateSalt, digest } from '../index';
 
 describe('This file is for utility functions', () => {
   test('generateSalt', async () => {

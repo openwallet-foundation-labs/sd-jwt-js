@@ -5,7 +5,7 @@ import {
   presentSync,
   presentableKeys,
   presentableKeysSync,
-} from '../present';
+} from '../index';
 import { decodeSdJwt, decodeSdJwtSync } from '@sd-jwt/decode';
 
 describe('Present tests', () => {
