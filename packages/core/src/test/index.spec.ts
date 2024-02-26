@@ -3,6 +3,7 @@ import { Signer, Verifier } from '@sd-jwt/types';
 import Crypto from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
+import { SDJWTException } from '@sd-jwt/utils';
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -41,6 +42,9 @@ describe('index', () => {
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
       },
       {
         _sd: ['foo'],
@@ -75,6 +79,9 @@ describe('index', () => {
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
       },
       {
         _sd: ['foo'],
@@ -107,6 +114,9 @@ describe('index', () => {
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
       },
       {
         _sd: ['foo'],
@@ -145,6 +155,9 @@ describe('index', () => {
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
       },
       {
         _sd: ['foo'],
@@ -185,6 +198,9 @@ describe('index', () => {
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
       },
       {
         _sd: ['foo'],
@@ -212,6 +228,9 @@ describe('index', () => {
       const credential = await sdjwt.issue(
         {
           foo: 'bar',
+          iss: 'Issuer',
+          iat: new Date().getTime(),
+          vct: '',
         },
         {
           _sd: ['foo'],
@@ -232,6 +251,9 @@ describe('index', () => {
       const credential = await sdjwt.issue(
         {
           foo: 'bar',
+          iss: 'Issuer',
+          iat: new Date().getTime(),
+          vct: '',
         },
         {
           _sd: ['foo'],
@@ -253,6 +275,9 @@ describe('index', () => {
       const credential = await sdjwt.issue(
         {
           foo: 'bar',
+          iss: 'Issuer',
+          iat: new Date().getTime(),
+          vct: '',
         },
         {
           _sd: ['foo'],
@@ -280,6 +305,9 @@ describe('index', () => {
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
       },
       {
         _sd: ['foo'],
@@ -318,6 +346,9 @@ describe('index', () => {
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
       },
       {
         _sd: ['foo'],
@@ -354,6 +385,9 @@ describe('index', () => {
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
       },
       {
         _sd: ['foo'],
@@ -375,5 +409,71 @@ describe('index', () => {
     } catch (e) {
       expect(e).toBeDefined();
     }
+  });
+
+  test('kbSignAlg not found', async () => {
+    const { signer, verifier } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      verifier,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      kbSigner: signer,
+      signAlg: 'EdDSA',
+    });
+
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    const presentation = sdjwt.present(credential, ['foo'], {
+      kb: {
+        payload: {
+          sd_hash: 'sha-256',
+          aud: '1',
+          iat: 1,
+          nonce: '342',
+        },
+      },
+    });
+    expect(presentation).rejects.toThrow(
+      'Key Binding sign algorithm not specified',
+    );
+  });
+
+  test('hasher is not found', () => {
+    const sdjwt = new SDJwtInstance({});
+    expect(sdjwt.keys('')).rejects.toThrow('Hasher not found');
+  });
+
+  test('try to disclose a procted field', async () => {
+    const { signer } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance({
+      signer,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      signAlg: 'EdDSA',
+    });
+
+    const credential = sdjwt.issue(
+      {
+        foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
+      },
+      {
+        _sd: ['foo', 'iss'],
+      },
+    );
+    expect(credential).rejects.toThrow('Cannot disclose protected field');
   });
 });
