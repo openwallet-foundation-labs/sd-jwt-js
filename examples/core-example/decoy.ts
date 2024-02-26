@@ -26,7 +26,15 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
     _sd: ['id'],
     _sd_decoy: 1, // 1 decoy digest will be added in SD JWT
   };
-  const credential = await sdjwt.issue(claims, disclosureFrame);
+  const credential = await sdjwt.issue(
+    {
+      iss: 'Issuer',
+      iat: new Date().getTime(),
+      vct: 'https://example.com',
+      ...claims,
+    },
+    disclosureFrame,
+  );
   console.log('encodedSdjwt:', credential);
 
   // You can check the decoy digest in the SD JWT by decoding it
