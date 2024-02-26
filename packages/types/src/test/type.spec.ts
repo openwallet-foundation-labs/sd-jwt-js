@@ -5,7 +5,7 @@ import {
   SD_DIGEST,
   SD_DECOY,
   KB_JWT_TYP,
-} from '../type';
+} from '../index';
 
 describe('Variable tests', () => {
   test('SD_SEPARATOR', () => {
