@@ -1,6 +1,12 @@
 import { describe, expect, test } from 'vitest';
 import { generateSalt, digest, ES256, Ed25519 } from '../index';
 
+// Extract the major version as a number
+const nodeVersionMajor = parseInt(
+  process.version.split('.')[0].substring(1),
+  10,
+);
+
 describe('This file is for utility functions', () => {
   test('generateSalt', async () => {
     const salt = generateSalt(8);
@@ -28,7 +34,7 @@ describe('This file is for utility functions', () => {
     expect(s1.length).toBe(64);
   });
 
-  test('Ed25519', async () => {
+  (nodeVersionMajor < 20 ? test.skip : test)('Ed25519', async () => {
     const { privateKey, publicKey } = await Ed25519.generateKeyPair();
     expect(privateKey).toBeDefined();
     expect(publicKey).toBeDefined();
@@ -47,7 +53,7 @@ describe('This file is for utility functions', () => {
     expect(result).toBe(true);
   });
 
-  test('ES256', async () => {
+  (nodeVersionMajor < 20 ? test.skip : test)('ES256', async () => {
     const { privateKey, publicKey } = await ES256.generateKeyPair();
     expect(privateKey).toBeDefined();
     expect(publicKey).toBeDefined();

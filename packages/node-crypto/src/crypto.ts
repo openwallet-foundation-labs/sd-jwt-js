@@ -1,23 +1,4 @@
-import {
-  createHash,
-  randomBytes,
-  sign,
-  verify,
-  generateKeyPairSync,
-  createPublicKey,
-  createPrivateKey,
-  KeyObject,
-} from 'crypto';
-import {
-  exportJWK,
-  importJWK,
-  JWK,
-  exportPKCS8,
-  exportSPKI,
-  KeyLike,
-} from 'jose';
-
-const { subtle } = globalThis.crypto;
+import { createHash, randomBytes } from 'crypto';
 
 export const generateSalt = (length: number): string => {
   if (length <= 0) {
@@ -42,6 +23,7 @@ const toNodeCryptoAlg = (hashAlg: string): string =>
 export const Ed25519 = {
   alg: 'EdDSA',
   async generateKeyPair() {
+    const { subtle } = globalThis.crypto;
     const keyPair = (await subtle.generateKey(
       {
         name: 'Ed25519',
@@ -58,6 +40,7 @@ export const Ed25519 = {
   },
 
   async getSigner(privateKeyJWK: object) {
+    const { subtle } = globalThis.crypto;
     const privateKey = await subtle.importKey(
       'jwk',
       privateKeyJWK,
@@ -86,6 +69,7 @@ export const Ed25519 = {
   },
 
   async getVerifier(publicKeyJWK: object) {
+    const { subtle } = globalThis.crypto;
     const publicKey = await subtle.importKey(
       'jwk',
       publicKeyJWK,
@@ -120,6 +104,7 @@ export const ES256 = {
   alg: 'ES256',
 
   async generateKeyPair() {
+    const { subtle } = globalThis.crypto;
     const keyPair = await subtle.generateKey(
       {
         name: 'ECDSA',
@@ -137,6 +122,7 @@ export const ES256 = {
   },
 
   async getSigner(privateKeyJWK: object) {
+    const { subtle } = globalThis.crypto;
     const privateKey = await subtle.importKey(
       'jwk',
       privateKeyJWK,
@@ -167,6 +153,7 @@ export const ES256 = {
   },
 
   async getVerifier(publicKeyJWK: object) {
+    const { subtle } = globalThis.crypto;
     const publicKey = await subtle.importKey(
       'jwk',
       publicKeyJWK,
