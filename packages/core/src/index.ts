@@ -105,7 +105,11 @@ export class SDJwtInstance {
     }
 
     //validate disclosureFrame according to https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-01.html#section-3.2.2.2
-    if (disclosureFrame?._sd) {
+    if (
+      disclosureFrame?._sd &&
+      Array.isArray(disclosureFrame._sd) &&
+      disclosureFrame._sd.length > 0
+    ) {
       const reservedNames = [
         'iss',
         'iat',
@@ -116,15 +120,11 @@ export class SDJwtInstance {
         'status',
       ];
       // check if there is any reserved names in the disclosureFrame._sd array
-      const reservedNamesInDisclosureFrame = Object.keys(
-        disclosureFrame._sd,
+      const reservedNamesInDisclosureFrame = (
+        disclosureFrame._sd as string[]
       ).filter((key) => reservedNames.includes(key));
       if (reservedNamesInDisclosureFrame.length > 0) {
-        throw new SDJWTException(
-          `Invalid disclosureFrame: reserved names in _sd array: ${reservedNamesInDisclosureFrame.join(
-            ', ',
-          )}`,
-        );
+        throw new SDJWTException('Cannot disclose protected field');
       }
     }
 
