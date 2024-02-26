@@ -22,7 +22,7 @@ describe('Variable tests', () => {
   });
 
   test('SD_JWT_TYP', () => {
-    expect(SD_JWT_TYP).toBe('sd-jwt');
+    expect(SD_JWT_TYP).toBe('sd-jwt-vc');
   });
 
   test('SD_DECOY', () => {
