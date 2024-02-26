@@ -1,9 +1,18 @@
-import { SDJwtInstance } from '../index';
-import { Signer, Verifier } from '@sd-jwt/types';
+import { SDJwtInstance, SDJwtPayload } from '../index';
+import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import Crypto from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { SDJWTException } from '@sd-jwt/utils';
+
+export class TestInstance extends SDJwtInstance<SDJwtPayload> {
+  protected type = 'sd-jwt';
+
+  protected validateReservedFields(
+    disclosureFrame: DisclosureFrame<SDJwtPayload>,
+  ): void {
+    return;
+  }
+}
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -24,13 +33,13 @@ export const createSignerVerifier = () => {
 
 describe('index', () => {
   test('create', async () => {
-    const sdjwt = new SDJwtInstance();
+    const sdjwt = new TestInstance();
     expect(sdjwt).toBeDefined();
   });
 
   test('kbJwt', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -69,7 +78,7 @@ describe('index', () => {
 
   test('issue', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -103,7 +112,7 @@ describe('index', () => {
       );
     };
 
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       signAlg: 'EdDSA',
       verifier: failedverifier,
@@ -141,7 +150,7 @@ describe('index', () => {
         Buffer.from(sig, 'base64url'),
       );
     };
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -184,7 +193,7 @@ describe('index', () => {
 
   test('verify with kbJwt', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -223,7 +232,7 @@ describe('index', () => {
   });
 
   test('Hasher not found', async () => {
-    const sdjwt = new SDJwtInstance({});
+    const sdjwt = new TestInstance({});
     try {
       const credential = await sdjwt.issue(
         {
@@ -244,7 +253,7 @@ describe('index', () => {
   });
 
   test('SaltGenerator not found', async () => {
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       hasher: digest,
     });
     try {
@@ -267,7 +276,7 @@ describe('index', () => {
   });
 
   test('Signer not found', async () => {
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       hasher: digest,
       saltGenerator: generateSalt,
     });
@@ -292,7 +301,7 @@ describe('index', () => {
 
   test('Verifier not found', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       hasher: digest,
       saltGenerator: generateSalt,
@@ -333,7 +342,7 @@ describe('index', () => {
 
   test('kbSigner not found', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       verifier,
       hasher: digest,
@@ -372,7 +381,7 @@ describe('index', () => {
 
   test('kbVerifier not found', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       verifier,
       hasher: digest,
@@ -413,7 +422,7 @@ describe('index', () => {
 
   test('kbSignAlg not found', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance({
+    const sdjwt = new TestInstance({
       signer,
       verifier,
       hasher: digest,
@@ -450,30 +459,7 @@ describe('index', () => {
   });
 
   test('hasher is not found', () => {
-    const sdjwt = new SDJwtInstance({});
+    const sdjwt = new TestInstance({});
     expect(sdjwt.keys('')).rejects.toThrow('Hasher not found');
-  });
-
-  test('try to disclose a procted field', async () => {
-    const { signer } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance({
-      signer,
-      hasher: digest,
-      saltGenerator: generateSalt,
-      signAlg: 'EdDSA',
-    });
-
-    const credential = sdjwt.issue(
-      {
-        foo: 'bar',
-        iss: 'Issuer',
-        iat: new Date().getTime(),
-        vct: '',
-      },
-      {
-        _sd: ['foo', 'iss'],
-      },
-    );
-    expect(credential).rejects.toThrow('Cannot disclose protected field');
   });
 });

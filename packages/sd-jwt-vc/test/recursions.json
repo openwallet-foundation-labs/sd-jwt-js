@@ -1,0 +1,98 @@
+{
+  "claims": {
+    "foo": ["one", "two"],
+    "bar": {
+      "red": 1,
+      "green": 2
+    },
+    "qux": [["blue", "yellow"]],
+    "baz": [["orange", "purple"], ["black", "white"]],
+    "animals": {
+      "snake": {
+        "name": "python",
+        "age": 10
+      },
+      "bird": {
+        "name": "eagle",
+        "age": 20
+      }
+    }
+  },
+  "disclosureFrame": {
+    "foo": {
+      "_sd": [0, 1]
+    },
+    "bar": {
+      "_sd": ["red", "green"]
+    },
+    "qux": {
+      "_sd": [0],
+      "0": {
+        "_sd": [0, 1]
+      }
+    },
+    "baz": {
+      "_sd": [0, 1],
+      "0": {
+        "_sd": [0, 1]
+      },
+      "1": {
+        "_sd": [0, 1]
+      }
+    },
+    "animals": {
+      "_sd": ["snake", "bird"],
+      "snake": {
+        "_sd": ["name", "age"]
+      },
+      "bird": {
+        "_sd": ["name", "age"]
+      }
+    }
+  },
+  "presentationKeys": [
+    "foo.1",
+    "bar.green",
+    "qux.0",
+    "qux.0.0",
+    "qux.0.1",
+    "baz.0",
+    "baz.0.0",
+    "baz.0.1",
+    "baz.1",
+    "baz.1.0",
+    "baz.1.1",
+    "animals.snake",
+    "animals.snake.age",
+    "animals.bird",
+    "animals.bird.age"
+  ],
+  "presenatedClaims": {
+    "foo": ["two"],
+    "bar": {
+      "green": 2
+    },
+    "qux": [["blue", "yellow"]],
+    "baz": [["orange", "purple"], ["black", "white"]],
+    "animals": {
+      "snake": {
+        "age": 10
+      },
+      "bird": {
+        "age": 20
+      }
+    }
+  },
+  "requiredClaimKeys": [
+    "foo.1",
+    "bar.green",
+    "qux.0.0",
+    "qux.0.1",
+    "baz.0.0",
+    "baz.0.1",
+    "baz.1.0",
+    "baz.1.1",
+    "animals.snake.age",
+    "animals.bird.age"
+  ]
+}

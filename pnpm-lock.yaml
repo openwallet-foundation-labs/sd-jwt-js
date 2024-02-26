@@ -167,6 +167,19 @@ importers:
         specifier: workspace:*
         version: link:../node-crypto
 
+  packages/sd-jwt-vc:
+    dependencies:
+      '@sd-jwt/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@sd-jwt/crypto-nodejs':
+        specifier: workspace:*
+        version: link:../node-crypto
+      '@sd-jwt/types':
+        specifier: workspace:*
+        version: link:../types
+
   packages/types: {}
 
   packages/utils:
