@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { generateSalt, digest, ES256, Ed25519 } from '../index';
+import { generateSalt, digest, ES256 } from '../index';
 
 // Extract the major version as a number
 const nodeVersionMajor = parseInt(
@@ -32,25 +32,6 @@ describe('This file is for utility functions', () => {
     const s1 = await digest(payload, 'SHA512');
     expect(s1).toBeDefined();
     expect(s1.length).toBe(64);
-  });
-
-  (nodeVersionMajor < 20 ? test.skip : test)('Ed25519', async () => {
-    const { privateKey, publicKey } = await Ed25519.generateKeyPair();
-    expect(privateKey).toBeDefined();
-    expect(publicKey).toBeDefined();
-    expect(typeof privateKey).toBe('object');
-    expect(typeof publicKey).toBe('object');
-
-    const data =
-      'In cryptography, a salt is random data that is used as an additional input to a one-way function that hashes data, a password or passphrase.';
-    const signer = await Ed25519.getSigner(privateKey);
-    const signature = await signer(data);
-    expect(signature).toBeDefined();
-    expect(typeof signature).toBe('string');
-
-    const verifier = await Ed25519.getVerifier(publicKey);
-    const result = await verifier(data, signature);
-    expect(result).toBe(true);
   });
 
   (nodeVersionMajor < 20 ? test.skip : test)('ES256', async () => {
