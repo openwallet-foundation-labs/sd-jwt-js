@@ -39,25 +39,6 @@ importers:
         specifier: ^1.2.2
         version: 1.3.1(@types/node@20.11.20)(jsdom@24.0.0)
 
-  examples/core-example:
-    dependencies:
-      '@sd-jwt/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@sd-jwt/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-    devDependencies:
-      '@types/node':
-        specifier: ^20.10.4
-        version: 20.11.19
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.11.19)(typescript@5.3.3)
-      typescript:
-        specifier: ^5.3.3
-        version: 5.3.3
-
   examples/decode-example:
     dependencies:
       '@sd-jwt/crypto-nodejs':
@@ -101,6 +82,28 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.11.19)(typescript@5.3.3)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
+  examples/sd-jwt-vc-example:
+    dependencies:
+      '@sd-jwt/crypto-nodejs':
+        specifier: workspace:*
+        version: link:../../packages/node-crypto
+      '@sd-jwt/sd-jwt-vc':
+        specifier: workspace:*
+        version: link:../../packages/sd-jwt-vc
+      '@sd-jwt/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.20
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.11.20)(typescript@5.3.3)
       typescript:
         specifier: ^5.3.3
         version: 5.3.3

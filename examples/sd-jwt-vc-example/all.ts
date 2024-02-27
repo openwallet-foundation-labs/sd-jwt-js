@@ -1,12 +1,12 @@
-import { SDJwtInstance } from '@sd-jwt/core';
+import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { DisclosureFrame } from '@sd-jwt/types';
 import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
-  const { signer, verifier } = createSignerVerifier();
+  const { signer, verifier } = await createSignerVerifier();
 
   // Create SDJwt instance for use
-  const sdjwt = new SDJwtInstance({
+  const sdjwt = new SDJwtVcInstance({
     signer,
     verifier,
     signAlg: 'EdDSA',
