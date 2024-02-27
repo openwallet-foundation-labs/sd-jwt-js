@@ -1,8 +1,8 @@
-import { SDJwt, SDJwtInstance, SDJwtPayload } from '@sd-jwt/core';
+import { SDJwt, SDJwtInstance, SdJwtPayload } from '@sd-jwt/core';
 import { DisclosureFrame } from '@sd-jwt/types';
 import { SDJWTException } from '../../utils/dist';
 
-export interface SdJwtVcPayload extends SDJwtPayload {
+export interface SdJwtVcPayload extends SdJwtPayload {
   // The Issuer of the Verifiable Credential. The value of iss MUST be a URI. See [RFC7519] for more information.
   iss: string;
   // The time of issuance of the Verifiable Credential. See [RFC7519] for more information.

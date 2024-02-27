@@ -15,9 +15,9 @@ export * from './kbjwt';
 export * from './jwt';
 export * from './decoy';
 
-export type SdJwtPayload = Record<string, unknown>
+export type SdJwtPayload = Record<string, unknown>;
 
-export abstract class SDJwtInstance<ExtendedPayload extends SDJwtPayload> {
+export abstract class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
   //header type
   protected abstract type: string;
 

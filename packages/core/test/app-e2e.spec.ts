@@ -1,5 +1,5 @@
 import Crypto from 'node:crypto';
-import { SDJwtPayload } from '../src';
+import { SdJwtPayload } from '../src';
 import { DisclosureFrame, SD, Signer, Verifier } from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
@@ -235,8 +235,8 @@ async function JSONtest(filename: string) {
 }
 
 type TestJson = {
-  claims: SDJwtPayload;
-  disclosureFrame: DisclosureFrame<SDJwtPayload>;
+  claims: SdJwtPayload;
+  disclosureFrame: DisclosureFrame<SdJwtPayload>;
   presentationKeys: string[];
   presenatedClaims: object;
   requiredClaimKeys: string[];
