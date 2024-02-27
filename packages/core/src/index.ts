@@ -4,6 +4,7 @@ import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
 import {
   DisclosureFrame,
+  Hasher,
   KBOptions,
   KB_JWT_TYP,
   SDJWTCompact,
@@ -143,9 +144,11 @@ export class SDJwtInstance {
       return presentSdJwtWithoutKb;
     }
 
-    const { _sd_alg } = getSDAlgAndPayload(sdjwt.jwt.payload);
-    const sdHash = await hasher(presentSdJwtWithoutKb, _sd_alg);
-    const sdHashStr = Uint8ArrayToBase64Url(sdHash);
+    const sdHashStr = await this.calculateSDHash(
+      presentSdJwtWithoutKb,
+      sdjwt,
+      hasher,
+    );
 
     sdjwt.kbJwt = await this.createKBJwt(options.kb, sdHashStr);
     return sdjwt.present(presentationKeys.sort(), hasher);
@@ -198,15 +201,31 @@ export class SDJwtInstance {
     });
 
     const presentSdJwtWithoutKb = sdjwtWithoutKb.encodeSDJwt();
-    const { _sd_alg } = getSDAlgAndPayload(sdjwt.jwt.payload);
-    const sdHash = await hasher(presentSdJwtWithoutKb, _sd_alg);
-    const sdHashStr = Uint8ArrayToBase64Url(sdHash);
+    const sdHashStr = await this.calculateSDHash(
+      presentSdJwtWithoutKb,
+      sdjwt,
+      hasher,
+    );
 
     if (sdHashStr !== sdHashfromKb) {
       throw new SDJWTException('Invalid sd_hash in Key Binding JWT');
     }
 
     return { payload, header, kb };
+  }
+
+  private async calculateSDHash(
+    presentSdJwtWithoutKb: string,
+    sdjwt: SDJwt,
+    hasher: Hasher,
+  ) {
+    if (!sdjwt.jwt || !sdjwt.jwt.payload) {
+      throw new SDJWTException('Invalid SD JWT');
+    }
+    const { _sd_alg } = getSDAlgAndPayload(sdjwt.jwt.payload);
+    const sdHash = await hasher(presentSdJwtWithoutKb, _sd_alg);
+    const sdHashStr = Uint8ArrayToBase64Url(sdHash);
+    return sdHashStr;
   }
 
   // This function is for validating the SD JWT
