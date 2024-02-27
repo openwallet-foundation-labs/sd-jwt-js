@@ -15,10 +15,7 @@ export * from './kbjwt';
 export * from './jwt';
 export * from './decoy';
 
-export interface SDJwtPayload {
-  // more entries
-  [key: string]: unknown;
-}
+export type SdJwtPayload = Record<string, unknown>
 
 export abstract class SDJwtInstance<ExtendedPayload extends SDJwtPayload> {
   //header type
