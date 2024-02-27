@@ -1,14 +1,14 @@
-import { SDJwtInstance, SDJwtPayload } from '../index';
+import { SDJwtInstance, SdJwtPayload } from '../index';
 import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import Crypto from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 
-export class TestInstance extends SDJwtInstance<SDJwtPayload> {
+export class TestInstance extends SDJwtInstance<SdJwtPayload> {
   protected type = 'sd-jwt';
 
   protected validateReservedFields(
-    disclosureFrame: DisclosureFrame<SDJwtPayload>,
+    disclosureFrame: DisclosureFrame<SdJwtPayload>,
   ): void {
     return;
   }
