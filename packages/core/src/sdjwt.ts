@@ -6,12 +6,15 @@ import {
   DisclosureFrame,
   Hasher,
   HasherAndAlg,
+  KBOptions,
+  KB_JWT_TYP,
   SDJWTCompact,
   SD_DECOY,
   SD_DIGEST,
   SD_LIST_KEY,
   SD_SEPARATOR,
   SaltGenerator,
+  Signer,
   kbHeader,
   kbPayload,
 } from '@sd-jwt/types';
@@ -112,6 +115,25 @@ export class SDJwt<
       disclosures,
       kbJwt,
     });
+  }
+
+  private async createKBJwt(
+    options: KBOptions,
+    sdHash: string,
+    kbSigner: Signer,
+    kbSignAlg: string,
+  ): Promise<KBJwt> {
+    const { payload } = options;
+    const kbJwt = new KBJwt({
+      header: {
+        typ: KB_JWT_TYP,
+        alg: kbSignAlg,
+      },
+      payload: { ...payload, sd_hash: sdHash },
+    });
+
+    await kbJwt.sign(kbSigner);
+    return kbJwt;
   }
 
   public async present(keys: string[], hasher: Hasher): Promise<SDJWTCompact> {

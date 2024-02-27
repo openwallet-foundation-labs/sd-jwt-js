@@ -32,7 +32,7 @@ export type kbPayload = {
 };
 
 export type KBOptions = {
-  payload: kbPayload;
+  payload: Omit<kbPayload, 'sd_hash'>;
 };
 
 export type OrPromise<T> = T | Promise<T>;
@@ -104,14 +104,14 @@ type Frame<Payload> = Payload extends Array<infer U>
     ? Record<number, Frame<U>> & SD<Payload> & DECOY
     : SD<Payload> & DECOY
   : Payload extends Record<string, unknown>
-    ? NonNever<
-        {
-          [K in keyof Payload]?: Payload[K] extends object
-            ? Frame<Payload[K]>
-            : never;
-        } & SD<Payload> &
-          DECOY
-      >
-    : SD<Payload> & DECOY;
+  ? NonNever<
+      {
+        [K in keyof Payload]?: Payload[K] extends object
+          ? Frame<Payload[K]>
+          : never;
+      } & SD<Payload> &
+        DECOY
+    >
+  : SD<Payload> & DECOY;
 
 export type DisclosureFrame<T extends object> = Frame<T>;
