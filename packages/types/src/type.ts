@@ -32,7 +32,7 @@ export type kbPayload = {
 };
 
 export type KBOptions = {
-  payload: kbPayload;
+  payload: Omit<kbPayload, 'sd_hash'>;
 };
 
 export type OrPromise<T> = T | Promise<T>;

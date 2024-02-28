@@ -52,7 +52,6 @@ describe('index', () => {
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
         payload: {
-          sd_hash: 'sha-256',
           aud: '1',
           iat: 1,
           nonce: '342',
@@ -154,8 +153,7 @@ describe('index', () => {
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
         payload: {
-          sd_hash: '',
-          aud: '1',
+          aud: '',
           iat: 1,
           nonce: '342',
         },
@@ -194,7 +192,6 @@ describe('index', () => {
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
         payload: {
-          sd_hash: 'sha-256',
           aud: '1',
           iat: 1,
           nonce: '342',
@@ -289,7 +286,6 @@ describe('index', () => {
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
         payload: {
-          sd_hash: 'sha-256',
           aud: '1',
           iat: 1,
           nonce: '342',
@@ -327,7 +323,6 @@ describe('index', () => {
       const presentation = await sdjwt.present(credential, ['foo'], {
         kb: {
           payload: {
-            sd_hash: 'sha-256',
             aud: '1',
             iat: 1,
             nonce: '342',
@@ -363,7 +358,6 @@ describe('index', () => {
     const presentation = await sdjwt.present(credential, ['foo'], {
       kb: {
         payload: {
-          sd_hash: 'sha-256',
           aud: '1',
           iat: 1,
           nonce: '342',

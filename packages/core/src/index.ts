@@ -1,15 +1,17 @@
-import { SDJWTException } from '@sd-jwt/utils';
+import { SDJWTException, Uint8ArrayToBase64Url } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
 import {
   DisclosureFrame,
+  Hasher,
   KBOptions,
   KB_JWT_TYP,
   SDJWTCompact,
   SDJWTConfig,
   SD_JWT_TYP,
 } from '@sd-jwt/types';
+import { getSDAlgAndPayload } from '@sd-jwt/decode';
 
 export * from './sdjwt';
 export * from './kbjwt';
@@ -27,20 +29,24 @@ export class SDJwtInstance {
     }
   }
 
-  private async createKBJwt(options: KBOptions): Promise<KBJwt> {
+  private async createKBJwt(
+    options: KBOptions,
+    sdHash: string,
+  ): Promise<KBJwt> {
     if (!this.userConfig.kbSigner) {
       throw new SDJWTException('Key Binding Signer not found');
     }
     if (!this.userConfig.kbSignAlg) {
       throw new SDJWTException('Key Binding sign algorithm not specified');
     }
+
     const { payload } = options;
     const kbJwt = new KBJwt({
       header: {
         typ: KB_JWT_TYP,
         alg: this.userConfig.kbSignAlg,
       },
-      payload,
+      payload: { ...payload, sd_hash: sdHash },
     });
 
     await kbJwt.sign(this.userConfig.kbSigner);
@@ -127,9 +133,24 @@ export class SDJwtInstance {
     const hasher = this.userConfig.hasher;
 
     const sdjwt = await SDJwt.fromEncode(encodedSDJwt, hasher);
-    const kbJwt = options?.kb ? await this.createKBJwt(options.kb) : undefined;
-    sdjwt.kbJwt = kbJwt;
 
+    if (!sdjwt.jwt?.payload) throw new SDJWTException('Payload not found');
+    const presentSdJwtWithoutKb = await sdjwt.present(
+      presentationKeys.sort(),
+      hasher,
+    );
+
+    if (!options?.kb) {
+      return presentSdJwtWithoutKb;
+    }
+
+    const sdHashStr = await this.calculateSDHash(
+      presentSdJwtWithoutKb,
+      sdjwt,
+      hasher,
+    );
+
+    sdjwt.kbJwt = await this.createKBJwt(options.kb, sdHashStr);
     return sdjwt.present(presentationKeys.sort(), hasher);
   }
 
@@ -147,7 +168,7 @@ export class SDJwtInstance {
     const hasher = this.userConfig.hasher;
 
     const sdjwt = await SDJwt.fromEncode(encodedSDJwt, hasher);
-    if (!sdjwt.jwt) {
+    if (!sdjwt.jwt || !sdjwt.jwt.payload) {
       throw new SDJWTException('Invalid SD JWT');
     }
     const { payload, header } = await this.validate(encodedSDJwt);
@@ -173,7 +194,38 @@ export class SDJwtInstance {
       throw new SDJWTException('Key Binding Verifier not found');
     }
     const kb = await sdjwt.kbJwt.verify(this.userConfig.kbVerifier);
+    const sdHashfromKb = kb.payload.sd_hash;
+    const sdjwtWithoutKb = new SDJwt({
+      jwt: sdjwt.jwt,
+      disclosures: sdjwt.disclosures,
+    });
+
+    const presentSdJwtWithoutKb = sdjwtWithoutKb.encodeSDJwt();
+    const sdHashStr = await this.calculateSDHash(
+      presentSdJwtWithoutKb,
+      sdjwt,
+      hasher,
+    );
+
+    if (sdHashStr !== sdHashfromKb) {
+      throw new SDJWTException('Invalid sd_hash in Key Binding JWT');
+    }
+
     return { payload, header, kb };
+  }
+
+  private async calculateSDHash(
+    presentSdJwtWithoutKb: string,
+    sdjwt: SDJwt,
+    hasher: Hasher,
+  ) {
+    if (!sdjwt.jwt || !sdjwt.jwt.payload) {
+      throw new SDJWTException('Invalid SD JWT');
+    }
+    const { _sd_alg } = getSDAlgAndPayload(sdjwt.jwt.payload);
+    const sdHash = await hasher(presentSdJwtWithoutKb, _sd_alg);
+    const sdHashStr = Uint8ArrayToBase64Url(sdHash);
+    return sdHashStr;
   }
 
   // This function is for validating the SD JWT
