@@ -1,12 +1,12 @@
-import { SDJwtInstance } from '@sd-jwt/core';
+import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { DisclosureFrame } from '@sd-jwt/types';
 import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
-  const { signer, verifier } = createSignerVerifier();
+  const { signer, verifier } = await createSignerVerifier();
 
   // Create SDJwt instance for use
-  const sdjwt = new SDJwtInstance({
+  const sdjwt = new SDJwtVcInstance({
     signer,
     verifier,
     signAlg: 'EdDSA',
@@ -21,39 +21,24 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
     lastname: 'Doe',
     ssn: '123-45-6789',
     id: '1234',
-    data: {
-      firstname: 'John',
-      lastname: 'Doe',
-      ssn: '123-45-6789',
-      list: [{ r: '1' }, 'b', 'c'],
-    },
-    data2: {
-      hi: 'bye',
-    },
   };
 
   // Issuer Define the disclosure frame to specify which claims can be disclosed
   const disclosureFrame: DisclosureFrame<typeof claims> = {
-    _sd: ['firstname', 'id', 'data2'],
-    data: {
-      _sd: ['list'],
-      _sd_decoy: 2,
-      list: {
-        _sd: [0, 2],
-        _sd_decoy: 1,
-        0: {
-          _sd: ['r'],
-        },
-      },
-    },
-    data2: {
-      _sd: ['hi'],
-    },
+    _sd: ['firstname', 'id'],
   };
 
   // Issue a signed JWT credential with the specified claims and disclosures
   // Return a Encoded SD JWT. Issuer send the credential to the holder
-  const credential = await sdjwt.issue(claims, disclosureFrame);
+  const credential = await sdjwt.issue(
+    {
+      iss: 'Issuer',
+      iat: new Date().getTime(),
+      vct: 'https://example.com',
+      ...claims,
+    },
+    disclosureFrame,
+  );
   console.log('encodedJwt:', credential);
 
   // Holder Receive the credential from the issuer and validate it
@@ -96,10 +81,10 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   console.log('presentedSDJwt:', presentation);
 
   // Verifier Define the required claims that need to be verified in the presentation
-  const requiredClaims = ['firstname', 'id', 'data.ssn'];
+  const requiredClaims = ['firstname', 'id'];
 
   // Verify the presentation using the public key and the required claims
   // return a boolean result
-  const verified = await sdjwt.verify(credential, requiredClaims);
+  const verified = await sdjwt.verify(presentation, requiredClaims);
   console.log('verified:', verified);
 })();

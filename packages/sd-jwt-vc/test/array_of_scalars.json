@@ -1,0 +1,15 @@
+{
+  "claims": {
+    "nationalities": ["US", "CA", "DE"]
+  },
+  "disclosureFrame": {
+    "nationalities": {
+      "_sd": [0, 1]
+    }
+  },
+  "presentationKeys": ["nationalities.1"],
+  "presenatedClaims": {
+    "nationalities": ["CA", "DE"]
+  },
+  "requiredClaimKeys": ["nationalities.0", "nationalities.1"]
+}

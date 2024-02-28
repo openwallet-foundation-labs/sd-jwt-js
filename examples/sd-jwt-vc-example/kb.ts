@@ -1,12 +1,12 @@
-import { SDJwtInstance } from '@sd-jwt/core';
+import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import { DisclosureFrame } from '@sd-jwt/types';
 import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
-  const { signer, verifier } = createSignerVerifier();
+  const { signer, verifier } = await createSignerVerifier();
 
   // Create SDJwt instance for use
-  const sdjwt = new SDJwtInstance({
+  const sdjwt = new SDJwtVcInstance({
     signer,
     signAlg: 'EdDSA',
     verifier,
@@ -34,7 +34,15 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
     sd_hash: '1234',
   };
 
-  const encodedSdjwt = await sdjwt.issue(claims, disclosureFrame);
+  const encodedSdjwt = await sdjwt.issue(
+    {
+      iss: 'Issuer',
+      iat: new Date().getTime(),
+      vct: 'https://example.com',
+      ...claims,
+    },
+    disclosureFrame,
+  );
   console.log('encodedSdjwt:', encodedSdjwt);
   const sdjwttoken = await sdjwt.decode(encodedSdjwt);
   console.log(sdjwttoken);

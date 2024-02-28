@@ -16,7 +16,7 @@ importers:
         version: 20.11.20
       '@vitest/coverage-v8':
         specifier: ^1.2.2
-        version: 1.2.2(vitest@1.3.1)
+        version: 1.3.1(vitest@1.3.1)
       jsdom:
         specifier: ^24.0.0
         version: 24.0.0
@@ -38,25 +38,6 @@ importers:
       vitest:
         specifier: ^1.2.2
         version: 1.3.1(@types/node@20.11.20)(jsdom@24.0.0)
-
-  examples/core-example:
-    dependencies:
-      '@sd-jwt/core':
-        specifier: workspace:*
-        version: link:../../packages/core
-      '@sd-jwt/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-    devDependencies:
-      '@types/node':
-        specifier: ^20.10.4
-        version: 20.11.19
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.11.19)(typescript@5.3.3)
-      typescript:
-        specifier: ^5.3.3
-        version: 5.3.3
 
   examples/decode-example:
     dependencies:
@@ -101,6 +82,28 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.11.19)(typescript@5.3.3)
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
+  examples/sd-jwt-vc-example:
+    dependencies:
+      '@sd-jwt/crypto-nodejs':
+        specifier: workspace:*
+        version: link:../../packages/node-crypto
+      '@sd-jwt/sd-jwt-vc':
+        specifier: workspace:*
+        version: link:../../packages/sd-jwt-vc
+      '@sd-jwt/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.11.20
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.11.20)(typescript@5.3.3)
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -166,6 +169,19 @@ importers:
       '@sd-jwt/crypto-nodejs':
         specifier: workspace:*
         version: link:../node-crypto
+
+  packages/sd-jwt-vc:
+    dependencies:
+      '@sd-jwt/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@sd-jwt/crypto-nodejs':
+        specifier: workspace:*
+        version: link:../node-crypto
+      '@sd-jwt/types':
+        specifier: workspace:*
+        version: link:../types
 
   packages/types: {}
 
@@ -1310,10 +1326,10 @@ packages:
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
     dev: true
 
-  /@vitest/coverage-v8@1.2.2(vitest@1.3.1):
-    resolution: {integrity: sha512-IHyKnDz18SFclIEEAHb9Y4Uxx0sPKC2VO1kdDCs1BF6Ip4S8rQprs971zIsooLUn7Afs71GRxWMWpkCGZpRMhw==}
+  /@vitest/coverage-v8@1.3.1(vitest@1.3.1):
+    resolution: {integrity: sha512-UuBnkSJUNE9rdHjDCPyJ4fYuMkoMtnghes1XohYa4At0MS3OQSAo97FrbwSLRshYsXThMZy1+ybD/byK5llyIg==}
     peerDependencies:
-      vitest: ^1.0.0
+      vitest: 1.3.1
     dependencies:
       '@ampproject/remapping': 2.2.1
       '@bcoe/v8-coverage': 0.2.3

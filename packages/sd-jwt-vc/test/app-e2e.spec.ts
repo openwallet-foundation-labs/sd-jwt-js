@@ -1,11 +1,10 @@
 import Crypto from 'node:crypto';
-import { SdJwtPayload } from '../src';
-import { DisclosureFrame, SD, Signer, Verifier } from '@sd-jwt/types';
+import { SDJwtVcInstance } from '../src';
+import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { TestInstance } from '../src/test/index.spec';
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -24,10 +23,14 @@ export const createSignerVerifier = () => {
   return { signer, verifier };
 };
 
+const iss = 'ExampleIssuer';
+const vct = 'https://example.com/schema/1';
+const iat = new Date().getTime() / 1000;
+
 describe('App', () => {
   test('Example', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new TestInstance({
+    const sdjwt = new SDJwtVcInstance({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -68,7 +71,9 @@ describe('App', () => {
         _sd: ['hi'],
       },
     };
-    const encodedSdjwt = await sdjwt.issue(claims, disclosureFrame);
+
+    const expectedPayload = { iat, iss, vct, ...claims };
+    const encodedSdjwt = await sdjwt.issue(expectedPayload, disclosureFrame);
     expect(encodedSdjwt).toBeDefined();
     const validated = await sdjwt.validate(encodedSdjwt);
     expect(validated).toBeDefined();
@@ -88,12 +93,15 @@ describe('App', () => {
       'data2',
       'data2.hi',
       'firstname',
+      'iat',
       'id',
+      'iss',
       'lastname',
       'ssn',
+      'vct',
     ]);
     const payloads = await decoded.getClaims(digest);
-    expect(payloads).toEqual(claims);
+    expect(payloads).toEqual(expectedPayload);
     const presentableKeys = await decoded.presentableKeys(digest);
     expect(presentableKeys).toEqual([
       'data.list',
@@ -118,6 +126,9 @@ describe('App', () => {
       data: { firstname: 'John', lastname: 'Doe', ssn: '123-45-6789' },
       id: '1234',
       firstname: 'John',
+      iat,
+      iss,
+      vct,
     });
 
     const requiredClaimKeys = ['firstname', 'id', 'data.ssn'];
@@ -193,7 +204,7 @@ describe('App', () => {
 async function JSONtest(filename: string) {
   const test = loadTestJsonFile(filename);
   const { signer, verifier } = createSignerVerifier();
-  const sdjwt = new TestInstance({
+  const sdjwt = new SDJwtVcInstance({
     signer,
     signAlg: 'EdDSA',
     verifier,
@@ -202,7 +213,8 @@ async function JSONtest(filename: string) {
     saltGenerator: generateSalt,
   });
 
-  const encodedSdjwt = await sdjwt.issue(test.claims, test.disclosureFrame);
+  const payload = { iss, vct, iat, ...test.claims };
+  const encodedSdjwt = await sdjwt.issue(payload, test.disclosureFrame);
 
   expect(encodedSdjwt).toBeDefined();
 
@@ -210,8 +222,8 @@ async function JSONtest(filename: string) {
 
   expect(validated).toBeDefined();
   expect(validated).toStrictEqual({
-    header: { alg: 'EdDSA', typ: 'sd-jwt' },
-    payload: test.claims,
+    header: { alg: 'EdDSA', typ: 'sd-jwt-vc' },
+    payload,
   });
 
   const presentedSDJwt = await sdjwt.present(
@@ -223,20 +235,25 @@ async function JSONtest(filename: string) {
 
   const presentationClaims = await sdjwt.getClaims(presentedSDJwt);
 
-  expect(presentationClaims).toEqual(test.presenatedClaims);
+  expect(presentationClaims).toEqual({
+    ...test.presenatedClaims,
+    iat,
+    iss,
+    vct,
+  });
 
   const verified = await sdjwt.verify(encodedSdjwt, test.requiredClaimKeys);
 
   expect(verified).toBeDefined();
   expect(verified).toStrictEqual({
-    header: { alg: 'EdDSA', typ: 'sd-jwt' },
-    payload: test.claims,
+    header: { alg: 'EdDSA', typ: 'sd-jwt-vc' },
+    payload,
   });
 }
 
 type TestJson = {
-  claims: SdJwtPayload;
-  disclosureFrame: DisclosureFrame<SdJwtPayload>;
+  claims: object;
+  disclosureFrame: DisclosureFrame<object>;
   presentationKeys: string[];
   presenatedClaims: object;
   requiredClaimKeys: string[];

@@ -8,7 +8,6 @@ import {
   KB_JWT_TYP,
   SDJWTCompact,
   SDJWTConfig,
-  SD_JWT_TYP,
 } from '@sd-jwt/types';
 
 export * from './sdjwt';
@@ -16,7 +15,12 @@ export * from './kbjwt';
 export * from './jwt';
 export * from './decoy';
 
-export class SDJwtInstance {
+export type SdJwtPayload = Record<string, unknown>;
+
+export abstract class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
+  //header type
+  protected abstract type: string;
+
   public static DEFAULT_hashAlg = 'sha-256';
 
   private userConfig: SDJWTConfig = {};
@@ -62,7 +66,7 @@ export class SDJwtInstance {
     return jwt.verify(this.userConfig.verifier);
   }
 
-  public async issue<Payload extends Record<string, unknown>>(
+  public async issue<Payload extends ExtendedPayload>(
     payload: Payload,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
@@ -81,6 +85,10 @@ export class SDJwtInstance {
       throw new SDJWTException('sign alogrithm not specified');
     }
 
+    if (disclosureFrame) {
+      this.validateReservedFields<Payload>(disclosureFrame);
+    }
+
     const hasher = this.userConfig.hasher;
     const hashAlg = this.userConfig.hashAlg ?? SDJwtInstance.DEFAULT_hashAlg;
 
@@ -94,7 +102,7 @@ export class SDJwtInstance {
     const OptionHeader = options?.header ?? {};
     const CustomHeader = this.userConfig.omitTyp
       ? OptionHeader
-      : { typ: SD_JWT_TYP, ...OptionHeader };
+      : { typ: this.type, ...OptionHeader };
     const header = { ...CustomHeader, alg };
     const jwt = new Jwt({
       header,
@@ -112,6 +120,10 @@ export class SDJwtInstance {
 
     return sdJwt.encodeSDJwt();
   }
+
+  protected abstract validateReservedFields<T extends ExtendedPayload>(
+    disclosureFrame: DisclosureFrame<T>,
+  ): void;
 
   public async present(
     encodedSDJwt: string,
