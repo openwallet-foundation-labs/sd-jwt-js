@@ -1,11 +1,10 @@
 import Crypto from 'node:crypto';
-import { SdJwtPayload } from '../src';
-import { DisclosureFrame, SD, Signer, Verifier } from '@sd-jwt/types';
+import { SDJwtInstance, SdJwtPayload } from '../src';
+import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { TestInstance } from '../src/test/index.spec';
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -27,7 +26,7 @@ export const createSignerVerifier = () => {
 describe('App', () => {
   test('Example', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new TestInstance({
+    const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -193,7 +192,7 @@ describe('App', () => {
 async function JSONtest(filename: string) {
   const test = loadTestJsonFile(filename);
   const { signer, verifier } = createSignerVerifier();
-  const sdjwt = new TestInstance({
+  const sdjwt = new SDJwtInstance<SdJwtPayload>({
     signer,
     signAlg: 'EdDSA',
     verifier,
@@ -210,7 +209,7 @@ async function JSONtest(filename: string) {
 
   expect(validated).toBeDefined();
   expect(validated).toStrictEqual({
-    header: { alg: 'EdDSA', typ: 'sd-jwt' },
+    header: { alg: 'EdDSA' },
     payload: test.claims,
   });
 
@@ -229,7 +228,7 @@ async function JSONtest(filename: string) {
 
   expect(verified).toBeDefined();
   expect(verified).toStrictEqual({
-    header: { alg: 'EdDSA', typ: 'sd-jwt' },
+    header: { alg: 'EdDSA' },
     payload: test.claims,
   });
 }

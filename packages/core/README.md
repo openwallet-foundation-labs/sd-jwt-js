@@ -32,7 +32,8 @@ Ensure you have Node.js installed as a prerequisite.
 
 ### Usage
 
-This library can not be used on it's own, it is a dependency for other implementations like `@sd-jwt/sd-jwt-vc`.
+The library can be used to create sd-jwt based credentials. To be compliant with the  `sd-jwt-vc` standard, you can use the `@sd-jwt/sd-jwt-vc` that is implementing this spec.
+If you want to use the pure sd-jwt class or implement your own sd-jwt credential approach, you can use this library.
 
 ### Dependencies
 

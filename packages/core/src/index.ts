@@ -19,9 +19,9 @@ export * from './decoy';
 
 export type SdJwtPayload = Record<string, unknown>;
 
-export abstract class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
+export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
   //header type
-  protected abstract type: string;
+  protected type?: string;
 
   public static DEFAULT_hashAlg = 'sha-256';
 
@@ -127,9 +127,16 @@ export abstract class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     return sdJwt.encodeSDJwt();
   }
 
-  protected abstract validateReservedFields<T extends ExtendedPayload>(
+  /**
+   * Validates if the disclosureFrame contains any reserved fields. If so it will throw an error.
+   * @param disclosureFrame
+   * @returns
+   */
+  protected validateReservedFields<T extends ExtendedPayload>(
     disclosureFrame: DisclosureFrame<T>,
-  ): void;
+  ) {
+    return;
+  }
 
   public async present(
     encodedSDJwt: string,
