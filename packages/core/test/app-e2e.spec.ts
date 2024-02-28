@@ -6,16 +6,6 @@ import path from 'path';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 
-export class TestInstance extends SDJwtInstance<SdJwtPayload> {
-  protected type = 'sd-jwt';
-
-  protected validateReservedFields(
-    disclosureFrame: DisclosureFrame<SdJwtPayload>,
-  ): void {
-    return;
-  }
-}
-
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
   const signer: Signer = async (data: string) => {
@@ -36,7 +26,7 @@ export const createSignerVerifier = () => {
 describe('App', () => {
   test('Example', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new TestInstance({
+    const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -202,7 +192,7 @@ describe('App', () => {
 async function JSONtest(filename: string) {
   const test = loadTestJsonFile(filename);
   const { signer, verifier } = createSignerVerifier();
-  const sdjwt = new TestInstance({
+  const sdjwt = new SDJwtInstance<SdJwtPayload>({
     signer,
     signAlg: 'EdDSA',
     verifier,
