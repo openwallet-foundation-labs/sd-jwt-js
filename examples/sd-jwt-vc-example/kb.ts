@@ -31,7 +31,6 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
     aud: 'https://example.com',
     nonce: '1234',
     custom: 'data',
-    sd_hash: '1234',
   };
 
   const encodedSdjwt = await sdjwt.issue(
