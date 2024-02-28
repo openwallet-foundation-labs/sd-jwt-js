@@ -1,12 +1,12 @@
-import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
+import { SDJwtInstance } from '@sd-jwt/core';
 import { DisclosureFrame } from '@sd-jwt/types';
 import { createSignerVerifier, digest, generateSalt } from './utils';
 
 (async () => {
-  const { signer, verifier } = await createSignerVerifier();
+  const { signer, verifier } = createSignerVerifier();
 
   // Create SDJwt instance for use
-  const sdjwt = new SDJwtVcInstance({
+  const sdjwt = new SDJwtInstance({
     signer,
     verifier,
     signAlg: 'EdDSA',
@@ -14,8 +14,10 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
     hashAlg: 'SHA-256',
     saltGenerator: generateSalt,
   });
+
   // Issuer Define the claims object with the user's information
   const claims = {
+    firstname: 'John',
     lastname: 'Doe',
     ssn: '123-45-6789',
     id: '1234',
@@ -23,21 +25,17 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
 
   // Issuer Define the disclosure frame to specify which claims can be disclosed
   const disclosureFrame: DisclosureFrame<typeof claims> = {
-    _sd: ['id'],
-    _sd_decoy: 1, // 1 decoy digest will be added in SD JWT
+    _sd: ['firstname', 'id'],
   };
-  const credential = await sdjwt.issue(
-    {
-      iss: 'Issuer',
-      iat: new Date().getTime(),
-      vct: 'https://example.com',
-      ...claims,
-    },
-    disclosureFrame,
-  );
+
+  // Issue a signed JWT credential with the specified claims and disclosures
+  // Return a Encoded SD JWT. Issuer send the credential to the holder
+  const credential = await sdjwt.issue(claims, disclosureFrame, {
+    header: { typ: 'vc+sd-jwt', custom: 'data' }, // You can add custom header data to the SD JWT
+  });
   console.log('encodedSdjwt:', credential);
 
-  // You can check the decoy digest in the SD JWT by decoding it
+  // You can check the custom header data by decoding the SD JWT
   const sdJwtToken = await sdjwt.decode(credential);
   console.log(sdJwtToken);
 })();

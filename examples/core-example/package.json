@@ -1,5 +1,5 @@
 {
-  "name": "sdjwt-vc-examples",
+  "name": "sdjwt-core-examples",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -23,8 +23,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@sd-jwt/sd-jwt-vc": "workspace:*",
-    "@sd-jwt/types": "workspace:*",
-    "@sd-jwt/crypto-nodejs": "workspace:*"
+    "@sd-jwt/core": "workspace:*",
+    "@sd-jwt/types": "workspace:*"
   }
 }

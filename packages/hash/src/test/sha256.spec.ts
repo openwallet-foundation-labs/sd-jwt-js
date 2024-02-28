@@ -1,6 +1,6 @@
 import { digest } from '@sd-jwt/crypto-nodejs';
 import { bytesToHex } from '@noble/hashes/utils';
-import { hasher, sha256 } from '../index';
+import { hasher, sha256 } from '../sha256';
 import { describe, expect, test } from 'vitest';
 
 describe('SHA-256 tests', () => {

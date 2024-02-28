@@ -1,11 +1,10 @@
 import Crypto from 'node:crypto';
-import { SdJwtPayload } from '../src';
-import { DisclosureFrame, SD, Signer, Verifier } from '@sd-jwt/types';
+import { SDJwtInstance } from '../src';
+import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { TestInstance } from '../src/test/index.spec';
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -27,7 +26,7 @@ export const createSignerVerifier = () => {
 describe('App', () => {
   test('Example', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new TestInstance({
+    const sdjwt = new SDJwtInstance({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -193,7 +192,7 @@ describe('App', () => {
 async function JSONtest(filename: string) {
   const test = loadTestJsonFile(filename);
   const { signer, verifier } = createSignerVerifier();
-  const sdjwt = new TestInstance({
+  const sdjwt = new SDJwtInstance({
     signer,
     signAlg: 'EdDSA',
     verifier,
@@ -235,8 +234,8 @@ async function JSONtest(filename: string) {
 }
 
 type TestJson = {
-  claims: SdJwtPayload;
-  disclosureFrame: DisclosureFrame<SdJwtPayload>;
+  claims: object;
+  disclosureFrame: DisclosureFrame<object>;
   presentationKeys: string[];
   presenatedClaims: object;
   requiredClaimKeys: string[];

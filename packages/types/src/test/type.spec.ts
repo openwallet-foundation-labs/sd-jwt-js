@@ -3,9 +3,10 @@ import {
   SD_SEPARATOR,
   SD_LIST_KEY,
   SD_DIGEST,
+  SD_JWT_TYP,
   SD_DECOY,
   KB_JWT_TYP,
-} from '../index';
+} from '../type';
 
 describe('Variable tests', () => {
   test('SD_SEPARATOR', () => {
@@ -18,6 +19,10 @@ describe('Variable tests', () => {
 
   test('SD_DIGEST', () => {
     expect(SD_DIGEST).toBe('_sd');
+  });
+
+  test('SD_JWT_TYP', () => {
+    expect(SD_JWT_TYP).toBe('sd-jwt');
   });
 
   test('SD_DECOY', () => {
