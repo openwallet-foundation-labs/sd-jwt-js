@@ -100,7 +100,7 @@ export class SDJwtInstance {
       header,
       payload: {
         ...packedClaims,
-        _sd_alg: hashAlg,
+        _sd_alg: disclosureFrame ? hashAlg : undefined,
       },
     });
     await this.SignJwt(jwt);
