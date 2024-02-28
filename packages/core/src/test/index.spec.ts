@@ -3,6 +3,7 @@ import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import Crypto from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
+import exp from 'node:constants';
 
 export class TestInstance extends SDJwtInstance<SdJwtPayload> {
   protected type = 'sd-jwt';
@@ -440,7 +441,6 @@ describe('index', () => {
     const presentation = sdjwt.present(credential, ['foo'], {
       kb: {
         payload: {
-          sd_hash: 'sha-256',
           aud: '1',
           iat: 1,
           nonce: '342',
@@ -452,8 +452,56 @@ describe('index', () => {
     );
   });
 
-  test('hasher is not found', () => {
+  test('hasher is not found', async () => {
+    const { signer } = createSignerVerifier();
+    const sdjwt_create = new TestInstance({
+      signer,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      signAlg: 'EdDSA',
+    });
+    const credential = await sdjwt_create.issue(
+      {
+        foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
     const sdjwt = new TestInstance({});
     expect(sdjwt.keys('')).rejects.toThrow('Hasher not found');
+    expect(sdjwt.presentableKeys('')).rejects.toThrow('Hasher not found');
+    expect(sdjwt.getClaims('')).rejects.toThrow('Hasher not found');
+    expect(() => sdjwt.decode('')).toThrowError('Hasher not found');
+    expect(sdjwt.present(credential, ['foo'])).rejects.toThrow(
+      'Hasher not found',
+    );
+  });
+
+  test('presentableKeys', async () => {
+    const { signer } = createSignerVerifier();
+    const sdjwt = new TestInstance({
+      signer,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      signAlg: 'EdDSA',
+    });
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+    const keys = await sdjwt.presentableKeys(credential);
+    expect(keys).toBeDefined();
+    expect(keys).toEqual(['foo']);
   });
 });

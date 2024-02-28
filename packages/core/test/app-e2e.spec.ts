@@ -1,11 +1,20 @@
 import Crypto from 'node:crypto';
-import { SdJwtPayload } from '../src';
-import { DisclosureFrame, SD, Signer, Verifier } from '@sd-jwt/types';
+import { SDJwtInstance, SdJwtPayload } from '../src';
+import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { TestInstance } from '../src/test/index.spec';
+
+export class TestInstance extends SDJwtInstance<SdJwtPayload> {
+  protected type = 'sd-jwt';
+
+  protected validateReservedFields(
+    disclosureFrame: DisclosureFrame<SdJwtPayload>,
+  ): void {
+    return;
+  }
+}
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
