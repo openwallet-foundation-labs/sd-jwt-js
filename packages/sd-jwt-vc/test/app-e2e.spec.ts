@@ -1,5 +1,5 @@
 import Crypto from 'node:crypto';
-import { SDJwtVcInstance } from '../src';
+import { SDJwtVcInstance, SdJwtVcPayload } from '../src/index';
 import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
@@ -72,7 +72,7 @@ describe('App', () => {
       },
     };
 
-    const expectedPayload = { iat, iss, vct, ...claims };
+    const expectedPayload: SdJwtVcPayload = { iat, iss, vct, ...claims };
     const encodedSdjwt = await sdjwt.issue(expectedPayload, disclosureFrame);
     expect(encodedSdjwt).toBeDefined();
     const validated = await sdjwt.validate(encodedSdjwt);

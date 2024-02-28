@@ -1,0 +1,30 @@
+{
+  "name": "sdjwt-examples",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "basic": "ts-node basic.ts",
+    "all": "ts-node all.ts",
+    "sdjwtobject": "ts-node sdjwtobject.ts",
+    "custom": "ts-node custom.ts",
+    "decoy": "ts-node decoy.ts",
+    "custom_header": "ts-node custom_header.ts",
+    "kb": "ts-node kb.ts",
+    "decode": "ts-node decode.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@sd-jwt/core": "workspace:*",
+    "@sd-jwt/types": "workspace:*",
+    "@sd-jwt/crypto-nodejs": "workspace:*"
+  }
+}
