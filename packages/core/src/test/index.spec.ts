@@ -1,9 +1,10 @@
 import { SDJwtInstance, SdJwtPayload } from '../index';
 import { Signer, Verifier } from '@sd-jwt/types';
-import Crypto from 'node:crypto';
+import Crypto, { KeyLike } from 'node:crypto';
 import { describe, expect, test } from 'vitest';
-import { digest, generateSalt, ES256 } from '@sd-jwt/crypto-nodejs';
+import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 import { KbVerifier, JwtPayload } from '@sd-jwt/types';
+import { importJWK, exportJWK, JWK } from 'jose';
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -182,7 +183,8 @@ describe('index', () => {
 
   test('verify with kbJwt', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const { privateKey, publicKey } = await ES256.generateKeyPair();
+
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
 
     //TODO: maybe we can pass a minial class of the jwt to pass the token
     const kbVerifier: KbVerifier = async (
@@ -198,13 +200,17 @@ describe('index', () => {
         throw Error('key binding not supported');
       }
       // get the key of the holder to verify the signature
-      return ES256.getVerifier(publicKey as object).then((verifier) =>
-        verifier(data, sig),
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        (await importJWK(publicKey as JWK, 'EdDSA')) as KeyLike,
+        Buffer.from(sig, 'base64url'),
       );
     };
 
     const kbSigner = (data: string) => {
-      return ES256.getSigner(privateKey).then((signer) => signer(data));
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
     };
 
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
@@ -222,7 +228,7 @@ describe('index', () => {
         foo: 'bar',
         iat: new Date().getTime(),
         cnf: {
-          jwk: publicKey,
+          jwk: await exportJWK(publicKey),
         },
       },
       {
