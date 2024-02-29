@@ -83,10 +83,28 @@
           >> Try it Online</a
         >
       </p>
-      <h2 class="text-2xl font-bold mb-4">Installation</h2>
+      <h2 class="text-2xl font-bold mb-4">What is SD-JWT VC?</h2>
       <p class="mb-4">
-        Currently compliant with: <b>draft-ietf-oauth-selective-disclosure-jwt-07</b>
+        SD-JWT VC describes data formats as well as validation and processing rules to 
+        express Verifiable Credentials with JSON payloads with and without 
+        selective disclosure based on the SD-JWT. You can check the details in <a
+          href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/"
+          class="text-blue-700 hover:underline"
+          target="_blank"
+        >IETF SD-JWT VC specification</a>
       </p>
+      <p class="mb-4">
+        Note: We are provide both SD-JWT and SD-JWT VC. The library can be used to create sd-jwt based credentials. 
+        To be compliant with the `sd-jwt-vc` standard, you can use the `@sd-jwt/sd-jwt-vc` that is implementing this spec.
+      </p>
+      <h2 class="text-2xl font-bold mb-4">Specification Compliance</h2>
+      <div class="mb-4">
+        <ul class="list-disc pl-5 space-y-2">
+          <li>SD-JWT: <b>draft-ietf-oauth-selective-disclosure-jwt-07</b></li>
+          <li>SD-JWT VC: <b>draft-ietf-oauth-sd-jwt-vc-02</b></li>
+        </ul>
+      </div>
+      <h2 class="text-2xl font-bold mb-4">Installation</h2>
       <p class="mb-4">
         <div class="bg-gray-800 text-blue-200 font-mono text-sm p-4 rounded-lg overflow-x-auto my-6">
           <pre>$ npm install @sd-jwt/sd-jwt-vc</pre>
