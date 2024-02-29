@@ -1,14 +1,24 @@
 import { SDJwtInstance, SdJwtPayload } from '../index';
-import { Verifier } from '@sd-jwt/types';
+import { Signer, Verifier } from '@sd-jwt/types';
 import Crypto from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt, ES256 } from '@sd-jwt/crypto-nodejs';
 import { KbVerifier, JwtPayload } from '@sd-jwt/types';
 
-export const createSignerVerifier = async () => {
-  const { privateKey, publicKey } = await ES256.generateKeyPair();
-  const signer = await ES256.getSigner(privateKey);
-  const verifier = await ES256.getVerifier(publicKey);
+export const createSignerVerifier = () => {
+  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+  const signer: Signer = async (data: string) => {
+    const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+    return Buffer.from(sig).toString('base64url');
+  };
+  const verifier: Verifier = async (data: string, sig: string) => {
+    return Crypto.verify(
+      null,
+      Buffer.from(data),
+      publicKey,
+      Buffer.from(sig, 'base64url'),
+    );
+  };
   return { signer, verifier };
 };
 
@@ -19,7 +29,7 @@ describe('index', () => {
   });
 
   test('kbJwt', async () => {
-    const { signer, verifier } = await createSignerVerifier();
+    const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       signAlg: 'EdDSA',
@@ -57,7 +67,7 @@ describe('index', () => {
   });
 
   test('issue', async () => {
-    const { signer, verifier } = await createSignerVerifier();
+    const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       signAlg: 'EdDSA',
@@ -81,7 +91,7 @@ describe('index', () => {
   });
 
   test('verify failed', async () => {
-    const { signer } = await createSignerVerifier();
+    const { signer } = createSignerVerifier();
     const { publicKey } = Crypto.generateKeyPairSync('ed25519');
     const failedverifier: Verifier = async (data: string, sig: string) => {
       return Crypto.verify(
@@ -120,7 +130,7 @@ describe('index', () => {
   });
 
   test('verify failed with kbJwt', async () => {
-    const { signer, verifier } = await createSignerVerifier();
+    const { signer, verifier } = createSignerVerifier();
     const { publicKey } = Crypto.generateKeyPairSync('ed25519');
     const failedverifier: Verifier = async (data: string, sig: string) => {
       return Crypto.verify(
@@ -171,7 +181,7 @@ describe('index', () => {
   });
 
   test('verify with kbJwt', async () => {
-    const { signer, verifier } = await createSignerVerifier();
+    const { signer, verifier } = createSignerVerifier();
     const { privateKey, publicKey } = await ES256.generateKeyPair();
 
     //TODO: maybe we can pass a minial class of the jwt to pass the token
@@ -303,7 +313,7 @@ describe('index', () => {
   });
 
   test('Verifier not found', async () => {
-    const { signer, verifier } = await createSignerVerifier();
+    const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       hasher: digest,
@@ -343,7 +353,7 @@ describe('index', () => {
   });
 
   test('kbSigner not found', async () => {
-    const { signer, verifier } = await createSignerVerifier();
+    const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       verifier,
@@ -381,7 +391,7 @@ describe('index', () => {
   });
 
   test('kbVerifier not found', async () => {
-    const { signer, verifier } = await createSignerVerifier();
+    const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       verifier,
@@ -421,7 +431,7 @@ describe('index', () => {
   });
 
   test('kbSignAlg not found', async () => {
-    const { signer, verifier } = await createSignerVerifier();
+    const { signer, verifier } = createSignerVerifier();
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       verifier,
@@ -458,7 +468,7 @@ describe('index', () => {
   });
 
   test('hasher is not found', async () => {
-    const { signer } = await createSignerVerifier();
+    const { signer } = createSignerVerifier();
     const sdjwt_create = new SDJwtInstance<SdJwtPayload>({
       signer,
       hasher: digest,
@@ -487,7 +497,7 @@ describe('index', () => {
   });
 
   test('presentableKeys', async () => {
-    const { signer } = await createSignerVerifier();
+    const { signer } = createSignerVerifier();
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       hasher: digest,
