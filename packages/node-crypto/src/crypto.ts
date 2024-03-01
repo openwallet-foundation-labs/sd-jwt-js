@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from 'crypto';
+import { createHash, randomBytes, subtle } from 'crypto';
 
 export const generateSalt = (length: number): string => {
   if (length <= 0) {
@@ -24,7 +24,6 @@ export const ES256 = {
   alg: 'ES256',
 
   async generateKeyPair() {
-    const { subtle } = globalThis.crypto;
     const keyPair = await subtle.generateKey(
       {
         name: 'ECDSA',
@@ -42,7 +41,6 @@ export const ES256 = {
   },
 
   async getSigner(privateKeyJWK: object) {
-    const { subtle } = globalThis.crypto;
     const privateKey = await subtle.importKey(
       'jwk',
       privateKeyJWK,
@@ -73,7 +71,6 @@ export const ES256 = {
   },
 
   async getVerifier(publicKeyJWK: object) {
-    const { subtle } = globalThis.crypto;
     const publicKey = await subtle.importKey(
       'jwk',
       publicKeyJWK,

@@ -1,8 +1,10 @@
 import { SDJwtInstance, SdJwtPayload } from '../index';
 import { Signer, Verifier } from '@sd-jwt/types';
-import Crypto from 'node:crypto';
+import Crypto, { KeyLike } from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
+import { KbVerifier, JwtPayload } from '@sd-jwt/types';
+import { importJWK, exportJWK, JWK } from 'jose';
 
 export const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
@@ -181,23 +183,53 @@ describe('index', () => {
 
   test('verify with kbJwt', async () => {
     const { signer, verifier } = createSignerVerifier();
+
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+
+    //TODO: maybe we can pass a minial class of the jwt to pass the token
+    const kbVerifier: KbVerifier = async (
+      data: string,
+      sig: string,
+      payload: JwtPayload,
+    ) => {
+      let publicKey: JsonWebKey;
+      if (payload.cnf) {
+        // use the key from the cnf
+        publicKey = payload.cnf.jwk;
+      } else {
+        throw Error('key binding not supported');
+      }
+      // get the key of the holder to verify the signature
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        (await importJWK(publicKey as JWK, 'EdDSA')) as KeyLike,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
+    const kbSigner = (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
     const sdjwt = new SDJwtInstance<SdJwtPayload>({
       signer,
       signAlg: 'EdDSA',
       verifier,
       hasher: digest,
       saltGenerator: generateSalt,
-      kbSigner: signer,
-      kbVerifier: verifier,
+      kbSigner: kbSigner,
+      kbVerifier: kbVerifier,
       kbSignAlg: 'EdDSA',
     });
-
     const credential = await sdjwt.issue(
       {
         foo: 'bar',
-        iss: 'Issuer',
         iat: new Date().getTime(),
-        vct: '',
+        cnf: {
+          jwk: await exportJWK(publicKey),
+        },
       },
       {
         _sd: ['foo'],
