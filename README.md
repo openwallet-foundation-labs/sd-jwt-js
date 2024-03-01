@@ -10,7 +10,10 @@ This is the reference implmentation of [IETF SD-JWT specification](https://data
 
 Hopae, a founding member of OpenWallet Foundation, is building wallet module in TypeScript and need this project as a core component.
 
-Currently compliant with: **draft-ietf-oauth-selective-disclosure-jwt-07**
+Currently compliant with:
+
+- **[draft-ietf-oauth-selective-disclosure-jwt-07](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/)**
+- **[draft-ietf-oauth-sd-jwt-vc-02](https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-02.html)**
 
 ## **Background**
 
@@ -41,6 +44,7 @@ By adhering to these design principles, "Selective Disclosure for JWT" aims to s
 ## Packages
 
 - **[@sd-jwt/core](./packages/core/README.md)**: Core library for selective disclosure JWTs
+- **[@sd-jwt/sd-jwt-vc](./packages/sd-jwt-vc/README.md)**: SD-JWT VC format based on the core functions
 - **[@sd-jwt/decode](./packages/decode/README.md)**: Decode SD JWT into objects
 - **[@sd-jwt/present](./packages/present/README.md)**: Present SD JWT
 - **[@sd-jwt/utils](./packages/utils/README.md)**: Utility functions for SD JWT
