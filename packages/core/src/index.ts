@@ -11,6 +11,7 @@ import {
   SDJWTConfig,
 } from '@sd-jwt/types';
 import { getSDAlgAndPayload } from '@sd-jwt/decode';
+import { JwtPayload } from '@sd-jwt/types';
 
 export * from './sdjwt';
 export * from './kbjwt';
@@ -212,7 +213,13 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     if (!this.userConfig.kbVerifier) {
       throw new SDJWTException('Key Binding Verifier not found');
     }
-    const kb = await sdjwt.kbJwt.verify(this.userConfig.kbVerifier);
+    const kb = await sdjwt.kbJwt.verifyKB({
+      verifier: this.userConfig.kbVerifier,
+      payload: payload as JwtPayload,
+    });
+    if (!kb) {
+      throw new Error('signature is not valid');
+    }
     const sdHashfromKb = kb.payload.sd_hash;
     const sdjwtWithoutKb = new SDJwt({
       jwt: sdjwt.jwt,

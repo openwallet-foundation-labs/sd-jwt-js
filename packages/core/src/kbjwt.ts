@@ -1,13 +1,14 @@
-import { SDJWTException } from '@sd-jwt/utils';
+import { Base64urlEncode, SDJWTException } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
-import { Verifier, kbHeader, kbPayload } from '@sd-jwt/types';
+import { JwtPayload, kbHeader, kbPayload, KbVerifier } from '@sd-jwt/types';
 
 export class KBJwt<
   Header extends kbHeader = kbHeader,
   Payload extends kbPayload = kbPayload,
 > extends Jwt<Header, Payload> {
   // Checking the validity of the key binding jwt
-  public async verify(verifier: Verifier) {
+  // the type unknown is not good, but we don't know at this point how to get the public key of the signer, this is defined in the kbVerifier
+  public async verifyKB(values: { verifier: KbVerifier; payload: JwtPayload }) {
     if (
       !this.header?.alg ||
       !this.header.typ ||
@@ -22,7 +23,22 @@ export class KBJwt<
     ) {
       throw new SDJWTException('Invalid Key Binding Jwt');
     }
-    return await super.verify(verifier);
+    if (!this.header || !this.payload || !this.signature) {
+      throw new SDJWTException('Verify Error: Invalid JWT');
+    }
+
+    const header = Base64urlEncode(JSON.stringify(this.header));
+    const payload = Base64urlEncode(JSON.stringify(this.payload));
+    const data = `${header}.${payload}`;
+    const verified = await values.verifier(
+      data,
+      this.signature,
+      values.payload,
+    );
+    if (!verified) {
+      throw new SDJWTException('Verify Error: Invalid JWT Signature');
+    }
+    return { payload: this.payload, header: this.header };
   }
 
   // This function is for creating KBJwt object for verify properly

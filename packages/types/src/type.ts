@@ -19,7 +19,7 @@ export type SDJWTConfig = {
   verifier?: Verifier;
   kbSigner?: Signer;
   kbSignAlg?: string;
-  kbVerifier?: Verifier;
+  kbVerifier?: KbVerifier;
 };
 
 export type kbHeader = { typ: 'kb+jwt'; alg: string };
@@ -34,10 +34,22 @@ export type KBOptions = {
   payload: Omit<kbPayload, 'sd_hash'>;
 };
 
+export interface JwtPayload {
+  cnf?: {
+    jwk: JsonWebKey;
+  };
+  [key: string]: unknown;
+}
+
 export type OrPromise<T> = T | Promise<T>;
 
 export type Signer = (data: string) => OrPromise<string>;
 export type Verifier = (data: string, sig: string) => OrPromise<boolean>;
+export type KbVerifier = (
+  data: string,
+  sig: string,
+  payload: JwtPayload,
+) => OrPromise<boolean>;
 export type Hasher = (data: string, alg: string) => OrPromise<Uint8Array>;
 export type SaltGenerator = (length: number) => OrPromise<string>;
 export type HasherAndAlg = {
