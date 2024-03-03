@@ -146,7 +146,6 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
       kb?: KBOptions;
     },
   ): Promise<SDJWTCompact> {
-    if (!presentationKeys) return encodedSDJwt;
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
@@ -154,9 +153,12 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
 
     const sdjwt = await SDJwt.fromEncode(encodedSDJwt, hasher);
 
+    const sortedpresentationKeys =
+      presentationKeys?.sort() ?? (await sdjwt.presentableKeys(hasher));
+
     if (!sdjwt.jwt?.payload) throw new SDJWTException('Payload not found');
     const presentSdJwtWithoutKb = await sdjwt.present(
-      presentationKeys.sort(),
+      sortedpresentationKeys,
       hasher,
     );
 
@@ -171,7 +173,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     );
 
     sdjwt.kbJwt = await this.createKBJwt(options.kb, sdHashStr);
-    return sdjwt.present(presentationKeys.sort(), hasher);
+    return sdjwt.present(sortedpresentationKeys, hasher);
   }
 
   // This function is for verifying the SD JWT
