@@ -525,4 +525,42 @@ describe('index', () => {
     expect(keys).toBeDefined();
     expect(keys).toEqual(['foo']);
   });
+
+  test('present all disclosures with kb jwt', async () => {
+    const { signer } = createSignerVerifier();
+    const sdjwt = new SDJwtInstance<SdJwtPayload>({
+      signer,
+      kbSigner: signer,
+      hasher: digest,
+      saltGenerator: generateSalt,
+      signAlg: 'EdDSA',
+      kbSignAlg: 'EdDSA',
+    });
+    const credential = await sdjwt.issue(
+      {
+        foo: 'bar',
+        iss: 'Issuer',
+        iat: new Date().getTime(),
+        vct: '',
+      },
+      {
+        _sd: ['foo'],
+      },
+    );
+
+    const presentation = await sdjwt.present(credential, undefined, {
+      kb: {
+        payload: {
+          aud: '1',
+          iat: 1,
+          nonce: '342',
+        },
+      },
+    });
+
+    const decoded = await sdjwt.decode(presentation);
+    expect(decoded.jwt).toBeDefined();
+    expect(decoded.disclosures).toBeDefined();
+    expect(decoded.kbJwt).toBeDefined();
+  });
 });
