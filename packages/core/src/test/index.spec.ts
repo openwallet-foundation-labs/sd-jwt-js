@@ -1,9 +1,8 @@
 import { SDJwtInstance, SdJwtPayload } from '../index';
-import { Signer, Verifier } from '@sd-jwt/types';
+import { Signer, Verifier, KbVerifier, JwtPayload } from '@sd-jwt/types';
 import Crypto, { KeyLike } from 'node:crypto';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { KbVerifier, JwtPayload } from '@sd-jwt/types';
 import { importJWK, exportJWK, JWK } from 'jose';
 
 export const createSignerVerifier = () => {
