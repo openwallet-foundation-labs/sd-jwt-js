@@ -118,3 +118,28 @@ export const presentSync = (
     kbJwt ?? '',
   ].join(SD_SEPARATOR);
 };
+
+type InputObject = {
+  [key: string]: boolean | InputObject;
+};
+
+/**
+ * Transform the object keys into an array of strings. We are not sorting the array in any way.
+ * @param obj The object to transform
+ * @param prefix The prefix to add to the keys
+ * @returns
+ */
+export const transformPresentationFrame = (
+  obj: InputObject,
+  prefix = '',
+): string[] => {
+  return Object.entries(obj).reduce<string[]>((acc, [key, value]) => {
+    const newPrefix = prefix ? `${prefix}.${key}` : key;
+    if (typeof value === 'boolean') {
+      acc.push(newPrefix);
+    } else {
+      acc.push(...transformPresentationFrame(value, newPrefix));
+    }
+    return acc;
+  }, []);
+};

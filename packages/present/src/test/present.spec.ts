@@ -5,6 +5,7 @@ import {
   presentSync,
   presentableKeys,
   presentableKeysSync,
+  transformPresentationFrame,
 } from '../index';
 import { decodeSdJwt, decodeSdJwtSync } from '@sd-jwt/decode';
 
@@ -77,5 +78,17 @@ describe('Present tests', () => {
     } catch (e) {
       expect(e).toBeDefined();
     }
+  });
+
+  test('transform an object for a presentation to a list', () => {
+    const obj = {
+      name: true,
+      address: {
+        city: true,
+        street: true,
+      },
+    };
+    const list = transformPresentationFrame(obj);
+    expect(list).toStrictEqual(['name', 'address.city', 'address.street']);
   });
 });
