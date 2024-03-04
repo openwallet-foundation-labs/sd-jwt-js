@@ -98,7 +98,7 @@ export class Jwt<
     const payload = Base64urlEncode(JSON.stringify(this.payload));
     const data = `${header}.${payload}`;
 
-    const verified = verifier(data, this.signature);
+    const verified = await verifier(data, this.signature);
     if (!verified) {
       throw new SDJWTException('Verify Error: Invalid JWT Signature');
     }
