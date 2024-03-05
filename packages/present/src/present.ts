@@ -123,7 +123,7 @@ export const presentSync = (
  * Represtens the structure of the disclosure schema
  */
 export type InputObject = {
-  [key: string]: true | InputObject;
+  [key: string]: boolean | InputObject;
 };
 
 /**

@@ -119,7 +119,7 @@ describe('Present tests', () => {
         street: true,
       },
     };
-    const list = transformPresentationFrame(obj as InputObject);
+    const list = transformPresentationFrame(obj);
     expect(list).toStrictEqual(['address', 'address.city', 'address.street']);
   });
 });
