@@ -1,6 +1,12 @@
 import { Base64urlEncode, SDJWTException } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
-import { JwtPayload, kbHeader, kbPayload, KbVerifier } from '@sd-jwt/types';
+import {
+  JwtPayload,
+  KB_JWT_TYP,
+  kbHeader,
+  kbPayload,
+  KbVerifier,
+} from '@sd-jwt/types';
 
 export class KBJwt<
   Header extends kbHeader = kbHeader,
@@ -15,9 +21,9 @@ export class KBJwt<
 
     if (
       !this.header.alg ||
-      this.header.alg !== 'none' ||
+      this.header.alg === 'none' ||
       !this.header.typ ||
-      this.header.typ !== 'kb+jwt' ||
+      this.header.typ !== KB_JWT_TYP ||
       !this.payload.iat ||
       !this.payload.aud ||
       !this.payload.nonce ||
