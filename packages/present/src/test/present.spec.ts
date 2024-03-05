@@ -87,8 +87,38 @@ describe('Present tests', () => {
         city: true,
         street: true,
       },
+      list: {
+        0: true,
+      },
+      elements: {
+        0: {
+          name: true,
+        },
+      },
     };
     const list = transformPresentationFrame(obj);
-    expect(list).toStrictEqual(['name', 'address.city', 'address.street']);
+    expect(list).toStrictEqual([
+      'name',
+      'address',
+      'address.city',
+      'address.street',
+      'list',
+      'list.0',
+      'elements',
+      'elements.0',
+      'elements.0.name',
+    ]);
+  });
+
+  test('transform an object for a presentation to a list, but with faulty inputs', () => {
+    const obj = {
+      name: false,
+      address: {
+        city: true,
+        street: true,
+      },
+    };
+    const list = transformPresentationFrame(obj);
+    expect(list).toStrictEqual(['address', 'address.city', 'address.street']);
   });
 });

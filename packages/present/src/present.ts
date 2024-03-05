@@ -136,9 +136,15 @@ export const transformPresentationFrame = (
   return Object.entries(obj).reduce<string[]>((acc, [key, value]) => {
     const newPrefix = prefix ? `${prefix}.${key}` : key;
     if (typeof value === 'boolean') {
-      acc.push(newPrefix);
+      // only add it, when it's true
+      if (value) {
+        acc.push(newPrefix);
+      }
     } else {
-      acc.push(...transformPresentationFrame(value, newPrefix));
+      acc.push(
+        newPrefix,
+        ...transformPresentationFrame(value as InputObject, newPrefix),
+      );
     }
     return acc;
   }, []);
