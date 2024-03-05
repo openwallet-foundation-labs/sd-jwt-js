@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import {
+  InputObject,
   present,
   presentSync,
   presentableKeys,
@@ -81,7 +82,7 @@ describe('Present tests', () => {
   });
 
   test('transform an object for a presentation to a list', () => {
-    const obj = {
+    const obj: InputObject = {
       name: true,
       address: {
         city: true,
@@ -118,7 +119,7 @@ describe('Present tests', () => {
         street: true,
       },
     };
-    const list = transformPresentationFrame(obj);
+    const list = transformPresentationFrame(obj as InputObject);
     expect(list).toStrictEqual(['address', 'address.city', 'address.street']);
   });
 });
