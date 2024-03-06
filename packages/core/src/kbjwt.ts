@@ -1,6 +1,12 @@
 import { Base64urlEncode, SDJWTException } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
-import { JwtPayload, kbHeader, kbPayload, KbVerifier } from '@sd-jwt/types';
+import {
+  JwtPayload,
+  KB_JWT_TYP,
+  kbHeader,
+  kbPayload,
+  KbVerifier,
+} from '@sd-jwt/types';
 
 export class KBJwt<
   Header extends kbHeader = kbHeader,
@@ -9,22 +15,25 @@ export class KBJwt<
   // Checking the validity of the key binding jwt
   // the type unknown is not good, but we don't know at this point how to get the public key of the signer, this is defined in the kbVerifier
   public async verifyKB(values: { verifier: KbVerifier; payload: JwtPayload }) {
+    if (!this.header || !this.payload || !this.signature) {
+      throw new SDJWTException('Verify Error: Invalid JWT');
+    }
+
     if (
-      !this.header?.alg ||
+      !this.header.alg ||
+      this.header.alg === 'none' ||
       !this.header.typ ||
-      !this.payload?.iat ||
-      !this.payload?.aud ||
-      !this.payload?.nonce ||
+      this.header.typ !== KB_JWT_TYP ||
+      !this.payload.iat ||
+      !this.payload.aud ||
+      !this.payload.nonce ||
       // this is for backward compatibility with version 06
       !(
-        this.payload?.sd_hash ||
+        this.payload.sd_hash ||
         (this.payload as Record<string, unknown> | undefined)?._sd_hash
       )
     ) {
       throw new SDJWTException('Invalid Key Binding Jwt');
-    }
-    if (!this.header || !this.payload || !this.signature) {
-      throw new SDJWTException('Verify Error: Invalid JWT');
     }
 
     const header = Base64urlEncode(JSON.stringify(this.header));
