@@ -34,6 +34,13 @@ export type KBOptions = {
   payload: Omit<kbPayload, 'sd_hash'>;
 };
 
+// This type declaration is from lib.dom.ts
+interface RsaOtherPrimesInfo {
+  d?: string;
+  r?: string;
+  t?: string;
+}
+
 interface JsonWebKey {
   alg?: string;
   crv?: string;
@@ -46,6 +53,7 @@ interface JsonWebKey {
   key_ops?: string[];
   kty?: string;
   n?: string;
+  oth?: RsaOtherPrimesInfo[];
   p?: string;
   q?: string;
   qi?: string;
