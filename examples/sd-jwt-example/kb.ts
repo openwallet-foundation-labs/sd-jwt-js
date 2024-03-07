@@ -38,11 +38,15 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   const sdjwttoken = await sdjwt.decode(encodedSdjwt);
   console.log(sdjwttoken);
 
-  const presentedSdJwt = await sdjwt.present(encodedSdjwt, ['id'], {
-    kb: {
-      payload: kbPayload,
+  const presentedSdJwt = await sdjwt.present(
+    encodedSdjwt,
+    { id: true },
+    {
+      kb: {
+        payload: kbPayload,
+      },
     },
-  });
+  );
 
   const verified = await sdjwt.verify(presentedSdJwt, ['id', 'ssn'], true);
   console.log(verified);
