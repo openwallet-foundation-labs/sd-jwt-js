@@ -7,7 +7,11 @@
       "_sd": [0, 1]
     }
   },
-  "presentationKeys": ["nationalities.1"],
+  "presentationFrames": {
+    "nationalities": {
+      "1": true
+    }
+  },
   "presenatedClaims": {
     "nationalities": ["CA", "DE"]
   },

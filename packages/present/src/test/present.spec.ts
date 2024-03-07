@@ -8,7 +8,7 @@ import {
   transformPresentationFrame,
 } from '../index';
 import { decodeSdJwt, decodeSdJwtSync } from '@sd-jwt/decode';
-import { PresentFrame } from '@sd-jwt/types';
+import { PresentationFrame } from '@sd-jwt/types';
 
 describe('Present tests', () => {
   test('presentableKeys', async () => {
@@ -96,7 +96,7 @@ describe('Present tests', () => {
       },
     };
 
-    const presentFrame: PresentFrame<typeof claims> = {
+    const presentFrame: PresentationFrame<typeof claims> = {
       firstname: true,
       data: {
         firstname: true,
@@ -114,7 +114,7 @@ describe('Present tests', () => {
       data2: true,
     };
 
-    const list = transformPresentationFrame(presentFrame);
+    const list = transformPresentationFrame<typeof claims>(presentFrame);
     expect(list).toStrictEqual([
       'firstname',
       'data',
@@ -139,14 +139,14 @@ describe('Present tests', () => {
       },
     };
 
-    const obj: PresentFrame<typeof claims> = {
+    const obj: PresentationFrame<typeof claims> = {
       name: false,
       address: {
         city: true,
         street: true,
       },
     };
-    const list = transformPresentationFrame(obj);
+    const list = transformPresentationFrame<typeof claims>(obj);
     expect(list).toStrictEqual(['address', 'address.city', 'address.street']);
   });
 });

@@ -13,7 +13,7 @@
     "test2": ["foo", "bar"]
   },
   "disclosureFrame": {},
-  "presentationKeys": [],
+  "presentationFrames": {},
   "presenatedClaims": {
     "recursive": [
       "boring",

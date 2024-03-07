@@ -1,4 +1,4 @@
-import { Hasher, PresentFrame, SD_SEPARATOR } from '@sd-jwt/types';
+import { Hasher, PresentationFrame, SD_SEPARATOR } from '@sd-jwt/types';
 import { Disclosure } from '@sd-jwt/utils';
 import {
   createHashMapping,
@@ -49,7 +49,7 @@ export const presentableKeysSync = (
 
 export const present = async <T extends Record<string, unknown>>(
   sdJwt: string,
-  presentFrame: PresentFrame<T>,
+  presentFrame: PresentationFrame<T>,
   hasher: Hasher,
 ): Promise<string> => {
   const { jwt, kbJwt } = splitSdJwt(sdJwt);
@@ -77,9 +77,9 @@ export const present = async <T extends Record<string, unknown>>(
   ].join(SD_SEPARATOR);
 };
 
-export const presentSync = <T>(
+export const presentSync = <T extends Record<string, unknown>>(
   sdJwt: string,
-  presentFrame: PresentFrame<T>,
+  presentFrame: PresentationFrame<T>,
   hasher: HasherSync,
 ): string => {
   const { jwt, kbJwt } = splitSdJwt(sdJwt);
@@ -115,7 +115,7 @@ export const presentSync = <T>(
  * @returns
  */
 export const transformPresentationFrame = <T extends object>(
-  obj: PresentFrame<T>,
+  obj: PresentationFrame<T>,
   prefix = '',
 ): string[] => {
   return Object.entries(obj).reduce<string[]>((acc, [key, value]) => {
@@ -128,7 +128,7 @@ export const transformPresentationFrame = <T extends object>(
     } else {
       acc.push(
         newPrefix,
-        ...transformPresentationFrame(value as PresentFrame<T>, newPrefix),
+        ...transformPresentationFrame(value as PresentationFrame<T>, newPrefix),
       );
     }
     return acc;

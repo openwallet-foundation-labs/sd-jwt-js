@@ -43,7 +43,8 @@
   "dependencies": {
     "@sd-jwt/decode": "workspace:*",
     "@sd-jwt/types": "workspace:*",
-    "@sd-jwt/utils": "workspace:*"
+    "@sd-jwt/utils": "workspace:*",
+    "@sd-jwt/present": "workspace:*"
   },
   "publishConfig": {
     "access": "public"

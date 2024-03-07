@@ -6,7 +6,7 @@ import {
   SD_DECOY,
   KB_JWT_TYP,
   DisclosureFrame,
-  PresentFrame,
+  PresentationFrame,
 } from '../index';
 
 const claims = {
@@ -66,7 +66,7 @@ describe('Variable tests', () => {
   });
 
   test('PresentationFrameType test', () => {
-    const presentationFrame: PresentFrame<typeof claims> = {
+    const presentationFrame: PresentationFrame<typeof claims> = {
       firstname: true,
       data: {
         firstname: true,

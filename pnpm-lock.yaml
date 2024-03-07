@@ -140,6 +140,9 @@ importers:
       '@sd-jwt/decode':
         specifier: workspace:*
         version: link:../decode
+      '@sd-jwt/present':
+        specifier: workspace:*
+        version: link:../present
       '@sd-jwt/types':
         specifier: workspace:*
         version: link:../types

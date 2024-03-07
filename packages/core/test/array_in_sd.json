@@ -5,7 +5,7 @@
   "disclosureFrame": {
     "_sd": ["sd_array"]
   },
-  "presentationKeys": ["sd_array"],
+  "presentationFrames": { "sd_array": true },
   "presenatedClaims": {
     "sd_array": ["32", "23"]
   },
