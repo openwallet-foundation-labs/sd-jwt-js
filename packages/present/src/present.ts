@@ -1,5 +1,5 @@
-import { Hasher, SD_SEPARATOR } from '@sd-jwt/types';
-import { Disclosure, SDJWTException } from '@sd-jwt/utils';
+import { Hasher, PresentationFrame, SD_SEPARATOR } from '@sd-jwt/types';
+import { Disclosure } from '@sd-jwt/utils';
 import {
   createHashMapping,
   decodeSdJwt,
@@ -47,9 +47,9 @@ export const presentableKeysSync = (
   return Object.keys(disclosureKeymap).sort();
 };
 
-export const present = async (
+export const present = async <T extends Record<string, unknown>>(
   sdJwt: string,
-  keys: string[],
+  presentFrame: PresentationFrame<T>,
   hasher: Hasher,
 ): Promise<string> => {
   const { jwt, kbJwt } = splitSdJwt(sdJwt);
@@ -60,21 +60,15 @@ export const present = async (
 
   const { _sd_alg: alg } = getSDAlgAndPayload(payload);
   const hash = { alg, hasher };
+  const keys = transformPresentationFrame(presentFrame);
 
   // hashmap: <digest> => <disclosure>
   // to match the digest with the disclosure
   const hashmap = await createHashMapping(disclosures, hash);
   const { disclosureKeymap } = await unpack(payload, disclosures, hasher);
-  const presentableKeys = Object.keys(disclosureKeymap);
-
-  const missingKeys = keys.filter((k) => !presentableKeys.includes(k));
-  if (missingKeys.length > 0) {
-    throw new SDJWTException(
-      `Invalid sd-jwt: invalid present keys: ${missingKeys.join(', ')}`,
-    );
-  }
-
-  const presentedDisclosures = keys.map((k) => hashmap[disclosureKeymap[k]]);
+  const presentedDisclosures = keys
+    .map((k) => hashmap[disclosureKeymap[k]])
+    .filter((d) => d !== undefined);
 
   return [
     jwt,
@@ -83,9 +77,9 @@ export const present = async (
   ].join(SD_SEPARATOR);
 };
 
-export const presentSync = (
+export const presentSync = <T extends Record<string, unknown>>(
   sdJwt: string,
-  keys: string[],
+  presentFrame: PresentationFrame<T>,
   hasher: HasherSync,
 ): string => {
   const { jwt, kbJwt } = splitSdJwt(sdJwt);
@@ -96,25 +90,47 @@ export const presentSync = (
 
   const { _sd_alg: alg } = getSDAlgAndPayload(payload);
   const hash = { alg, hasher };
+  const keys = transformPresentationFrame(presentFrame);
 
   // hashmap: <digest> => <disclosure>
   // to match the digest with the disclosure
   const hashmap = createHashMappingSync(disclosures, hash);
   const { disclosureKeymap } = unpackSync(payload, disclosures, hasher);
-  const presentableKeys = Object.keys(disclosureKeymap);
 
-  const missingKeys = keys.filter((k) => !presentableKeys.includes(k));
-  if (missingKeys.length > 0) {
-    throw new SDJWTException(
-      `Invalid sd-jwt: invalid present keys: ${missingKeys.join(', ')}`,
-    );
-  }
-
-  const presentedDisclosures = keys.map((k) => hashmap[disclosureKeymap[k]]);
+  const presentedDisclosures = keys
+    .map((k) => hashmap[disclosureKeymap[k]])
+    .filter((d) => d !== undefined);
 
   return [
     jwt,
     ...presentedDisclosures.map((d) => d.encode()),
     kbJwt ?? '',
   ].join(SD_SEPARATOR);
+};
+
+/**
+ * Transform the object keys into an array of strings. We are not sorting the array in any way.
+ * @param obj The object to transform
+ * @param prefix The prefix to add to the keys
+ * @returns
+ */
+export const transformPresentationFrame = <T extends object>(
+  obj: PresentationFrame<T>,
+  prefix = '',
+): string[] => {
+  return Object.entries(obj).reduce<string[]>((acc, [key, value]) => {
+    const newPrefix = prefix ? `${prefix}.${key}` : key;
+    if (typeof value === 'boolean') {
+      // only add it, when it's true
+      if (value) {
+        acc.push(newPrefix);
+      }
+    } else {
+      acc.push(
+        newPrefix,
+        ...transformPresentationFrame(value as PresentationFrame<T>, newPrefix),
+      );
+    }
+    return acc;
+  }, []);
 };

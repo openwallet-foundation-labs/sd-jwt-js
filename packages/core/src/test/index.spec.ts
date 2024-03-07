@@ -53,15 +53,19 @@ describe('index', () => {
 
     expect(credential).toBeDefined();
 
-    const presentation = await sdjwt.present(credential, ['foo'], {
-      kb: {
-        payload: {
-          aud: '1',
-          iat: 1,
-          nonce: '342',
+    const presentation = await sdjwt.present(
+      credential,
+      { foo: true },
+      {
+        kb: {
+          payload: {
+            aud: '1',
+            iat: 1,
+            nonce: '342',
+          },
         },
       },
-    });
+    );
 
     expect(presentation).toBeDefined();
   });
@@ -163,15 +167,19 @@ describe('index', () => {
       },
     );
 
-    const presentation = await sdjwt.present(credential, ['foo'], {
-      kb: {
-        payload: {
-          aud: '',
-          iat: 1,
-          nonce: '342',
+    const presentation = await sdjwt.present(
+      credential,
+      { foo: true },
+      {
+        kb: {
+          payload: {
+            aud: '',
+            iat: 1,
+            nonce: '342',
+          },
         },
       },
-    });
+    );
 
     try {
       await sdjwt.verify(presentation);
@@ -235,15 +243,19 @@ describe('index', () => {
       },
     );
 
-    const presentation = await sdjwt.present(credential, ['foo'], {
-      kb: {
-        payload: {
-          aud: '1',
-          iat: 1,
-          nonce: '342',
+    const presentation = await sdjwt.present(
+      credential,
+      { foo: true },
+      {
+        kb: {
+          payload: {
+            aud: '1',
+            iat: 1,
+            nonce: '342',
+          },
         },
       },
-    });
+    );
 
     const results = await sdjwt.verify(presentation, ['foo'], true);
     expect(results).toBeDefined();
@@ -341,15 +353,19 @@ describe('index', () => {
       },
     );
 
-    const presentation = await sdjwt.present(credential, ['foo'], {
-      kb: {
-        payload: {
-          aud: '1',
-          iat: 1,
-          nonce: '342',
+    const presentation = await sdjwt.present(
+      credential,
+      { foo: true },
+      {
+        kb: {
+          payload: {
+            aud: '1',
+            iat: 1,
+            nonce: '342',
+          },
         },
       },
-    });
+    );
     try {
       const results = await sdjwt.verify(presentation, ['foo'], true);
     } catch (e) {
@@ -381,15 +397,19 @@ describe('index', () => {
       },
     );
     try {
-      const presentation = await sdjwt.present(credential, ['foo'], {
-        kb: {
-          payload: {
-            aud: '1',
-            iat: 1,
-            nonce: '342',
+      const presentation = await sdjwt.present(
+        credential,
+        { foo: true },
+        {
+          kb: {
+            payload: {
+              aud: '1',
+              iat: 1,
+              nonce: '342',
+            },
           },
         },
-      });
+      );
     } catch (e) {
       expect(e).toBeDefined();
     }
@@ -419,15 +439,19 @@ describe('index', () => {
       },
     );
 
-    const presentation = await sdjwt.present(credential, ['foo'], {
-      kb: {
-        payload: {
-          aud: '1',
-          iat: 1,
-          nonce: '342',
+    const presentation = await sdjwt.present(
+      credential,
+      { foo: true },
+      {
+        kb: {
+          payload: {
+            aud: '1',
+            iat: 1,
+            nonce: '342',
+          },
         },
       },
-    });
+    );
     try {
       const results = await sdjwt.verify(presentation, ['foo'], true);
     } catch (e) {
@@ -458,15 +482,19 @@ describe('index', () => {
       },
     );
 
-    const presentation = sdjwt.present(credential, ['foo'], {
-      kb: {
-        payload: {
-          aud: '1',
-          iat: 1,
-          nonce: '342',
+    const presentation = sdjwt.present(
+      credential,
+      { foo: true },
+      {
+        kb: {
+          payload: {
+            aud: '1',
+            iat: 1,
+            nonce: '342',
+          },
         },
       },
-    });
+    );
     expect(presentation).rejects.toThrow(
       'Key Binding sign algorithm not specified',
     );
@@ -496,7 +524,7 @@ describe('index', () => {
     expect(sdjwt.presentableKeys('')).rejects.toThrow('Hasher not found');
     expect(sdjwt.getClaims('')).rejects.toThrow('Hasher not found');
     expect(() => sdjwt.decode('')).toThrowError('Hasher not found');
-    expect(sdjwt.present(credential, ['foo'])).rejects.toThrow(
+    expect(sdjwt.present(credential, { foo: true })).rejects.toThrow(
       'Hasher not found',
     );
   });

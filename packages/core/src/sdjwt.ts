@@ -6,19 +6,18 @@ import {
   DisclosureFrame,
   Hasher,
   HasherAndAlg,
-  KBOptions,
-  KB_JWT_TYP,
+  PresentationFrame,
   SDJWTCompact,
   SD_DECOY,
   SD_DIGEST,
   SD_LIST_KEY,
   SD_SEPARATOR,
   SaltGenerator,
-  Signer,
   kbHeader,
   kbPayload,
 } from '@sd-jwt/types';
 import { createHashMapping, getSDAlgAndPayload, unpack } from '@sd-jwt/decode';
+import { transformPresentationFrame } from '@sd-jwt/present';
 
 export type SDJwtData<
   Header extends Record<string, unknown>,
@@ -117,7 +116,10 @@ export class SDJwt<
     });
   }
 
-  public async present(keys: string[], hasher: Hasher): Promise<SDJWTCompact> {
+  public async present<T extends Record<string, unknown>>(
+    presentFrame: PresentationFrame<T> | undefined,
+    hasher: Hasher,
+  ): Promise<SDJWTCompact> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
@@ -130,15 +132,12 @@ export class SDJwt<
       hasher,
     );
 
-    const presentableKeys = Object.keys(disclosureKeymap);
-    const missingKeys = keys.filter((k) => !presentableKeys.includes(k));
-    if (missingKeys.length > 0) {
-      throw new SDJWTException(
-        `Invalid sd-jwt: invalid present keys: ${missingKeys.join(', ')}`,
-      );
-    }
-
-    const disclosures = keys.map((k) => hashmap[disclosureKeymap[k]]);
+    const keys = presentFrame
+      ? transformPresentationFrame(presentFrame)
+      : await this.presentableKeys(hasher);
+    const disclosures = keys
+      .map((k) => hashmap[disclosureKeymap[k]])
+      .filter((d) => d !== undefined);
     const presentSDJwt = new SDJwt({
       jwt: this.jwt,
       disclosures,

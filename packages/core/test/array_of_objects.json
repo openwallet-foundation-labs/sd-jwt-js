@@ -28,7 +28,14 @@
       "_sd": ["foo"]
     }
   },
-  "presentationKeys": ["addresses.1", "array_with_one_sd_object.foo"],
+  "presentationFrames": {
+    "addresses": {
+      "1": true
+    },
+    "array_with_one_sd_object": {
+      "foo": true
+    }
+  },
   "presenatedClaims": {
     "addresses": [
       {

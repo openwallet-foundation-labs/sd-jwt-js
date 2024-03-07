@@ -7,6 +7,7 @@ import {
   Hasher,
   KBOptions,
   KB_JWT_TYP,
+  PresentationFrame,
   SDJWTCompact,
   SDJWTConfig,
 } from '@sd-jwt/types';
@@ -139,9 +140,9 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     return;
   }
 
-  public async present(
+  public async present<T extends Record<string, unknown>>(
     encodedSDJwt: string,
-    presentationKeys?: string[],
+    presentationFrame?: PresentationFrame<T>,
     options?: {
       kb?: KBOptions;
     },
@@ -153,12 +154,9 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
 
     const sdjwt = await SDJwt.fromEncode(encodedSDJwt, hasher);
 
-    const sortedpresentationKeys =
-      presentationKeys?.sort() ?? (await sdjwt.presentableKeys(hasher));
-
     if (!sdjwt.jwt?.payload) throw new SDJWTException('Payload not found');
     const presentSdJwtWithoutKb = await sdjwt.present(
-      sortedpresentationKeys,
+      presentationFrame,
       hasher,
     );
 
@@ -173,7 +171,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     );
 
     sdjwt.kbJwt = await this.createKBJwt(options.kb, sdHashStr);
-    return sdjwt.present(sortedpresentationKeys, hasher);
+    return sdjwt.present(presentationFrame, hasher);
   }
 
   // This function is for verifying the SD JWT
