@@ -6,15 +6,12 @@ import {
   DisclosureFrame,
   Hasher,
   HasherAndAlg,
-  KBOptions,
-  KB_JWT_TYP,
   SDJWTCompact,
   SD_DECOY,
   SD_DIGEST,
   SD_LIST_KEY,
   SD_SEPARATOR,
   SaltGenerator,
-  Signer,
   kbHeader,
   kbPayload,
 } from '@sd-jwt/types';
@@ -129,14 +126,6 @@ export class SDJwt<
       this.disclosures,
       hasher,
     );
-
-    const presentableKeys = Object.keys(disclosureKeymap);
-    const missingKeys = keys.filter((k) => !presentableKeys.includes(k));
-    if (missingKeys.length > 0) {
-      throw new SDJWTException(
-        `Invalid sd-jwt: invalid present keys: ${missingKeys.join(', ')}`,
-      );
-    }
 
     const disclosures = keys.map((k) => hashmap[disclosureKeymap[k]]);
     const presentSDJwt = new SDJwt({
