@@ -1,4 +1,4 @@
-import { Hasher, SD_SEPARATOR } from '@sd-jwt/types';
+import { Hasher, PresentFrame, SD_SEPARATOR } from '@sd-jwt/types';
 import { Disclosure, SDJWTException } from '@sd-jwt/utils';
 import {
   createHashMapping,
@@ -120,20 +120,13 @@ export const presentSync = (
 };
 
 /**
- * Represtens the structure of the disclosure schema
- */
-export type InputObject = {
-  [key: string]: boolean | InputObject;
-};
-
-/**
  * Transform the object keys into an array of strings. We are not sorting the array in any way.
  * @param obj The object to transform
  * @param prefix The prefix to add to the keys
  * @returns
  */
-export const transformPresentationFrame = (
-  obj: InputObject,
+export const transformPresentationFrame = <T extends object>(
+  obj: PresentFrame<T>,
   prefix = '',
 ): string[] => {
   return Object.entries(obj).reduce<string[]>((acc, [key, value]) => {
@@ -146,7 +139,7 @@ export const transformPresentationFrame = (
     } else {
       acc.push(
         newPrefix,
-        ...transformPresentationFrame(value as InputObject, newPrefix),
+        ...transformPresentationFrame(value as PresentFrame<T>, newPrefix),
       );
     }
     return acc;

@@ -136,14 +136,28 @@ type Frame<Payload> = Payload extends Array<infer U>
     ? Record<number, Frame<U>> & SD<Payload> & DECOY
     : SD<Payload> & DECOY
   : Payload extends Record<string, unknown>
-    ? NonNever<
-        {
-          [K in keyof Payload]?: Payload[K] extends object
-            ? Frame<Payload[K]>
-            : never;
-        } & SD<Payload> &
-          DECOY
-      >
-    : SD<Payload> & DECOY;
+  ? NonNever<
+      {
+        [K in keyof Payload]?: Payload[K] extends object
+          ? Frame<Payload[K]>
+          : never;
+      } & SD<Payload> &
+        DECOY
+    >
+  : SD<Payload> & DECOY;
 
 export type DisclosureFrame<T extends object> = Frame<T>;
+
+type PFrame<Payload> = Payload extends Array<infer U>
+  ? U extends object
+    ? Record<number, PFrame<U> | boolean> | boolean
+    : Record<number, boolean> | boolean
+  : Payload extends Record<string, unknown>
+  ? NonNever<{
+      [K in keyof Payload]?: Payload[K] extends object
+        ? PFrame<Payload[K]> | boolean
+        : boolean;
+    }>
+  : never;
+
+export type PresentFrame<T extends object> = PFrame<T>;
