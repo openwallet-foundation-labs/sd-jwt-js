@@ -154,3 +154,58 @@ type Frame<Payload> = Payload extends Array<infer U>
     : SD<Payload> & DECOY;
 
 export type DisclosureFrame<T extends object> = Frame<T>;
+
+/**
+ * This is a presentationFrame type that is used to represent the structure of what is being presented.
+ * PresentationFrame is made from the payload type.
+ * const claims = {
+      firstname: 'John',
+      lastname: 'Doe',
+      ssn: '123-45-6789',
+      id: '1234',
+      data: {
+        firstname: 'John',
+        lastname: 'Doe',
+        ssn: '123-45-6789',
+        list: [{ r: 'd' }, 'b', 'c'],
+        list2: ['1', '2', '3'],
+        list3: ['1', null, 2],
+      },
+      data2: {
+        hi: 'bye',
+      },
+    };
+
+  Example of a presentationFrame:
+  const presentationFrame: PresentationFrame<typeof claims> = {
+    firstname: true,
+    lastname: true,
+    ssn: true,
+    id: 'true',
+    data: {
+      firstname: true,
+      list: {
+        1: true,
+        0: {
+          r: true,
+        },
+      },
+      list2: {
+        1: true,
+      },
+      list3: true,
+    },
+    data2: true,
+  };
+*/
+type PFrame<Payload> = Payload extends Array<infer U>
+  ? U extends object
+    ? Record<number, PFrame<U> | boolean> | boolean
+    : Record<number, boolean> | boolean
+  : {
+      [K in keyof Payload]?: Payload[K] extends object
+        ? PFrame<Payload[K]> | boolean
+        : boolean;
+    };
+
+export type PresentationFrame<T extends object> = PFrame<T>;

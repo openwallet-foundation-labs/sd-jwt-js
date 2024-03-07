@@ -50,23 +50,42 @@
       }
     }
   },
-  "presentationKeys": [
-    "foo.1",
-    "bar.green",
-    "qux.0",
-    "qux.0.0",
-    "qux.0.1",
-    "baz.0",
-    "baz.0.0",
-    "baz.0.1",
-    "baz.1",
-    "baz.1.0",
-    "baz.1.1",
-    "animals.snake",
-    "animals.snake.age",
-    "animals.bird",
-    "animals.bird.age"
-  ],
+  "presentationFrames": {
+    "foo": {
+      "1": true
+    },
+    "bar": {
+      "green": true
+    },
+    "qux": {
+      "0": {
+        "0": true,
+        "1": true
+      },
+      "1": {
+        "0": true,
+        "1": true
+      }
+    },
+    "baz": {
+      "0": {
+        "0": true,
+        "1": true
+      },
+      "1": {
+        "0": true,
+        "1": true
+      }
+    },
+    "animals": {
+      "snake": {
+        "age": true
+      },
+      "bird": {
+        "age": true
+      }
+    }
+  },
   "presenatedClaims": {
     "foo": ["two"],
     "bar": {

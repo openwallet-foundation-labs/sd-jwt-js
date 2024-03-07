@@ -1,6 +1,11 @@
 import Crypto from 'node:crypto';
 import { SDJwtInstance, SdJwtPayload } from '../src';
-import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
+import {
+  DisclosureFrame,
+  PresentationFrame,
+  Signer,
+  Verifier,
+} from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
@@ -105,7 +110,10 @@ describe('App', () => {
       'id',
     ]);
 
-    const presentationFrame = ['firstname', 'id'];
+    const presentationFrame = {
+      firstname: true,
+      id: true,
+    };
     const presentedSDJwt = await sdjwt.present(encodedSdjwt, presentationFrame);
     expect(presentedSDJwt).toBeDefined();
 
@@ -215,7 +223,7 @@ async function JSONtest(filename: string) {
 
   const presentedSDJwt = await sdjwt.present(
     encodedSdjwt,
-    test.presentationKeys,
+    test.presentationFrames,
   );
 
   expect(presentedSDJwt).toBeDefined();
@@ -236,7 +244,7 @@ async function JSONtest(filename: string) {
 type TestJson = {
   claims: SdJwtPayload;
   disclosureFrame: DisclosureFrame<SdJwtPayload>;
-  presentationKeys: string[];
+  presentationFrames: PresentationFrame<SdJwtPayload>;
   presenatedClaims: object;
   requiredClaimKeys: string[];
 };

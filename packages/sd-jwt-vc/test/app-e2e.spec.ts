@@ -1,6 +1,11 @@
 import Crypto from 'node:crypto';
 import { SDJwtVcInstance, SdJwtVcPayload } from '../src/index';
-import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
+import {
+  DisclosureFrame,
+  PresentationFrame,
+  Signer,
+  Verifier,
+} from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
@@ -53,6 +58,9 @@ describe('App', () => {
       data2: {
         hi: 'bye',
       },
+      iat,
+      iss,
+      vct,
     };
     const disclosureFrame: DisclosureFrame<typeof claims> = {
       _sd: ['firstname', 'id', 'data2'],
@@ -72,8 +80,7 @@ describe('App', () => {
       },
     };
 
-    const expectedPayload: SdJwtVcPayload = { iat, iss, vct, ...claims };
-    const encodedSdjwt = await sdjwt.issue(expectedPayload, disclosureFrame);
+    const encodedSdjwt = await sdjwt.issue(claims, disclosureFrame);
     expect(encodedSdjwt).toBeDefined();
     const validated = await sdjwt.validate(encodedSdjwt);
     expect(validated).toBeDefined();
@@ -101,7 +108,7 @@ describe('App', () => {
       'vct',
     ]);
     const payloads = await decoded.getClaims(digest);
-    expect(payloads).toEqual(expectedPayload);
+    expect(payloads).toEqual(claims);
     const presentableKeys = await decoded.presentableKeys(digest);
     expect(presentableKeys).toEqual([
       'data.list',
@@ -114,7 +121,10 @@ describe('App', () => {
       'id',
     ]);
 
-    const presentationFrame = ['firstname', 'id'];
+    const presentationFrame = {
+      firstname: true,
+      id: true,
+    };
     const presentedSDJwt = await sdjwt.present(encodedSdjwt, presentationFrame);
     expect(presentedSDJwt).toBeDefined();
 
@@ -228,7 +238,7 @@ async function JSONtest(filename: string) {
 
   const presentedSDJwt = await sdjwt.present(
     encodedSdjwt,
-    test.presentationKeys,
+    test.presentationFrames,
   );
 
   expect(presentedSDJwt).toBeDefined();
@@ -254,7 +264,7 @@ async function JSONtest(filename: string) {
 type TestJson = {
   claims: object;
   disclosureFrame: DisclosureFrame<object>;
-  presentationKeys: string[];
+  presentationFrames: PresentationFrame<object>;
   presenatedClaims: object;
   requiredClaimKeys: string[];
 };

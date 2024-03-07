@@ -24,7 +24,11 @@
       "birthdate"
     ]
   },
-  "presentationKeys": ["given_name", "family_name", "address"],
+  "presentationFrames": {
+    "given_name": true,
+    "family_name": true,
+    "address": true
+  },
   "presenatedClaims": {
     "given_name": "John",
     "family_name": "Deo",

@@ -25,12 +25,20 @@
       "_sd": [0, 1]
     }
   },
-  "presentationKeys": [
-    "array_with_recursive_sd.1.baz",
-    "array_with_recursive_sd.2.1",
-    "test2.0",
-    "test2.1"
-  ],
+  "presentationFrames": {
+    "array_with_recursive_sd": {
+      "1": {
+        "baz": true
+      },
+      "2": {
+        "1": true
+      }
+    },
+    "test2": {
+      "0": true,
+      "1": true
+    }
+  },
   "presenatedClaims": {
     "array_with_recursive_sd": [
       "boring",

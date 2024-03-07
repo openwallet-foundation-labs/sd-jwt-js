@@ -25,15 +25,17 @@
       ]
     }
   },
-  "presentationKeys": [
-    "value_Data_types.test_null",
-    "value_Data_types.test_int",
-    "value_Data_types.test_float",
-    "value_Data_types.test_str",
-    "value_Data_types.test_bool",
-    "value_Data_types.test_arr",
-    "value_Data_types.test_object"
-  ],
+  "presentationFrames": {
+    "value_Data_types": {
+      "test_null": true,
+      "test_int": true,
+      "test_float": true,
+      "test_str": true,
+      "test_bool": true,
+      "test_arr": true,
+      "test_object": true
+    }
+  },
   "presenatedClaims": {
     "value_Data_types": {
       "test_null": null,

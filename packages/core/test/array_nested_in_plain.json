@@ -12,7 +12,16 @@
       }
     }
   },
-  "presentationKeys": ["nested_array.0.0", "nested_array.1.1"],
+  "presentationFrames": {
+    "nested_array": {
+      "0": {
+        "0": true
+      },
+      "1": {
+        "1": true
+      }
+    }
+  },
   "presenatedClaims": {
     "nested_array": [["foo"], ["qux"]]
   },

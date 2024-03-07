@@ -7,14 +7,16 @@
       "_sd": [0, 1, 2, 3, 4, 5]
     }
   },
-  "presentationKeys": [
-    "data_types.0",
-    "data_types.1",
-    "data_types.2",
-    "data_types.3",
-    "data_types.4",
-    "data_types.5"
-  ],
+  "presentationFrames": {
+    "data_types": {
+      "0": true,
+      "1": true,
+      "2": true,
+      "3": true,
+      "4": true,
+      "5": true
+    }
+  },
   "presenatedClaims": {
     "data_types": [null, 42, 3.14, "foo", ["Test"], { "foo": "bar" }]
   },

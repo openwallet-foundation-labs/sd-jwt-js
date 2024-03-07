@@ -11,7 +11,7 @@
       "_sd": ["13", "18", "21"]
     }
   },
-  "presentationKeys": ["is_over.18"],
+  "presentationFrames": { "is_over": { "18": true } },
   "presenatedClaims": {
     "is_over": {
       "18": false
