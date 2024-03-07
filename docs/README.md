@@ -22,6 +22,28 @@ SD-JWT-JS is a [promise-based](https://javascript.info/promise-basics) SD JWT Cl
 
 ## Installing
 
+### If you want to use SD-JWT VC for credentials
+
+Using npm:
+
+```bash
+npm install @sd-jwt/sd-jwt-vc
+```
+
+Using yarn:
+
+```bash
+yarn add @sd-jwt/sd-jwt-vc
+```
+
+Using pnpm:
+
+```bash
+pnpm install @sd-jwt/sd-jwt-vc
+```
+
+### Using SD JWT Features Only
+
 Using npm:
 
 ```bash
