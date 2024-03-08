@@ -271,8 +271,8 @@ export const createHashMappingSync = (
 };
 
 // Extract _sd_alg. If it is not present, it is assumed to be sha-256
-export const getSDAlgAndPayload = (SdJwtPayload: Record<string, unknown>) => {
-  const { _sd_alg, ...payload } = SdJwtPayload;
+export const getSDAlgAndPayload = (sdjwtPayload: Record<string, unknown>) => {
+  const { _sd_alg, ...payload } = sdjwtPayload;
   if (typeof _sd_alg !== 'string') {
     // This is for compatibility
     return { _sd_alg: 'sha-256', payload };
@@ -283,11 +283,11 @@ export const getSDAlgAndPayload = (SdJwtPayload: Record<string, unknown>) => {
 // Match the digests of the disclosures with the claims and extract the claims
 // unpack function use unpackObj and unpackArray to recursively unpack the claims
 export const unpack = async (
-  SdJwtPayload: Record<string, unknown>,
+  sdjwtPayload: Record<string, unknown>,
   disclosures: Array<Disclosure>,
   hasher: Hasher,
 ) => {
-  const { _sd_alg, payload } = getSDAlgAndPayload(SdJwtPayload);
+  const { _sd_alg, payload } = getSDAlgAndPayload(sdjwtPayload);
   const hash = { hasher, alg: _sd_alg };
   const map = await createHashMapping(disclosures, hash);
 
@@ -295,11 +295,11 @@ export const unpack = async (
 };
 
 export const unpackSync = (
-  SdJwtPayload: Record<string, unknown>,
+  sdjwtPayload: Record<string, unknown>,
   disclosures: Array<Disclosure>,
   hasher: HasherSync,
 ) => {
-  const { _sd_alg, payload } = getSDAlgAndPayload(SdJwtPayload);
+  const { _sd_alg, payload } = getSDAlgAndPayload(sdjwtPayload);
   const hash = { hasher, alg: _sd_alg };
   const map = createHashMappingSync(disclosures, hash);
 

@@ -3,29 +3,10 @@ import {
   SD_SEPARATOR,
   SD_LIST_KEY,
   SD_DIGEST,
+  SD_JWT_TYP,
   SD_DECOY,
   KB_JWT_TYP,
-  DisclosureFrame,
-  PresentationFrame,
-} from '../index';
-
-const claims = {
-  firstname: 'John',
-  lastname: 'Doe',
-  ssn: '123-45-6789',
-  id: '1234',
-  data: {
-    firstname: 'John',
-    lastname: 'Doe',
-    ssn: '123-45-6789',
-    list: [{ r: 'd' }, 'b', 'c'],
-    list2: ['1', '2', '3'],
-    list3: ['1', null, 2],
-  },
-  data2: {
-    hi: 'bye',
-  },
-};
+} from '../type';
 
 describe('Variable tests', () => {
   test('SD_SEPARATOR', () => {
@@ -40,49 +21,15 @@ describe('Variable tests', () => {
     expect(SD_DIGEST).toBe('_sd');
   });
 
+  test('SD_JWT_TYP', () => {
+    expect(SD_JWT_TYP).toBe('sd-jwt');
+  });
+
   test('SD_DECOY', () => {
     expect(SD_DECOY).toBe('_sd_decoy');
   });
 
   test('KB_JWT_TYP', () => {
     expect(KB_JWT_TYP).toBe('kb+jwt');
-  });
-
-  test('DisclosureFrameType test', () => {
-    const disclosureFrame: DisclosureFrame<typeof claims> = {
-      _sd: ['data', 'firstname', 'data2'],
-      data: {
-        _sd: ['list', 'ssn'],
-        _sd_decoy: 2,
-        list: {
-          _sd: [0, 2],
-          0: {
-            _sd: ['r'],
-          },
-        },
-      },
-    };
-    expect(disclosureFrame).toBeDefined();
-  });
-
-  test('PresentationFrameType test', () => {
-    const presentationFrame: PresentationFrame<typeof claims> = {
-      firstname: true,
-      data: {
-        firstname: true,
-        list: {
-          1: true,
-          0: {
-            r: true,
-          },
-        },
-        list2: {
-          1: true,
-        },
-        list3: true,
-      },
-      data2: true,
-    };
-    expect(presentationFrame).toBeDefined();
   });
 });

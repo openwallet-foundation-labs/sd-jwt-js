@@ -1,6 +1,7 @@
 export const SD_SEPARATOR = '~';
 export const SD_LIST_KEY = '...';
 export const SD_DIGEST = '_sd';
+export const SD_JWT_TYP = 'sd-jwt';
 export const SD_DECOY = '_sd_decoy';
 export const KB_JWT_TYP = 'kb+jwt';
 
@@ -19,7 +20,7 @@ export type SDJWTConfig = {
   verifier?: Verifier;
   kbSigner?: Signer;
   kbSignAlg?: string;
-  kbVerifier?: KbVerifier;
+  kbVerifier?: Verifier;
 };
 
 export type kbHeader = { typ: 'kb+jwt'; alg: string };
@@ -31,53 +32,13 @@ export type kbPayload = {
 };
 
 export type KBOptions = {
-  payload: Omit<kbPayload, 'sd_hash'>;
+  payload: kbPayload;
 };
-
-// This type declaration is from lib.dom.ts
-interface RsaOtherPrimesInfo {
-  d?: string;
-  r?: string;
-  t?: string;
-}
-
-interface JsonWebKey {
-  alg?: string;
-  crv?: string;
-  d?: string;
-  dp?: string;
-  dq?: string;
-  e?: string;
-  ext?: boolean;
-  k?: string;
-  key_ops?: string[];
-  kty?: string;
-  n?: string;
-  oth?: RsaOtherPrimesInfo[];
-  p?: string;
-  q?: string;
-  qi?: string;
-  use?: string;
-  x?: string;
-  y?: string;
-}
-
-export interface JwtPayload {
-  cnf?: {
-    jwk: JsonWebKey;
-  };
-  [key: string]: unknown;
-}
 
 export type OrPromise<T> = T | Promise<T>;
 
 export type Signer = (data: string) => OrPromise<string>;
 export type Verifier = (data: string, sig: string) => OrPromise<boolean>;
-export type KbVerifier = (
-  data: string,
-  sig: string,
-  payload: JwtPayload,
-) => OrPromise<boolean>;
 export type Hasher = (data: string, alg: string) => OrPromise<Uint8Array>;
 export type SaltGenerator = (length: number) => OrPromise<string>;
 export type HasherAndAlg = {
@@ -154,58 +115,3 @@ type Frame<Payload> = Payload extends Array<infer U>
     : SD<Payload> & DECOY;
 
 export type DisclosureFrame<T extends object> = Frame<T>;
-
-/**
- * This is a presentationFrame type that is used to represent the structure of what is being presented.
- * PresentationFrame is made from the payload type.
- * const claims = {
-      firstname: 'John',
-      lastname: 'Doe',
-      ssn: '123-45-6789',
-      id: '1234',
-      data: {
-        firstname: 'John',
-        lastname: 'Doe',
-        ssn: '123-45-6789',
-        list: [{ r: 'd' }, 'b', 'c'],
-        list2: ['1', '2', '3'],
-        list3: ['1', null, 2],
-      },
-      data2: {
-        hi: 'bye',
-      },
-    };
-
-  Example of a presentationFrame:
-  const presentationFrame: PresentationFrame<typeof claims> = {
-    firstname: true,
-    lastname: true,
-    ssn: true,
-    id: 'true',
-    data: {
-      firstname: true,
-      list: {
-        1: true,
-        0: {
-          r: true,
-        },
-      },
-      list2: {
-        1: true,
-      },
-      list3: true,
-    },
-    data2: true,
-  };
-*/
-type PFrame<Payload> = Payload extends Array<infer U>
-  ? U extends object
-    ? Record<number, PFrame<U> | boolean> | boolean
-    : Record<number, boolean> | boolean
-  : {
-      [K in keyof Payload]?: Payload[K] extends object
-        ? PFrame<Payload[K]> | boolean
-        : boolean;
-    };
-
-export type PresentationFrame<T extends object> = PFrame<T>;

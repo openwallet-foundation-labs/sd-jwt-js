@@ -29,27 +29,16 @@ sdjwt.config({
 
 ```ts
 type SDJWTConfig = {
-  // omit typ property in JWT header
-  omitTyp?: boolean;
-  // hash function: (data: string) => Promise<string> or string;
-  hasher?: Hasher;
-  // hash algorithm string (e.g. 'SHA-256')
-  hashAlg?: string;
-  // salt generate function: (length: number) => Promise<string> or string;
-  saltGenerator?: SaltGenerator;
-  // sign function: (data: string) => Promise<string> or string;
-  signer?: Signer;
-  // sign algorithm string (e.g. 'EdDSA')
-  signAlg?: string;
-  // verify function: (data: string, signature: string) => Promise<boolean> or boolean;
-  verifier?: Verifier;
-  // optional key binding sign function
-  kbSigner?: Signer;
-  // optional key binding sign algorithm
-  kbSignAlg?: string;
-  // optional key binding verify function: (data: string, sig: string, payload: JwtPayload) => Promise<boolean> or boolean;
-  // JwtPayload: { cnf?: { jwk: JsonWebKey } }
-  kbVerifier?: KbVerifier;
+  omitTyp?: boolean; // omit typ property in JWT header
+  hasher?: Hasher; // hash function: (data: string) => Promise<string> or string;
+  hashAlg?: string; // hash algorithm string (e.g. 'SHA-256')
+  saltGenerator?: SaltGenerator; // salt generate function: (length: number) => string;
+  signer?: Signer; // sign function: (data: string) => Promise<string> or string;
+  signAlg?: string; // sign algorithm string (e.g. 'EdDSA')
+  verifier?: Verifier; // verify function: (data: string, signature: string) => Promise<boolean> or boolean;
+  kbSigner?: Signer; // optional key binding sign function
+  kbSignAlg?: string; // optional key binding sign algorithm
+  kbVerifier?: Verifier; // optional key binding verify function
 };
 ```
 

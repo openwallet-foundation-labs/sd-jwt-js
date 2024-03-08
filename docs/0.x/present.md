@@ -1,53 +1,20 @@
 ```ts
-const presentedSDJwt = await sdjwt.present(encodedSdjwt, presentationFrame);
+const presentedSDJwt = await sdjwt.present(encodedSdjwt, presentationKeys);
 ```
 
 ## Parameters
 
 - encodedSdjwt: encoded SD JWT [string]
-- presentationFrame: Represent the properties that should be selectively disclosed [object]
-
-### PresentationFrame
+- presentationKeys: JSON path key to selectively disclosure [Array<string>] (optional)
 
 ```ts
-const claims = {
+{
   data: {
-    arr: 'value';
+    arr: ['value'];
   }
 }
 
-// To present 'arr' property
-const presentationFrame = {
-  data: {
-    arr: true
-  }
-}
-```
-
-```ts
-const claims = {
-  data: {
-    arr: 'value';
-  }
-}
-
-// To present 'data' property
-const presentationFrame = {
-  data: true,
-}
-```
-
-```ts
-const claims = {
-  data: ['A', 'B'],
-};
-
-// To present 1st element of 'data' property
-const presentationFrame = {
-  data: {
-    0: true,
-  },
-};
+// The JSON Path of value 'value' is 'data.arr.0'
 ```
 
 ## Returns

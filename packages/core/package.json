@@ -14,9 +14,10 @@
   "scripts": {
     "build": "rm -rf **/dist && tsup",
     "lint": "biome lint ./src",
-    "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:cov",
-    "test:node": "vitest run ./src/test/*.spec.ts",
+    "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:e2e && pnpm run test:cov",
+    "test:node": "vitest run ./src/test/*.spec.ts && vitest run ./src/test/*.spec.ts --environment jsdom",
     "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
+    "test:e2e": "vitest run ./test/*e2e.spec.ts --environment node",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [
@@ -24,9 +25,6 @@
     "sdjwt",
     "sd-jwt-vc"
   ],
-  "engines": {
-    "node": ">=16"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js"
@@ -43,11 +41,7 @@
   "dependencies": {
     "@sd-jwt/decode": "workspace:*",
     "@sd-jwt/types": "workspace:*",
-    "@sd-jwt/utils": "workspace:*",
-    "@sd-jwt/present": "workspace:*"
-  },
-  "publishConfig": {
-    "access": "public"
+    "@sd-jwt/utils": "workspace:*"
   },
   "tsup": {
     "entry": [

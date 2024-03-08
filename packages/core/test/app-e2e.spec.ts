@@ -1,11 +1,6 @@
 import Crypto from 'node:crypto';
-import { SDJwtInstance, SdJwtPayload } from '../src';
-import {
-  DisclosureFrame,
-  PresentationFrame,
-  Signer,
-  Verifier,
-} from '@sd-jwt/types';
+import { SDJwtInstance } from '../src';
+import { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import fs from 'fs';
 import path from 'path';
 import { describe, expect, test } from 'vitest';
@@ -31,7 +26,7 @@ export const createSignerVerifier = () => {
 describe('App', () => {
   test('Example', async () => {
     const { signer, verifier } = createSignerVerifier();
-    const sdjwt = new SDJwtInstance<SdJwtPayload>({
+    const sdjwt = new SDJwtInstance({
       signer,
       signAlg: 'EdDSA',
       verifier,
@@ -200,7 +195,7 @@ describe('App', () => {
 async function JSONtest(filename: string) {
   const test = loadTestJsonFile(filename);
   const { signer, verifier } = createSignerVerifier();
-  const sdjwt = new SDJwtInstance<SdJwtPayload>({
+  const sdjwt = new SDJwtInstance({
     signer,
     signAlg: 'EdDSA',
     verifier,

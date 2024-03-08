@@ -1,5 +1,5 @@
 {
-  "name": "@sd-jwt/types",
+  "name": "@sd-jwt/crypto-browser",
   "version": "0.3.0",
   "description": "sd-jwt draft 7 implementation in typescript",
   "main": "dist/index.js",
@@ -14,9 +14,8 @@
   "scripts": {
     "build": "rm -rf **/dist && tsup",
     "lint": "biome lint ./src",
-    "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:cov",
-    "test:node": "vitest run ./src/test/*.spec.ts",
-    "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
+    "test": "pnpm run test:browser && pnpm run test:cov",
+    "test:browser": "vitest run ./src/test/*.spec.ts",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [

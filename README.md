@@ -63,7 +63,46 @@ We keep all the versions of our packages in sync.
 
 It means for example, that if you are using `@sd-jwt/core@1.0.0`, you should use `@sd-jwt/decode@1.0.0`, `@sd-jwt/present@1.0.0` and so on.
 
-# Development
+// Issuer defines the claims object with the user's information
+const claims = {
+  firstname: 'John',
+  lastname: 'Doe',
+  ssn: '123-45-6789',
+  id: '1234',
+};
+
+// Issuer defines the disclosure frame to specify which claims can be disclosed/undisclosed
+const disclosureFrame: DisclosureFrame<typeof claims> = {
+  _sd: ['firstname', 'lastname', 'ssn'],
+};
+
+// Issuer issues a signed JWT credential with the specified claims and disclosure frame
+// returns an encoded JWT
+const credential = await sdjwt.issue(claims, privateKey, disclosureFrame);
+
+// Holder may validate the credential from the issuer
+const valid = await sdjwt.validate(credential, publicKey);
+
+// Holder defines the presentation frame to specify which claims should be presented
+// The list of presented claims must be a subset of the disclosed claims
+const presentationFrame = ['firstname', 'ssn'];
+
+// Holder creates a presentation using the issued credential and the presentation frame
+// returns an encoded SD JWT.
+const presentation = await sdjwt.present(credential, presentationFrame);
+
+// Verifier can verify the presentation using the Issuer's public key
+const verified = await sdjwt.verify(presentation, publicKey);
+```
+
+Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki) or [examples](./examples/)
+
+## Dependencies
+
+- "@noble/hashes": "1.0.0",
+  - pure js hash algorithm implementation with security audit (v1.0.0)
+- "js-base64": "^3.7.6"
+  - pure js base64 implementation
 
 ## Build
 
@@ -84,8 +123,6 @@ pnpm test
 ```
 
 We use [Vitest](https://vitest.dev/) for our testing framework. Ensure you have written tests for all new features.
-
-We also use [CodeCov](https://app.codecov.io/gh/openwallet-foundation-labs/sd-jwt-js) for our testing coverage. You can check the details of coverage of each package
 
 ## Security
 

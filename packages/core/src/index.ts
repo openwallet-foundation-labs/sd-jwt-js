@@ -1,30 +1,22 @@
-import { SDJWTException, Uint8ArrayToBase64Url } from '@sd-jwt/utils';
+import { SDJWTException } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
 import {
   DisclosureFrame,
-  Hasher,
   KBOptions,
   KB_JWT_TYP,
-  PresentationFrame,
   SDJWTCompact,
   SDJWTConfig,
+  SD_JWT_TYP,
 } from '@sd-jwt/types';
-import { getSDAlgAndPayload } from '@sd-jwt/decode';
-import { JwtPayload } from '@sd-jwt/types';
 
 export * from './sdjwt';
 export * from './kbjwt';
 export * from './jwt';
 export * from './decoy';
 
-export type SdJwtPayload = Record<string, unknown>;
-
-export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
-  //header type
-  protected type?: string;
-
+export class SDJwtInstance {
   public static DEFAULT_hashAlg = 'sha-256';
 
   private userConfig: SDJWTConfig = {};
@@ -35,24 +27,20 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     }
   }
 
-  private async createKBJwt(
-    options: KBOptions,
-    sdHash: string,
-  ): Promise<KBJwt> {
+  private async createKBJwt(options: KBOptions): Promise<KBJwt> {
     if (!this.userConfig.kbSigner) {
       throw new SDJWTException('Key Binding Signer not found');
     }
     if (!this.userConfig.kbSignAlg) {
       throw new SDJWTException('Key Binding sign algorithm not specified');
     }
-
     const { payload } = options;
     const kbJwt = new KBJwt({
       header: {
         typ: KB_JWT_TYP,
         alg: this.userConfig.kbSignAlg,
       },
-      payload: { ...payload, sd_hash: sdHash },
+      payload,
     });
 
     await kbJwt.sign(this.userConfig.kbSigner);
@@ -74,7 +62,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     return jwt.verify(this.userConfig.verifier);
   }
 
-  public async issue<Payload extends ExtendedPayload>(
+  public async issue<Payload extends Record<string, unknown>>(
     payload: Payload,
     disclosureFrame?: DisclosureFrame<Payload>,
     options?: {
@@ -93,10 +81,6 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
       throw new SDJWTException('sign alogrithm not specified');
     }
 
-    if (disclosureFrame) {
-      this.validateReservedFields<Payload>(disclosureFrame);
-    }
-
     const hasher = this.userConfig.hasher;
     const hashAlg = this.userConfig.hashAlg ?? SDJwtInstance.DEFAULT_hashAlg;
 
@@ -110,13 +94,13 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     const OptionHeader = options?.header ?? {};
     const CustomHeader = this.userConfig.omitTyp
       ? OptionHeader
-      : { typ: this.type, ...OptionHeader };
+      : { typ: SD_JWT_TYP, ...OptionHeader };
     const header = { ...CustomHeader, alg };
     const jwt = new Jwt({
       header,
       payload: {
         ...packedClaims,
-        _sd_alg: disclosureFrame ? hashAlg : undefined,
+        _sd_alg: hashAlg,
       },
     });
     await this.SignJwt(jwt);
@@ -129,49 +113,24 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     return sdJwt.encodeSDJwt();
   }
 
-  /**
-   * Validates if the disclosureFrame contains any reserved fields. If so it will throw an error.
-   * @param disclosureFrame
-   * @returns
-   */
-  protected validateReservedFields<T extends ExtendedPayload>(
-    disclosureFrame: DisclosureFrame<T>,
-  ) {
-    return;
-  }
-
-  public async present<T extends Record<string, unknown>>(
+  public async present(
     encodedSDJwt: string,
-    presentationFrame?: PresentationFrame<T>,
+    presentationKeys?: string[],
     options?: {
       kb?: KBOptions;
     },
   ): Promise<SDJWTCompact> {
+    if (!presentationKeys) return encodedSDJwt;
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
     const hasher = this.userConfig.hasher;
 
     const sdjwt = await SDJwt.fromEncode(encodedSDJwt, hasher);
+    const kbJwt = options?.kb ? await this.createKBJwt(options.kb) : undefined;
+    sdjwt.kbJwt = kbJwt;
 
-    if (!sdjwt.jwt?.payload) throw new SDJWTException('Payload not found');
-    const presentSdJwtWithoutKb = await sdjwt.present(
-      presentationFrame,
-      hasher,
-    );
-
-    if (!options?.kb) {
-      return presentSdJwtWithoutKb;
-    }
-
-    const sdHashStr = await this.calculateSDHash(
-      presentSdJwtWithoutKb,
-      sdjwt,
-      hasher,
-    );
-
-    sdjwt.kbJwt = await this.createKBJwt(options.kb, sdHashStr);
-    return sdjwt.present(presentationFrame, hasher);
+    return sdjwt.present(presentationKeys.sort(), hasher);
   }
 
   // This function is for verifying the SD JWT
@@ -188,7 +147,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     const hasher = this.userConfig.hasher;
 
     const sdjwt = await SDJwt.fromEncode(encodedSDJwt, hasher);
-    if (!sdjwt.jwt || !sdjwt.jwt.payload) {
+    if (!sdjwt.jwt) {
       throw new SDJWTException('Invalid SD JWT');
     }
     const { payload, header } = await this.validate(encodedSDJwt);
@@ -213,45 +172,8 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     if (!this.userConfig.kbVerifier) {
       throw new SDJWTException('Key Binding Verifier not found');
     }
-    const kb = await sdjwt.kbJwt.verifyKB({
-      verifier: this.userConfig.kbVerifier,
-      payload: payload as JwtPayload,
-    });
-    if (!kb) {
-      throw new Error('signature is not valid');
-    }
-    const sdHashfromKb = kb.payload.sd_hash;
-    const sdjwtWithoutKb = new SDJwt({
-      jwt: sdjwt.jwt,
-      disclosures: sdjwt.disclosures,
-    });
-
-    const presentSdJwtWithoutKb = sdjwtWithoutKb.encodeSDJwt();
-    const sdHashStr = await this.calculateSDHash(
-      presentSdJwtWithoutKb,
-      sdjwt,
-      hasher,
-    );
-
-    if (sdHashStr !== sdHashfromKb) {
-      throw new SDJWTException('Invalid sd_hash in Key Binding JWT');
-    }
-
+    const kb = await sdjwt.kbJwt.verify(this.userConfig.kbVerifier);
     return { payload, header, kb };
-  }
-
-  private async calculateSDHash(
-    presentSdJwtWithoutKb: string,
-    sdjwt: SDJwt,
-    hasher: Hasher,
-  ) {
-    if (!sdjwt.jwt || !sdjwt.jwt.payload) {
-      throw new SDJWTException('Invalid SD JWT');
-    }
-    const { _sd_alg } = getSDAlgAndPayload(sdjwt.jwt.payload);
-    const sdHash = await hasher(presentSdJwtWithoutKb, _sd_alg);
-    const sdHashStr = Uint8ArrayToBase64Url(sdHash);
-    return sdHashStr;
   }
 
   // This function is for validating the SD JWT

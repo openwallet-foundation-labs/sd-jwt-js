@@ -3,18 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SD JWT is a TypeScript library implementing the IETF SD-JWT specification for selective disclosure of JWT claims, enhancing privacy and security in digital communications." />
-    <meta name="keywords" content="SD JWT, TypeScript, JWT, JSON Web Token, selective disclosure, IETF, authentication, Node.js, React Native, security, privacy, data transmission" />
-    <meta name="author" content="OpenWallet Foundation" />
-    <meta property="og:title" content="SD JWT - TypeScript JWT Library" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://sdjwt.js.org" />
-    <meta property="og:image" content="https://avatars.githubusercontent.com/u/114502864?s=200&v=4" />
-    <meta property="og:description" content="SD JWT is a TypeScript library implementing the IETF SD-JWT specification for selective disclosure of JWT claims, enhancing privacy and security in digital communications." />
-    <meta property="og:site_name" content="SD JWT - TypeScript JWT Library" />
-    <meta property="og:locale" content="en_US" />
-    <link rel="canonical" href="https://sdjwt.js.org" />
-    <title>SD JWT - TypeScript SD JWT Library</title>
+    <title>SD JWT - TypeScript JWT Library</title>
     <link
       href="https://unpkg.com/tailwindcss@^2.0/dist/tailwind.min.css"
       rel="stylesheet"
@@ -77,37 +66,14 @@
           class="bg-black text-white font-bold py-2 px-6 rounded hover:bg-gray-700 transition-colors duration-150 ease-in-out"
           >> See the details</a
         >
-        <a
-          href="https://sdjwt.co"
-          class="bg-blue-600 text-white font-bold py-2 px-6 rounded hover:bg-blue-800 transition-colors duration-150 ease-in-out"
-          >> Try it Online</a
-        >
       </p>
-      <h2 class="text-2xl font-bold mb-4">What is SD-JWT VC?</h2>
-      <p class="mb-4">
-        SD-JWT VC describes data formats as well as validation and processing rules to 
-        express Verifiable Credentials with JSON payloads with and without 
-        selective disclosure based on the SD-JWT. You can check the details in <a
-          href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/"
-          class="text-blue-700 hover:underline"
-          target="_blank"
-        >IETF SD-JWT VC specification</a>
-      </p>
-      <p class="mb-4">
-        Note: We are provide both SD-JWT and SD-JWT VC. The library can be used to create sd-jwt based credentials. 
-        To be compliant with the `sd-jwt-vc` standard, you can use the `@sd-jwt/sd-jwt-vc` that is implementing this spec.
-      </p>
-      <h2 class="text-2xl font-bold mb-4">Specification Compliance</h2>
-      <div class="mb-4">
-        <ul class="list-disc pl-5 space-y-2">
-          <li>SD-JWT: <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt" target="_blank"><b>draft-ietf-oauth-selective-disclosure-jwt-08</b></a></li>
-          <li>SD-JWT VC: <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank"><b>draft-ietf-oauth-sd-jwt-vc-03</b></a></li>
-        </ul>
-      </div>
       <h2 class="text-2xl font-bold mb-4">Installation</h2>
       <p class="mb-4">
+        Currently compliant with: <b>draft-ietf-oauth-selective-disclosure-jwt-07</b>
+      </p>
+      <p class="mb-4">
         <div class="bg-gray-800 text-blue-200 font-mono text-sm p-4 rounded-lg overflow-x-auto my-6">
-          <pre>$ npm install @sd-jwt/sd-jwt-vc</pre>
+          <pre>$ npm install @hopae/sd-jwt</pre>
         </div>
       </p>
       <div class="flex justify-center items-center gap-4 pb-6">

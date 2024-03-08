@@ -23,9 +23,6 @@
     "sdjwt",
     "sd-jwt-vc"
   ],
-  "engines": {
-    "node": ">=16"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js"
@@ -36,9 +33,6 @@
     "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js/issues"
   },
   "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public"
-  },
   "tsup": {
     "entry": [
       "./src/index.ts"

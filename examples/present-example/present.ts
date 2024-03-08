@@ -30,21 +30,9 @@ import { digest } from '@sd-jwt/crypto-nodejs';
   console.log('The presentable keys are:', keys);
 
   // You can present the SD JWT with the combination of presentable keys
-  const presentedSdJwt = await present<{
-    foo: string;
-    test: { zzz: string };
-    arr: (string | { a: string })[];
-  }>(
+  const presentedSdJwt = await present(
     sdjwt,
-    {
-      foo: true,
-      arr: {
-        0: true,
-      },
-      test: {
-        zzz: true,
-      },
-    },
+    ['foo', 'arr.0', 'arr', 'test.zzz'],
     digest,
   );
 

@@ -6,7 +6,6 @@ import {
   DisclosureFrame,
   Hasher,
   HasherAndAlg,
-  PresentationFrame,
   SDJWTCompact,
   SD_DECOY,
   SD_DIGEST,
@@ -17,7 +16,6 @@ import {
   kbPayload,
 } from '@sd-jwt/types';
 import { createHashMapping, getSDAlgAndPayload, unpack } from '@sd-jwt/decode';
-import { transformPresentationFrame } from '@sd-jwt/present';
 
 export type SDJwtData<
   Header extends Record<string, unknown>,
@@ -116,10 +114,7 @@ export class SDJwt<
     });
   }
 
-  public async present<T extends Record<string, unknown>>(
-    presentFrame: PresentationFrame<T> | undefined,
-    hasher: Hasher,
-  ): Promise<SDJWTCompact> {
+  public async present(keys: string[], hasher: Hasher): Promise<SDJWTCompact> {
     if (!this.jwt?.payload || !this.disclosures) {
       throw new SDJWTException('Invalid sd-jwt: jwt or disclosures is missing');
     }
@@ -132,12 +127,15 @@ export class SDJwt<
       hasher,
     );
 
-    const keys = presentFrame
-      ? transformPresentationFrame(presentFrame)
-      : await this.presentableKeys(hasher);
-    const disclosures = keys
-      .map((k) => hashmap[disclosureKeymap[k]])
-      .filter((d) => d !== undefined);
+    const presentableKeys = Object.keys(disclosureKeymap);
+    const missingKeys = keys.filter((k) => !presentableKeys.includes(k));
+    if (missingKeys.length > 0) {
+      throw new SDJWTException(
+        `Invalid sd-jwt: invalid present keys: ${missingKeys.join(', ')}`,
+      );
+    }
+
+    const disclosures = keys.map((k) => hashmap[disclosureKeymap[k]]);
     const presentSDJwt = new SDJwt({
       jwt: this.jwt,
       disclosures,
@@ -252,23 +250,7 @@ export const pack = async <T extends Record<string, unknown>>(
       const claim = recursivePackedClaims[i]
         ? recursivePackedClaims[i]
         : claims[i];
-      /** This part is set discloure for array items.
-       *  The example of disclosureFrame of an Array is
-       *
-       *  const claims = {
-       *    array: ['a', 'b', 'c']
-       *  }
-       *
-       *  diclosureFrame: DisclosureFrame<typeof claims> = {
-       *    array: {
-       *      _sd: [0, 2]
-       *    }
-       *  }
-       *
-       *  It means that we want to disclose the first and the third item of the array
-       *
-       *  So If the index `i` is in the disclosure list(sd), then we create a disclosure for the claim
-       */
+      // TODO: should this actually be the `i` or `claim`?
       // @ts-ignore
       if (sd.includes(i)) {
         const salt = await saltGenerator(16);

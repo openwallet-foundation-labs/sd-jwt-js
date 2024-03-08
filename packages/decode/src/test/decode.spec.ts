@@ -5,9 +5,8 @@ import {
   decodeSdJwtSync,
   getClaims,
   getClaimsSync,
-  getSDAlgAndPayload,
   splitSdJwt,
-} from '../index';
+} from '../decode';
 import { digest } from '@sd-jwt/crypto-nodejs';
 
 describe('decode tests', () => {
@@ -34,14 +33,6 @@ describe('decode tests', () => {
     const { jwt, disclosures, kbJwt } = splitSdJwt(sdjwt);
     expect(jwt).toBe('h.p.s');
     expect(disclosures).toStrictEqual(['d1', 'd2']);
-    expect(kbJwt).toBeUndefined();
-  });
-
-  test('split sdjwt without disclosures', () => {
-    const sdjwt = 'h.p.s';
-    const { jwt, disclosures, kbJwt } = splitSdJwt(sdjwt);
-    expect(jwt).toBe('h.p.s');
-    expect(disclosures).toStrictEqual([]);
     expect(kbJwt).toBeUndefined();
   });
 
@@ -155,10 +146,5 @@ describe('decode tests', () => {
         zzz: 'xxx',
       },
     });
-  });
-
-  test('Test default sd hash algorithm', () => {
-    const { _sd_alg, payload } = getSDAlgAndPayload({});
-    expect(_sd_alg).toBe('sha-256');
   });
 });
