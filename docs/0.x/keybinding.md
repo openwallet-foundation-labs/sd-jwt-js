@@ -25,13 +25,16 @@ const kbPayload = {
   aud: 'https://example.com',
   nonce: '1234',
   custom: 'data',
-  sd_hash: '1234',
 };
-const presentedSdJwt = await sdjwt.present(encodedSdjwt, ['id'], {
-  kb: {
-    payload: kbPayload,
+const presentedSdJwt = await sdjwt.present(
+  encodedSdjwt,
+  { id: true },
+  {
+    kb: {
+      payload: kbPayload,
+    },
   },
-});
+);
 ```
 
 ## Verify

@@ -1,6 +1,6 @@
 ## Claims
 
-You can get claims by using `getCliams` method
+You can get claims by using `getClaims` method
 
 ```ts
 const claims = sdjwt.getClaims(encodedSdjwt);

@@ -41,13 +41,13 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   );
 
   // Holder Receive the credential from the issuer and validate it
-  // Return a boolean result
+  // Return a result of header and payload
   const valid = await sdjwt.validate(credential);
 
   // Holder Define the presentation frame to specify which claims should be presented
   // The list of presented claims must be a subset of the disclosed claims
   // the presentation frame is determined by the verifier or the protocol that was agreed upon between the holder and the verifier
-  const presentationFrame = ['firstname', 'ssn'];
+  const presentationFrame = { firstname: true, id: true, ssn: true };
 
   // Create a presentation using the issued credential and the presentation frame
   // return a Encoded SD JWT. Holder send the presentation to the verifier
