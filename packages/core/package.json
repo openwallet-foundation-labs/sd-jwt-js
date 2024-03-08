@@ -1,6 +1,6 @@
 {
   "name": "@sd-jwt/core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "sd-jwt draft 7 implementation in typescript",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -42,9 +42,9 @@
   },
   "dependencies": {
     "@sd-jwt/decode": "workspace:*",
+    "@sd-jwt/present": "workspace:*",
     "@sd-jwt/types": "workspace:*",
-    "@sd-jwt/utils": "workspace:*",
-    "@sd-jwt/present": "workspace:*"
+    "@sd-jwt/utils": "workspace:*"
   },
   "publishConfig": {
     "access": "public"
