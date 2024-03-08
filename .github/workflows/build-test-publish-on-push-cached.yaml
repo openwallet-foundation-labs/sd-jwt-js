@@ -115,7 +115,7 @@ jobs:
         run: biome ci .
 
   # Only run this job when the push is on main, next or unstable
-  publish:    
+  publish:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/unstable')
     # needs permissions to write tags to the repository
     permissions:
