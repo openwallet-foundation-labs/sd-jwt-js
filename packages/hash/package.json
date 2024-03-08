@@ -1,6 +1,6 @@
 {
   "name": "@sd-jwt/hash",
-  "version": "0.4.0",
+  "version": "0.3.0",
   "description": "sd-jwt draft 7 implementation in typescript",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -41,8 +41,8 @@
     "@sd-jwt/crypto-nodejs": "workspace:*"
   },
   "dependencies": {
-    "@noble/hashes": "1.0.0",
-    "@sd-jwt/utils": "workspace:*"
+    "@sd-jwt/utils": "workspace:*",
+    "@noble/hashes": "1.0.0"
   },
   "publishConfig": {
     "access": "public"
