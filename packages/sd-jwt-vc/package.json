@@ -1,6 +1,6 @@
 {
   "name": "@sd-jwt/sd-jwt-vc",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "sd-jwt draft 7 implementation in typescript",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -42,8 +42,8 @@
     "@sd-jwt/core": "workspace:*"
   },
   "devDependencies": {
-    "@sd-jwt/types": "workspace:*",
-    "@sd-jwt/crypto-nodejs": "workspace:*"
+    "@sd-jwt/crypto-nodejs": "workspace:*",
+    "@sd-jwt/types": "workspace:*"
   },
   "publishConfig": {
     "access": "public"
