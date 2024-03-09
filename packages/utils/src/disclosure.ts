@@ -10,7 +10,7 @@ export class Disclosure<T = unknown> {
   public salt: string;
   public key?: string;
   public value: T;
-  private _digest: string | undefined;
+  public _digest: string | undefined;
   private _encoded: string | undefined;
 
   public constructor(
