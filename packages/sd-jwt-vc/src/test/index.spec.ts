@@ -1,9 +1,9 @@
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import { DisclosureFrame } from '@sd-jwt/types';
+import type { DisclosureFrame } from '@sd-jwt/types';
 import { describe, test, expect } from 'vitest';
 import { SDJwtVcInstance } from '..';
 import { createSignerVerifier } from '../../test/app-e2e.spec';
-import { SdJwtVcPayload } from '../sd-jwt-vc-payload';
+import type { SdJwtVcPayload } from '../sd-jwt-vc-payload';
 
 const iss = 'ExampleIssuer';
 const vct = 'https://example.com/schema/1';

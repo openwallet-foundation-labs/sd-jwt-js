@@ -1,15 +1,15 @@
-import { SDJWTException } from '@sd-jwt/utils';
+import type { SDJWTException } from '@sd-jwt/utils';
 import { KBJwt } from '../kbjwt';
 import {
-  JwtPayload,
+  type JwtPayload,
   KB_JWT_TYP,
-  KbVerifier,
-  Signer,
+  type KbVerifier,
+  type Signer,
   Verifier,
 } from '@sd-jwt/types';
-import Crypto, { KeyLike } from 'node:crypto';
+import Crypto, { type KeyLike } from 'node:crypto';
 import { describe, expect, test } from 'vitest';
-import { JWK, exportJWK, importJWK } from 'jose';
+import { type JWK, exportJWK, importJWK } from 'jose';
 
 describe('KB JWT', () => {
   test('create', async () => {
