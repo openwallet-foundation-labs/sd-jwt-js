@@ -107,12 +107,12 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
-        with:
-          version: latest
+      # - name: Setup Biome
+      #   uses: biomejs/setup-biome@v2
+      #   with:
+      #     version: latest
       - name: Run Biome
-        run: biome ci .
+        run: npx biome ci .
 
   # Only run this job when the push is on main, next or unstable
   publish:    
