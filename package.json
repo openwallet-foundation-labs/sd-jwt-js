@@ -6,6 +6,7 @@
     "build": "lerna run build --stream",
     "lint": "biome lint ./packages",
     "format": "biome format . --write",
+    "biome:ci": "biome ci .",
     "test": "vitest run --coverage.enabled=true --coverage.include=packages/*",
     "test:watch": "vitest",
     "clean": "lerna clean -y",
