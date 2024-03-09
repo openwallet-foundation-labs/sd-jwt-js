@@ -1,4 +1,4 @@
-import { SdJwtPayload } from '@sd-jwt/core';
+import type { SdJwtPayload } from '@sd-jwt/core';
 
 export interface SdJwtVcPayload extends SdJwtPayload {
   // The Issuer of the Verifiable Credential. The value of iss MUST be a URI. See [RFC7519] for more information.

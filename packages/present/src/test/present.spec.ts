@@ -8,7 +8,7 @@ import {
   transformPresentationFrame,
 } from '../index';
 import { decodeSdJwt, decodeSdJwtSync } from '@sd-jwt/decode';
-import { PresentationFrame } from '@sd-jwt/types';
+import type { PresentationFrame } from '@sd-jwt/types';
 
 describe('Present tests', () => {
   test('presentableKeys', async () => {

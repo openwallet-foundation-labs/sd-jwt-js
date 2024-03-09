@@ -3,18 +3,18 @@ import { SDJWTException, Disclosure } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import {
-  DisclosureFrame,
-  Hasher,
-  HasherAndAlg,
-  PresentationFrame,
-  SDJWTCompact,
+  type DisclosureFrame,
+  type Hasher,
+  type HasherAndAlg,
+  type PresentationFrame,
+  type SDJWTCompact,
   SD_DECOY,
   SD_DIGEST,
   SD_LIST_KEY,
   SD_SEPARATOR,
-  SaltGenerator,
-  kbHeader,
-  kbPayload,
+  type SaltGenerator,
+  type kbHeader,
+  type kbPayload,
 } from '@sd-jwt/types';
 import { createHashMapping, getSDAlgAndPayload, unpack } from '@sd-jwt/decode';
 import { transformPresentationFrame } from '@sd-jwt/present';
@@ -236,7 +236,7 @@ export const pack = async <T extends Record<string, unknown>>(
 
     for (const key in disclosureFrame) {
       if (key !== SD_DIGEST) {
-        const idx = parseInt(key);
+        const idx = Number.parseInt(key);
         const packed = await pack(
           claims[idx],
           disclosureFrame[idx],

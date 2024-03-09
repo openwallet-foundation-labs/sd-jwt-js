@@ -1,5 +1,9 @@
-import { Hasher, PresentationFrame, SD_SEPARATOR } from '@sd-jwt/types';
-import { Disclosure } from '@sd-jwt/utils';
+import {
+  type Hasher,
+  type PresentationFrame,
+  SD_SEPARATOR,
+} from '@sd-jwt/types';
+import type { Disclosure } from '@sd-jwt/utils';
 import {
   createHashMapping,
   decodeSdJwt,
@@ -10,7 +14,7 @@ import {
   decodeSdJwtSync,
   unpackSync,
 } from '@sd-jwt/decode';
-import { HasherSync } from '@sd-jwt/types/src/type';
+import type { HasherSync } from '@sd-jwt/types/src/type';
 
 // Presentable keys
 // The presentable keys are the path of JSON object that are presentable in the SD JWT

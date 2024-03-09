@@ -4,7 +4,11 @@ import {
   Base64urlEncode,
 } from './base64url';
 import { SDJWTException } from './error';
-import { HasherAndAlg, DisclosureData, HasherAndAlgSync } from '@sd-jwt/types';
+import type {
+  HasherAndAlg,
+  DisclosureData,
+  HasherAndAlgSync,
+} from '@sd-jwt/types';
 
 export class Disclosure<T = unknown> {
   public salt: string;

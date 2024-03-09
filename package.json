@@ -13,11 +13,7 @@
     "publish:next": "lerna publish --no-private --conventional-prerelease --force-publish --canary --no-git-tag-version --include-merged-tags --preid next --pre-dist-tag next --yes",
     "publish:unstable": "lerna publish --no-private --conventional-prerelease --force-publish --canary --no-git-tag-version --include-merged-tags --preid unstable --pre-dist-tag unstable --yes"
   },
-  "keywords": [
-    "sd-jwt",
-    "sdjwt",
-    "sd-jwt-vc"
-  ],
+  "keywords": ["sd-jwt", "sdjwt", "sd-jwt-vc"],
   "engines": {
     "node": ">=16"
   },
@@ -32,7 +28,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@biomejs/biome": "1.5.3",
+    "@biomejs/biome": "^1.6.0",
     "@types/node": "^20.10.2",
     "@vitest/coverage-v8": "^1.2.2",
     "jose": "^5.2.2",
