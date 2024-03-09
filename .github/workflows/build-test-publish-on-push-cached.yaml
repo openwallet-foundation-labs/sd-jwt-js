@@ -107,12 +107,9 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
-        with:
-          version: latest
-      - name: Run Biome
-        run: biome ci .
+        # we are not using the github action for biome, but the package.json script. this makes sure we are using the same versions.
+      - name: Run Biome      
+        run: pnpm run biome:ci
 
   # Only run this job when the push is on main, next or unstable
   publish:    

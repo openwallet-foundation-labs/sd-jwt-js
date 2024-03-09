@@ -3,7 +3,7 @@ import { Jwt } from '../jwt';
 import { SDJwt, listKeys, pack } from '../sdjwt';
 import Crypto from 'node:crypto';
 import { describe, test, expect } from 'vitest';
-import { DisclosureFrame, Signer } from '@sd-jwt/types';
+import type { DisclosureFrame, Signer } from '@sd-jwt/types';
 import { generateSalt, digest as hasher } from '@sd-jwt/crypto-nodejs';
 import { unpack, createHashMapping } from '@sd-jwt/decode';
 

@@ -1,5 +1,5 @@
 import { Base64urlEncode, SDJWTException } from '@sd-jwt/utils';
-import { Base64urlString, Signer, Verifier } from '@sd-jwt/types';
+import type { Base64urlString, Signer, Verifier } from '@sd-jwt/types';
 import { decodeJwt } from '@sd-jwt/decode';
 
 export type JwtData<

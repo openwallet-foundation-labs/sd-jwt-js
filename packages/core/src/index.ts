@@ -3,16 +3,16 @@ import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
 import {
-  DisclosureFrame,
-  Hasher,
-  KBOptions,
+  type DisclosureFrame,
+  type Hasher,
+  type KBOptions,
   KB_JWT_TYP,
-  PresentationFrame,
-  SDJWTCompact,
-  SDJWTConfig,
+  type PresentationFrame,
+  type SDJWTCompact,
+  type SDJWTConfig,
 } from '@sd-jwt/types';
 import { getSDAlgAndPayload } from '@sd-jwt/decode';
-import { JwtPayload } from '@sd-jwt/types';
+import type { JwtPayload } from '@sd-jwt/types';
 
 export * from './sdjwt';
 export * from './kbjwt';

@@ -5,8 +5,8 @@ import {
   SD_DIGEST,
   SD_DECOY,
   KB_JWT_TYP,
-  DisclosureFrame,
-  PresentationFrame,
+  type DisclosureFrame,
+  type PresentationFrame,
 } from '../index';
 
 const claims = {

@@ -1,7 +1,7 @@
 import { SDJWTException } from '@sd-jwt/utils';
 import { Jwt } from '../jwt';
 import Crypto from 'node:crypto';
-import { Signer, Verifier } from '@sd-jwt/types';
+import type { Signer, Verifier } from '@sd-jwt/types';
 import { describe, expect, test } from 'vitest';
 
 describe('JWT', () => {
