@@ -1,11 +1,11 @@
 import { Base64urlEncode, SDJWTException } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import {
-  JwtPayload,
+  type JwtPayload,
   KB_JWT_TYP,
-  kbHeader,
-  kbPayload,
-  KbVerifier,
+  type kbHeader,
+  type kbPayload,
+  type KbVerifier,
 } from '@sd-jwt/types';
 
 export class KBJwt<

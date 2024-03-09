@@ -1,7 +1,7 @@
 import { SDJwtInstance } from '@sd-jwt/core';
-import { DisclosureFrame } from '@sd-jwt/types';
+import type { DisclosureFrame } from '@sd-jwt/types';
 import { SDJWTException } from '../../utils/dist';
-import { SdJwtVcPayload } from './sd-jwt-vc-payload';
+import type { SdJwtVcPayload } from './sd-jwt-vc-payload';
 
 export { SdJwtVcPayload } from './sd-jwt-vc-payload';
 

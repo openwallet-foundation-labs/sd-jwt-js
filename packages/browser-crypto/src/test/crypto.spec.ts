@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { generateSalt, digest, getHasher, ES256 } from '../index';
 
 // Extract the major version as a number
-const nodeVersionMajor = parseInt(
+const nodeVersionMajor = Number.parseInt(
   process.version.split('.')[0].substring(1),
   10,
 );
