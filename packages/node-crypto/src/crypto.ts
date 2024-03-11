@@ -1,4 +1,4 @@
-import { createHash, randomBytes, subtle } from 'crypto';
+import { createHash, randomBytes, subtle } from 'node:crypto';
 
 export const generateSalt = (length: number): string => {
   if (length <= 0) {

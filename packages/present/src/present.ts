@@ -1,5 +1,9 @@
-import { Hasher, PresentationFrame, SD_SEPARATOR } from '@sd-jwt/types';
-import { Disclosure } from '@sd-jwt/utils';
+import {
+  type Hasher,
+  type PresentationFrame,
+  SD_SEPARATOR,
+} from '@sd-jwt/types';
+import { Disclosure, SDJWTException } from '@sd-jwt/utils';
 import {
   createHashMapping,
   decodeSdJwt,
@@ -9,8 +13,9 @@ import {
   createHashMappingSync,
   decodeSdJwtSync,
   unpackSync,
+  unpackObj,
 } from '@sd-jwt/decode';
-import { HasherSync } from '@sd-jwt/types/src/type';
+import type { HasherSync } from '@sd-jwt/types/src/type';
 
 // Presentable keys
 // The presentable keys are the path of JSON object that are presentable in the SD JWT
@@ -133,4 +138,74 @@ export const transformPresentationFrame = <T extends object>(
     }
     return acc;
   }, []);
+};
+
+export type SerializedDisclosure = {
+  digest: string;
+  encoded: string;
+  salt: string;
+  key: string | undefined;
+  value: unknown;
+};
+
+const createHashMappingForSerializedDisclosure = (
+  disclosures: SerializedDisclosure[],
+) => {
+  const map: Record<string, Disclosure> = {};
+  for (let i = 0; i < disclosures.length; i++) {
+    const disclosure = disclosures[i];
+    const { digest, encoded, key, salt, value } = disclosure;
+    // we made Disclosure to fit the interface of unpack
+    map[digest] = Disclosure.fromArray(
+      key ? [salt, key, value] : [salt, value],
+      { digest, encoded },
+    );
+  }
+  return map;
+};
+
+/**
+ * This function selects the serialized disclosures from the payload
+ * and array of serialized disclosure based on the presentation frame.
+ * If you want to know what is serialized disclosures, check type SerializedDisclosure.
+ * @param payload: Record<string, unknown>
+ * @param disclosures: SerializedDisclosure[]
+ * @param presentationFrame: PresentationFrame<T>
+ */
+export const selectDisclosures = <T extends Record<string, unknown>>(
+  payload: Record<string, unknown>,
+  disclosures: SerializedDisclosure[],
+  presentationFrame: PresentationFrame<T>,
+) => {
+  if (disclosures.length === 0) {
+    return [];
+  }
+
+  const hashmap = createHashMappingForSerializedDisclosure(disclosures);
+  const { disclosureKeymap } = unpackObj(payload, hashmap);
+  const keys = transformPresentationFrame(presentationFrame);
+
+  const presentedDisclosures = keys
+    .map((k) => hashmap[disclosureKeymap[k]])
+    .filter((d) => d !== undefined);
+
+  const selectedDisclosures: SerializedDisclosure[] = presentedDisclosures.map(
+    (d) => {
+      const { salt, key, value, _digest } = d;
+      if (!_digest) {
+        throw new SDJWTException(
+          'Implementation error: _digest is not defined',
+        );
+      }
+      return {
+        digest: _digest,
+        encoded: d.encode(),
+        salt,
+        key,
+        value,
+      };
+    },
+  );
+
+  return selectedDisclosures;
 };
