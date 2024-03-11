@@ -84,7 +84,7 @@ jobs:
           path: coverage
       - uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
 
   lint:
@@ -108,11 +108,11 @@ jobs:
           node-version: 20
           cache: 'pnpm'
         # we are not using the github action for biome, but the package.json script. this makes sure we are using the same versions.
-      - name: Run Biome      
+      - name: Run Biome
         run: pnpm run biome:ci
 
   # Only run this job when the push is on main, next or unstable
-  publish:    
+  publish:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/unstable')
     # needs permissions to write tags to the repository
     permissions:
