@@ -376,7 +376,9 @@ describe('SD JWT', () => {
 
     const credential = sdJwt.encodeSDJwt();
     const decoded = await SDJwt.decodeSDJwt(credential, hasher);
-    expect(jwt).toEqual(decoded.jwt);
+    expect(jwt.header).toEqual(decoded.jwt.header);
+    expect(jwt.payload).toEqual(decoded.jwt.payload);
+    expect(jwt.signature).toEqual(decoded.jwt.signature);
     expect(decoded.disclosures).toEqual([]);
   });
 });
