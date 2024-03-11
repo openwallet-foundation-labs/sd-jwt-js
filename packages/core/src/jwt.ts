@@ -77,7 +77,7 @@ export class Jwt<
     if (this.encoded) {
       const parts = this.encoded.split('.');
       if (parts.length !== 3) {
-        throw new Error(`Invalid JWT format: ${this.encoded}`);
+        throw new SDJWTException(`Invalid JWT format: ${this.encoded}`);
       }
       const unsignedToken = parts.slice(0, 2).join('.');
       return unsignedToken;
