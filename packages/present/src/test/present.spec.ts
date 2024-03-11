@@ -1,10 +1,12 @@
 import { describe, expect, test } from 'vitest';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import {
+  SerializedDisclosure,
   present,
   presentSync,
   presentableKeys,
   presentableKeysSync,
+  selectDisclosures,
   transformPresentationFrame,
 } from '../index';
 import { decodeSdJwt, decodeSdJwtSync } from '@sd-jwt/decode';
@@ -148,5 +150,110 @@ describe('Present tests', () => {
     };
     const list = transformPresentationFrame<typeof claims>(obj);
     expect(list).toStrictEqual(['address', 'address.city', 'address.street']);
+  });
+
+  test('select disclosures', () => {
+    const payload = {
+      lastname: 'Doe',
+      _sd: [
+        'COnqXH7wGBFGR1ao12sDwTfu84Zs7cq92CZIg8ulIuU',
+        'RrOc4ZfBVyD6iNlMbtmdokZOti322mOXfvIOBKvpuc4',
+        'aXqInKwHoE1l8OM1VNUQDqTPeNUG1cMJVwVbxZJpP14',
+      ],
+      _sd_alg: 'SHA-256',
+    };
+
+    const presentationFrame = {
+      firstname: true,
+      //ssn: true,
+      id: true,
+    };
+
+    const disclosures: SerializedDisclosure[] = [
+      {
+        digest: 'COnqXH7wGBFGR1ao12sDwTfu84Zs7cq92CZIg8ulIuU',
+        encoded: 'WyJiMDQ3NjBiOTgxMDgyM2ZhIiwiZmlyc3RuYW1lIiwiSm9obiJd',
+        salt: 'b04760b9810823fa',
+        key: 'firstname',
+        value: 'John',
+      },
+      {
+        digest: 'RrOc4ZfBVyD6iNlMbtmdokZOti322mOXfvIOBKvpuc4',
+        encoded: 'WyJjNTQwZWE4YjJhOTNmZDE1Iiwic3NuIiwiMTIzLTQ1LTY3ODkiXQ',
+        salt: 'c540ea8b2a93fd15',
+        key: 'ssn',
+        value: '123-45-6789',
+      },
+      {
+        digest: 'aXqInKwHoE1l8OM1VNUQDqTPeNUG1cMJVwVbxZJpP14',
+        encoded: 'WyI5N2YwNTVkZTk0NGFmNzI5IiwiaWQiLCIxMjM0Il0',
+        salt: '97f055de944af729',
+        key: 'id',
+        value: '1234',
+      },
+    ];
+
+    const selected = selectDisclosures(payload, disclosures, presentationFrame);
+    expect(selected).toStrictEqual([
+      {
+        digest: 'COnqXH7wGBFGR1ao12sDwTfu84Zs7cq92CZIg8ulIuU',
+        encoded: 'WyJiMDQ3NjBiOTgxMDgyM2ZhIiwiZmlyc3RuYW1lIiwiSm9obiJd',
+        salt: 'b04760b9810823fa',
+        key: 'firstname',
+        value: 'John',
+      },
+      {
+        digest: 'aXqInKwHoE1l8OM1VNUQDqTPeNUG1cMJVwVbxZJpP14',
+        encoded: 'WyI5N2YwNTVkZTk0NGFmNzI5IiwiaWQiLCIxMjM0Il0',
+        salt: '97f055de944af729',
+        key: 'id',
+        value: '1234',
+      },
+    ]);
+  });
+
+  test('select disclosures no input', () => {
+    const selected = selectDisclosures({}, [], {});
+    expect(selected).toStrictEqual([]);
+  });
+
+  test('select disclosures noting return', () => {
+    const payload = {
+      lastname: 'Doe',
+      _sd: [
+        'COnqXH7wGBFGR1ao12sDwTfu84Zs7cq92CZIg8ulIuU',
+        'RrOc4ZfBVyD6iNlMbtmdokZOti322mOXfvIOBKvpuc4',
+        'aXqInKwHoE1l8OM1VNUQDqTPeNUG1cMJVwVbxZJpP14',
+      ],
+      _sd_alg: 'SHA-256',
+    };
+
+    const presentationFrame = {};
+
+    const disclosures: SerializedDisclosure[] = [
+      {
+        digest: 'COnqXH7wGBFGR1ao12sDwTfu84Zs7cq92CZIg8ulIuU',
+        encoded: 'WyJiMDQ3NjBiOTgxMDgyM2ZhIiwiZmlyc3RuYW1lIiwiSm9obiJd',
+        salt: 'b04760b9810823fa',
+        key: 'firstname',
+        value: 'John',
+      },
+      {
+        digest: 'RrOc4ZfBVyD6iNlMbtmdokZOti322mOXfvIOBKvpuc4',
+        encoded: 'WyJjNTQwZWE4YjJhOTNmZDE1Iiwic3NuIiwiMTIzLTQ1LTY3ODkiXQ',
+        salt: 'c540ea8b2a93fd15',
+        key: 'ssn',
+        value: '123-45-6789',
+      },
+      {
+        digest: 'aXqInKwHoE1l8OM1VNUQDqTPeNUG1cMJVwVbxZJpP14',
+        encoded: 'WyI5N2YwNTVkZTk0NGFmNzI5IiwiaWQiLCIxMjM0Il0',
+        salt: '97f055de944af729',
+        key: 'id',
+        value: '1234',
+      },
+    ];
+    const selected = selectDisclosures(payload, disclosures, presentationFrame);
+    expect(selected).toStrictEqual([]);
   });
 });
