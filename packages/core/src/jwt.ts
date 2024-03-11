@@ -9,6 +9,7 @@ export type JwtData<
   header?: Header;
   payload?: Payload;
   signature?: Base64urlString;
+  encoded?: string;
 };
 
 // This class is used to create and verify JWT
@@ -20,11 +21,13 @@ export class Jwt<
   public header?: Header;
   public payload?: Payload;
   public signature?: Base64urlString;
+  private encoded?: string;
 
   constructor(data?: JwtData<Header, Payload>) {
     this.header = data?.header;
     this.payload = data?.payload;
     this.signature = data?.signature;
+    this.encoded = data?.encoded;
   }
 
   public static decodeJWT<
@@ -48,6 +51,7 @@ export class Jwt<
       header,
       payload,
       signature,
+      encoded: encodedJwt,
     });
 
     return jwt;
@@ -55,28 +59,47 @@ export class Jwt<
 
   public setHeader(header: Header): Jwt<Header, Payload> {
     this.header = header;
+    this.encoded = undefined;
     return this;
   }
 
   public setPayload(payload: Payload): Jwt<Header, Payload> {
     this.payload = payload;
+    this.encoded = undefined;
     return this;
   }
 
-  public async sign(signer: Signer) {
+  protected getUnsignedToken() {
     if (!this.header || !this.payload) {
-      throw new SDJWTException('Sign Error: Invalid JWT');
+      throw new SDJWTException('Serialize Error: Invalid JWT');
+    }
+
+    if (this.encoded) {
+      const parts = this.encoded.split('.');
+      if (parts.length !== 3) {
+        throw new Error(`Invalid JWT format: ${this.encoded}`);
+      }
+      const unsignedToken = parts.slice(0, 2).join('.');
+      return unsignedToken;
     }
 
     const header = Base64urlEncode(JSON.stringify(this.header));
     const payload = Base64urlEncode(JSON.stringify(this.payload));
-    const data = `${header}.${payload}`;
+    return `${header}.${payload}`;
+  }
+
+  public async sign(signer: Signer) {
+    const data = this.getUnsignedToken();
     this.signature = await signer(data);
 
     return this.encodeJwt();
   }
 
   public encodeJwt(): string {
+    if (this.encoded) {
+      return this.encoded;
+    }
+
     if (!this.header || !this.payload || !this.signature) {
       throw new SDJWTException('Serialize Error: Invalid JWT');
     }
@@ -85,18 +108,16 @@ export class Jwt<
     const payload = Base64urlEncode(JSON.stringify(this.payload));
     const signature = this.signature;
     const compact = `${header}.${payload}.${signature}`;
+    this.encoded = compact;
 
     return compact;
   }
 
   public async verify(verifier: Verifier) {
-    if (!this.header || !this.payload || !this.signature) {
-      throw new SDJWTException('Verify Error: Invalid JWT');
+    if (!this.signature) {
+      throw new SDJWTException('Verify Error: no signature in JWT');
     }
-
-    const header = Base64urlEncode(JSON.stringify(this.header));
-    const payload = Base64urlEncode(JSON.stringify(this.payload));
-    const data = `${header}.${payload}`;
+    const data = this.getUnsignedToken();
 
     const verified = await verifier(data, this.signature);
     if (!verified) {
