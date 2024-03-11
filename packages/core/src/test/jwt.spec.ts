@@ -138,4 +138,65 @@ describe('JWT', () => {
       expect(e).toBeInstanceOf(SDJWTException);
     }
   });
+
+  test('getUnsignedToken failed', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
+    });
+
+    try {
+      await jwt.sign(testSigner);
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(SDJWTException);
+    }
+  });
+
+  test('wrong encoded field', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testSigner: Signer = async (data: string) => {
+      const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+      return Buffer.from(sig).toString('base64url');
+    };
+
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+      encoded: 'asfasfafaf.dfasfafafasf', // it has to be 3 parts
+    });
+
+    try {
+      await jwt.sign(testSigner);
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(SDJWTException);
+    }
+  });
+
+  test('verify failed no signature', async () => {
+    const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+    const testVerifier: Verifier = async (data: string, sig: string) => {
+      return Crypto.verify(
+        null,
+        Buffer.from(data),
+        publicKey,
+        Buffer.from(sig, 'base64url'),
+      );
+    };
+
+    const jwt = new Jwt({
+      header: { alg: 'EdDSA' },
+      payload: { foo: 'bar' },
+    });
+
+    try {
+      await jwt.verify(testVerifier);
+    } catch (e: unknown) {
+      expect(e).toBeInstanceOf(SDJWTException);
+    }
+  });
 });

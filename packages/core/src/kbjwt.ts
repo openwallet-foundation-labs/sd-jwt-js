@@ -36,9 +36,7 @@ export class KBJwt<
       throw new SDJWTException('Invalid Key Binding Jwt');
     }
 
-    const header = Base64urlEncode(JSON.stringify(this.header));
-    const payload = Base64urlEncode(JSON.stringify(this.payload));
-    const data = `${header}.${payload}`;
+    const data = this.getUnsignedToken();
     const verified = await values.verifier(
       data,
       this.signature,
@@ -63,6 +61,7 @@ export class KBJwt<
       header,
       payload,
       signature,
+      encoded: encodedJwt,
     });
 
     return jwt;
