@@ -177,6 +177,10 @@ export const selectDisclosures = <T extends Record<string, unknown>>(
   disclosures: SerializedDisclosure[],
   presentationFrame: PresentationFrame<T>,
 ) => {
+  if (disclosures.length === 0) {
+    return [];
+  }
+
   const hashmap = createHashMappingForSerializedDisclosure(disclosures);
   const { disclosureKeymap } = unpackObj(payload, hashmap);
   const keys = transformPresentationFrame(presentationFrame);
