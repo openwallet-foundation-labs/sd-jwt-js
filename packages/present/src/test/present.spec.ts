@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { digest } from '@sd-jwt/crypto-nodejs';
 import {
-  SerializedDisclosure,
+  type SerializedDisclosure,
   present,
   presentSync,
   presentableKeys,
