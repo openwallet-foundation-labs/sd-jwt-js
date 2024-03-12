@@ -148,7 +148,7 @@ export type SerializedDisclosure = {
   value: unknown;
 };
 
-const createHashMappingForSerializedDisclosure = (
+export const createHashMappingForSerializedDisclosure = (
   disclosures: SerializedDisclosure[],
 ) => {
   const map: Record<string, Disclosure> = {};
