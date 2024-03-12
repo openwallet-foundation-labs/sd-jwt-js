@@ -1,14 +1,36 @@
-name: build-test-publish-on-push-cached
-on:  
-  pull_request:
-    branches:      
-      - 'main'      
-  push:
-    branches:      
-      - 'main'      
+name: release
+on:
+  workflow_dispatch:
 
 jobs:
+  check-author:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Check if user is in CODEOWNERS
+        id: check_user
+        run: |
+            CODEOWNERS_PATH="CODEOWNERS"
+            if [ ! -f "$CODEOWNERS_PATH" ]; then
+                echo "CODEOWNERS file not found."
+                exit 1            
+            fi
+            
+            # Extract GitHub usernames from CODEOWNERS file (assumes usernames, not emails or teams)
+            USERS=$(grep '@' $CODEOWNERS_PATH | sed -E 's/.*@([^ ]+).*/\1/' | tr '\n' ' ')
+            
+            # Check if the actor is in the list of users
+            if [[ ! " $USERS " =~ " ${{ github.actor }} " ]]; then
+                echo "Error: Actor ${{ github.actor }} is not listed in CODEOWNERS."
+                exit 1
+            else
+                echo "Actor ${{ github.actor }} is listed in CODEOWNERS."
+            fi
+  # we can add an approval stage with the environment so it can only be run when accepted by two authorized users.
   build:
+    needs: check-author
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -107,9 +129,7 @@ jobs:
       - name: Run Biome      
         run: pnpm run biome:ci
 
-  # Only run this job when the push is on main, next or unstable
   publish:    
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # needs permissions to write tags to the repository
     permissions:
       contents: write
@@ -161,6 +181,5 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
           npm whoami
 
-      - name: 'Publish next version'
-        if: github.ref == 'refs/heads/next'
-        run: pnpm publish:next
+      - name: 'Publish latest version'        
+        run: pnpm publish:latest

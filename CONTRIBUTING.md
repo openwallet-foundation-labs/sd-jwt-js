@@ -42,3 +42,12 @@ We use GitHub issues to track public bugs. Report a bug by opening a new issue i
 - What you expected would happen
 - What actually happens
 - Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
+
+## Release procedure
+
+Each PR to the `main` branch has to pass the `build`, `test`, `lint` and `code coverage` steps from the CI. The PR also needs a review from one authorized person.
+All commits needs to be signed to pass the DCO check.
+
+After the PR is merged, a new `next` version is build and deployed to `npmjs` for all packages with the `next` tag.
+
+The release of a new version is done by running the `release` workflow manually. This workflow can only be triggered successfully by an authorized person that is listed inside the `CODEOWNERS` file. The test and coverage steps are executed again and the new version is published to `npmjs` for all packages with the `latest` tag. The version number is calculated based on the commits since the last release and the `semver` rules.
