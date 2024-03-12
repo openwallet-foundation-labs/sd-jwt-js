@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/openwallet-foundation-labs/sd-jwt-js/compare/v0.5.0...v0.6.0) (2024-03-12)
+
+
+### Bug Fixes
+
+* add missing export ([#159](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/159)) ([f92b3e2](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/f92b3e246371a83c51c5450b9bccb04753c58bf4))
+* validate JWT signed other implemenation ([#158](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/158)) ([9f28a26](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/9f28a26214d4112e5ef280e5e754b62e36772328))
+
+
+### Features
+
+* make _digest value public in disclosure ([#151](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/151)) ([9baa93e](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/9baa93efb612ee2fe73c5872766cbc37e541c4dc))
+
+
+
+
+
+# [0.5.0](https://github.com/openwallet-foundation-labs/sd-jwt-js/compare/v0.4.0...v0.5.0) (2024-03-11)
+
+
+### Bug Fixes
+
+* validate JWT signed other implemenation ([#158](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/158)) ([a0c1ddb](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/a0c1ddbb4c3785d03fc7302183f9c13e3c3fd955))
+
+
+### Features
+
+* make _digest value public in disclosure ([#151](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/151)) ([7a3fbd7](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/7a3fbd7db19b6501978340c972b171743d287285))
+
+
+
+
+
 # 0.4.0 (2024-03-08)
 
 
