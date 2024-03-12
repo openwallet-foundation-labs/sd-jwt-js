@@ -14,7 +14,7 @@ repository:
   homepage: https://sdjwt.js.org/
   # A comma-separated list of topics to set on the repository
   topics: sd-jwt, jwt
-  default_branch: next
+  default_branch: main
 
 # Labels: define labels for Issues and Pull Requests
 labels:
