@@ -1,11 +1,11 @@
 name: build-test-publish-on-push-cached
-on:  
+on:
   pull_request:
-    branches:      
-      - 'main'      
+    branches:
+      - 'main'
   push:
-    branches:      
-      - 'main'      
+    branches:
+      - 'main'
 
 jobs:
   build:
@@ -107,8 +107,8 @@ jobs:
       - name: Run Biome      
         run: pnpm run biome:ci
 
-  # Only run this job when the push is on main, next or unstable
-  publish:    
+  # Only run this job when the push is on main
+  publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     # needs permissions to write tags to the repository
     permissions:
@@ -162,5 +162,4 @@ jobs:
           npm whoami
 
       - name: 'Publish next version'
-        if: github.ref == 'refs/heads/next'
         run: pnpm publish:next
