@@ -1,6 +1,6 @@
 import { createDecoy } from '../decoy';
 import { describe, expect, test } from 'vitest';
-import { Base64urlEncode } from '@sd-jwt/utils';
+import { base64urlEncode } from '@sd-jwt/utils';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 
 const hash = {
@@ -21,7 +21,7 @@ describe('Decoy', () => {
   //  *  Contents: ["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]
   test('apply hasher and saltGenerator', async () => {
     const decoyValue = await createDecoy(hash, () =>
-      Base64urlEncode(
+      base64urlEncode(
         '["6Ij7tM-a5iVPGboS5tmvVA", "email", "johndoe@example.com"]',
       ),
     );

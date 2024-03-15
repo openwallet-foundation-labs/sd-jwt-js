@@ -1,4 +1,4 @@
-import { Base64urlEncode, SDJWTException } from '@sd-jwt/utils';
+import { SDJWTException } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import {
   type JwtPayload,
