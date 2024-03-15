@@ -1,7 +1,7 @@
 import { generateSalt, digest as hasher } from '@sd-jwt/crypto-nodejs';
 import { Disclosure } from '../disclosure';
 import { describe, expect, test } from 'vitest';
-import { Base64urlEncode, type SDJWTException } from '../index';
+import { base64urlEncode, type SDJWTException } from '../index';
 
 const hash = { alg: 'SHA256', hasher };
 
@@ -144,7 +144,7 @@ describe('Disclosure', () => {
   });
 
   test('digest disclosure #3', async () => {
-    const encoded = Base64urlEncode(TestDataDraft7.claimTests[0].contents);
+    const encoded = base64urlEncode(TestDataDraft7.claimTests[0].contents);
     expect(encoded).toStrictEqual(TestDataDraft7.claimTests[0].disclosure);
 
     const disclosure = await Disclosure.fromEncode(

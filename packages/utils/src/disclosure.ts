@@ -1,7 +1,7 @@
 import {
-  Uint8ArrayToBase64Url,
-  Base64urlDecode,
-  Base64urlEncode,
+  uint8ArrayToBase64Url,
+  base64urlDecode,
+  base64urlEncode,
 } from './base64url';
 import { SDJWTException } from './error';
 import type {
@@ -45,16 +45,16 @@ export class Disclosure<T = unknown> {
   public static async fromEncode<T>(s: string, hash: HasherAndAlg) {
     const { hasher, alg } = hash;
     const digest = await hasher(s, alg);
-    const digestStr = Uint8ArrayToBase64Url(digest);
-    const item = JSON.parse(Base64urlDecode(s)) as DisclosureData<T>;
+    const digestStr = uint8ArrayToBase64Url(digest);
+    const item = JSON.parse(base64urlDecode(s)) as DisclosureData<T>;
     return Disclosure.fromArray<T>(item, { digest: digestStr, encoded: s });
   }
 
   public static fromEncodeSync<T>(s: string, hash: HasherAndAlgSync) {
     const { hasher, alg } = hash;
     const digest = hasher(s, alg);
-    const digestStr = Uint8ArrayToBase64Url(digest);
-    const item = JSON.parse(Base64urlDecode(s)) as DisclosureData<T>;
+    const digestStr = uint8ArrayToBase64Url(digest);
+    const item = JSON.parse(base64urlDecode(s)) as DisclosureData<T>;
     return Disclosure.fromArray<T>(item, { digest: digestStr, encoded: s });
   }
 
@@ -69,7 +69,7 @@ export class Disclosure<T = unknown> {
     if (!this._encoded) {
       // we use JSON.stringify to encode the data
       // It's the most reliable and universal way to encode JSON object
-      this._encoded = Base64urlEncode(JSON.stringify(this.decode()));
+      this._encoded = base64urlEncode(JSON.stringify(this.decode()));
     }
     return this._encoded;
   }
@@ -84,7 +84,7 @@ export class Disclosure<T = unknown> {
     const { hasher, alg } = hash;
     if (!this._digest) {
       const hash = await hasher(this.encode(), alg);
-      this._digest = Uint8ArrayToBase64Url(hash);
+      this._digest = uint8ArrayToBase64Url(hash);
     }
 
     return this._digest;
@@ -94,7 +94,7 @@ export class Disclosure<T = unknown> {
     const { hasher, alg } = hash;
     if (!this._digest) {
       const hash = hasher(this.encode(), alg);
-      this._digest = Uint8ArrayToBase64Url(hash);
+      this._digest = uint8ArrayToBase64Url(hash);
     }
 
     return this._digest;

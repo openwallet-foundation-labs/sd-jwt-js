@@ -1,4 +1,4 @@
-import { Base64urlEncode, SDJWTException } from '@sd-jwt/utils';
+import { base64urlEncode, SDJWTException } from '@sd-jwt/utils';
 import type { Base64urlString, Signer, Verifier } from '@sd-jwt/types';
 import { decodeJwt } from '@sd-jwt/decode';
 
@@ -83,8 +83,8 @@ export class Jwt<
       return unsignedToken;
     }
 
-    const header = Base64urlEncode(JSON.stringify(this.header));
-    const payload = Base64urlEncode(JSON.stringify(this.payload));
+    const header = base64urlEncode(JSON.stringify(this.header));
+    const payload = base64urlEncode(JSON.stringify(this.payload));
     return `${header}.${payload}`;
   }
 
@@ -104,8 +104,8 @@ export class Jwt<
       throw new SDJWTException('Serialize Error: Invalid JWT');
     }
 
-    const header = Base64urlEncode(JSON.stringify(this.header));
-    const payload = Base64urlEncode(JSON.stringify(this.payload));
+    const header = base64urlEncode(JSON.stringify(this.header));
+    const payload = base64urlEncode(JSON.stringify(this.payload));
     const signature = this.signature;
     const compact = `${header}.${payload}.${signature}`;
     this.encoded = compact;

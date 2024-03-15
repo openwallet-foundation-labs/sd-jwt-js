@@ -1,4 +1,4 @@
-import { Base64urlDecode, SDJWTException, Disclosure } from '@sd-jwt/utils';
+import { base64urlDecode, SDJWTException, Disclosure } from '@sd-jwt/utils';
 import {
   type Hasher,
   type HasherAndAlg,
@@ -20,8 +20,8 @@ export const decodeJwt = <
   }
 
   return {
-    header: JSON.parse(Base64urlDecode(header)),
-    payload: JSON.parse(Base64urlDecode(payload)),
+    header: JSON.parse(base64urlDecode(header)),
+    payload: JSON.parse(base64urlDecode(payload)),
     signature: signature,
   };
 };

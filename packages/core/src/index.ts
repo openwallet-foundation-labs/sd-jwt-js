@@ -1,4 +1,4 @@
-import { SDJWTException, Uint8ArrayToBase64Url } from '@sd-jwt/utils';
+import { SDJWTException, uint8ArrayToBase64Url } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import { SDJwt, pack } from './sdjwt';
@@ -250,7 +250,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     }
     const { _sd_alg } = getSDAlgAndPayload(sdjwt.jwt.payload);
     const sdHash = await hasher(presentSdJwtWithoutKb, _sd_alg);
-    const sdHashStr = Uint8ArrayToBase64Url(sdHash);
+    const sdHashStr = uint8ArrayToBase64Url(sdHash);
     return sdHashStr;
   }
 
