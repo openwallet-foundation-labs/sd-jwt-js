@@ -285,7 +285,7 @@ export const unpack = async (
   const hash = { hasher, alg: _sd_alg };
   const map = await createHashMapping(disclosures, hash);
 
-  return unpackObjInternal(payload, map);
+  return unpackObj(payload, map);
 };
 
 export const unpackSync = (
@@ -297,7 +297,7 @@ export const unpackSync = (
   const hash = { hasher, alg: _sd_alg };
   const map = createHashMappingSync(disclosures, hash);
 
-  return unpackObjInternal(payload, map);
+  return unpackObj(payload, map);
 };
 
 // This is the type of the object that is returned by the decodeSdJwt function
