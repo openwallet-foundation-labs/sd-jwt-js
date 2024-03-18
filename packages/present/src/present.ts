@@ -114,18 +114,13 @@ export const presentSync = <T extends Record<string, unknown>>(
 };
 
 /**
- * Type of a frame that is used to present the SD JWT
- */
-type Frame = Record<string, boolean | unknown>;
-
-/**
  * Transform the object keys into an array of strings. We are not sorting the array in any way.
  * @param obj The object to transform
  * @param prefix The prefix to add to the keys
  * @returns
  */
 export const transformPresentationFrame = (
-  obj: PresentationFrame<Frame>,
+  obj: PresentationFrame<Extensible>,
   prefix = '',
 ): string[] => {
   return Object.entries(obj).reduce<string[]>((acc, [key, value]) => {
@@ -139,7 +134,7 @@ export const transformPresentationFrame = (
       acc.push(
         newPrefix,
         ...transformPresentationFrame(
-          value as PresentationFrame<Frame>,
+          value as PresentationFrame<Extensible>,
           newPrefix,
         ),
       );
