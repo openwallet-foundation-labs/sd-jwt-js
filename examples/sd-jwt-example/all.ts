@@ -92,7 +92,10 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
 
   // Create a presentation using the issued credential and the presentation frame
   // return a Encoded SD JWT. Holder send the presentation to the verifier
-  const presentation = await sdjwt.present(credential, presentationFrame);
+  const presentation = await sdjwt.present<typeof claims>(
+    credential,
+    presentationFrame,
+  );
   console.log('presentedSDJwt:', presentation);
 
   // Verifier Define the required claims that need to be verified in the presentation

@@ -15,7 +15,7 @@ import {
   unpackSync,
   unpackObj,
 } from '@sd-jwt/decode';
-import type { HasherSync } from '@sd-jwt/types/src/type';
+import type { Extensible, HasherSync } from '@sd-jwt/types/src/type';
 
 // Presentable keys
 // The presentable keys are the path of JSON object that are presentable in the SD JWT
@@ -119,8 +119,8 @@ export const presentSync = <T extends Record<string, unknown>>(
  * @param prefix The prefix to add to the keys
  * @returns
  */
-export const transformPresentationFrame = <T extends object>(
-  obj: PresentationFrame<T>,
+export const transformPresentationFrame = (
+  obj: PresentationFrame<Extensible>,
   prefix = '',
 ): string[] => {
   return Object.entries(obj).reduce<string[]>((acc, [key, value]) => {
@@ -130,10 +130,13 @@ export const transformPresentationFrame = <T extends object>(
       if (value) {
         acc.push(newPrefix);
       }
-    } else {
+    } else if (typeof value === 'object' && value !== null) {
       acc.push(
         newPrefix,
-        ...transformPresentationFrame(value as PresentationFrame<T>, newPrefix),
+        ...transformPresentationFrame(
+          value as PresentationFrame<Extensible>,
+          newPrefix,
+        ),
       );
     }
     return acc;

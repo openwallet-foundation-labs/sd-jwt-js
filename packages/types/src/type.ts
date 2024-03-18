@@ -153,7 +153,12 @@ type Frame<Payload> = Payload extends Array<infer U>
       >
     : SD<Payload> & DECOY;
 
-export type DisclosureFrame<T extends object> = Frame<T>;
+/**
+ * This is a disclosureFrame type that is used to represent the structure of what is being disclosed.
+ */
+export type Extensible = Record<string, unknown | boolean>;
+
+export type DisclosureFrame<T extends Extensible> = Frame<T>;
 
 /**
  * This is a presentationFrame type that is used to represent the structure of what is being presented.
@@ -208,4 +213,4 @@ type PFrame<Payload> = Payload extends Array<infer U>
         : boolean;
     };
 
-export type PresentationFrame<T extends object> = PFrame<T>;
+export type PresentationFrame<T extends Extensible> = PFrame<T>;
