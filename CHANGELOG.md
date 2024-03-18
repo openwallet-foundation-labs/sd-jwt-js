@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/openwallet-foundation-labs/sd-jwt-js/compare/v0.6.0...v0.6.1) (2024-03-18)
+
+
+### Bug Fixes
+
+* base64url convention ([#179](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/179)) ([f8db275](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/f8db275690dab88000a039838680a3478b3b61ec))
+* incorrect condition on workflow step ([#176](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/176)) ([fec88f0](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/fec88f0c084ee09b3a0c80920782c3efadfc51b1))
+* **sd-jwt-vc:** improve alignment with draft-03 ([#175](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/175)) ([bcd7d6e](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/bcd7d6e40fff938d06425d69297274400ab9e8a6))
+
+
+### Features
+
+* set token for deployment ([#174](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/174)) ([d097f8c](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/d097f8c0047abeefd7840d431521da4f7c331804))
+
+
+
+
+
 # [0.6.0](https://github.com/openwallet-foundation-labs/sd-jwt-js/compare/v0.5.0...v0.6.0) (2024-03-12)
 
 
