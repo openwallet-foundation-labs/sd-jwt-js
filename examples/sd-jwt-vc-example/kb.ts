@@ -46,7 +46,7 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   const sdjwttoken = await sdjwt.decode(encodedSdjwt);
   console.log(sdjwttoken);
 
-  const presentedSdJwt = await sdjwt.present(
+  const presentedSdJwt = await sdjwt.present<typeof claims>(
     encodedSdjwt,
     { id: true },
     {

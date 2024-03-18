@@ -125,7 +125,10 @@ describe('App', () => {
       firstname: true,
       id: true,
     };
-    const presentedSDJwt = await sdjwt.present(encodedSdjwt, presentationFrame);
+    const presentedSDJwt = await sdjwt.present<typeof claims>(
+      encodedSdjwt,
+      presentationFrame,
+    );
     expect(presentedSDJwt).toBeDefined();
 
     const presentationClaims = await sdjwt.getClaims(presentedSDJwt);
@@ -236,7 +239,7 @@ async function JSONtest(filename: string) {
     payload,
   });
 
-  const presentedSDJwt = await sdjwt.present(
+  const presentedSDJwt = await sdjwt.present<typeof claims>(
     encodedSdjwt,
     test.presentationFrames,
   );
