@@ -144,7 +144,7 @@ export const getClaimsSync = <T>(
   return unpackedObj as T;
 };
 
-export const unpackArray = (
+const unpackArray = (
   arr: Array<unknown>,
   map: Record<string, Disclosure>,
   prefix = '',
@@ -160,21 +160,15 @@ export const unpackArray = (
           const presentKey = prefix ? `${prefix}.${idx}` : `${idx}`;
           keys[presentKey] = hash;
 
-          const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
-            disclosed.value,
-            map,
-            presentKey,
-          );
+          const { unpackedObj, disclosureKeymap: disclosureKeys } =
+            unpackObjInternal(disclosed.value, map, presentKey);
           unpackedArray.push(unpackedObj);
           Object.assign(keys, disclosureKeys);
         }
       } else {
         const newKey = prefix ? `${prefix}.${idx}` : `${idx}`;
-        const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
-          item,
-          map,
-          newKey,
-        );
+        const { unpackedObj, disclosureKeymap: disclosureKeys } =
+          unpackObjInternal(item, map, newKey);
         unpackedArray.push(unpackedObj);
         Object.assign(keys, disclosureKeys);
       }
@@ -185,7 +179,12 @@ export const unpackArray = (
   return { unpackedObj: unpackedArray, disclosureKeymap: keys };
 };
 
-export const unpackObj = (
+export const unpackObj = (obj: unknown, map: Record<string, Disclosure>) => {
+  const copiedObj = JSON.parse(JSON.stringify(obj));
+  return unpackObjInternal(copiedObj, map);
+};
+
+const unpackObjInternal = (
   obj: unknown,
   map: Record<string, Disclosure>,
   prefix = '',
@@ -203,11 +202,8 @@ export const unpackObj = (
         typeof (obj as Record<string, unknown>)[key] === 'object'
       ) {
         const newKey = prefix ? `${prefix}.${key}` : key;
-        const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
-          (obj as Record<string, unknown>)[key],
-          map,
-          newKey,
-        );
+        const { unpackedObj, disclosureKeymap: disclosureKeys } =
+          unpackObjInternal((obj as Record<string, unknown>)[key], map, newKey);
         (obj as Record<string, unknown>)[key] = unpackedObj;
         Object.assign(keys, disclosureKeys);
       }
@@ -226,11 +222,8 @@ export const unpackObj = (
             : disclosed.key;
           keys[presentKey] = hash;
 
-          const { unpackedObj, disclosureKeymap: disclosureKeys } = unpackObj(
-            disclosed.value,
-            map,
-            presentKey,
-          );
+          const { unpackedObj, disclosureKeymap: disclosureKeys } =
+            unpackObjInternal(disclosed.value, map, presentKey);
           claims[disclosed.key] = unpackedObj;
           Object.assign(keys, disclosureKeys);
         }
@@ -281,7 +274,8 @@ export const getSDAlgAndPayload = (SdJwtPayload: Record<string, unknown>) => {
 };
 
 // Match the digests of the disclosures with the claims and extract the claims
-// unpack function use unpackObj and unpackArray to recursively unpack the claims
+// unpack function use unpackObjInternal and unpackArray to recursively unpack the claims
+// Since getSDAlgAndPayload create new object So we don't need to clone it again
 export const unpack = async (
   SdJwtPayload: Record<string, unknown>,
   disclosures: Array<Disclosure>,
