@@ -1,7 +1,6 @@
 {
   "name": "@sd-jwt/sd-jwt-vc",
-  "version": "0.3.0",
-  "description": "sd-jwt draft 7 implementation in typescript",
+  "description": "sd-jwt implementation in typescript",
   "scripts": {
     "build": "lerna run build --stream",
     "lint": "biome lint ./packages",
