@@ -15,7 +15,7 @@ import {
   unpackSync,
   unpackObj,
 } from '@sd-jwt/decode';
-import type { HasherSync } from '@sd-jwt/types/src/type';
+import type { Extensible, HasherSync } from '@sd-jwt/types/src/type';
 
 // Presentable keys
 // The presentable keys are the path of JSON object that are presentable in the SD JWT

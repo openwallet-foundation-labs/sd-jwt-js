@@ -143,17 +143,19 @@ type Frame<Payload> = Payload extends Array<infer U>
     ? Record<number, Frame<U>> & SD<Payload> & DECOY
     : SD<Payload> & DECOY
   : Payload extends Record<string, unknown>
-    ? NonNever<
-        {
-          [K in keyof Payload]?: Payload[K] extends object
-            ? Frame<Payload[K]>
-            : never;
-        } & SD<Payload> &
-          DECOY
-      >
-    : SD<Payload> & DECOY;
+  ? NonNever<
+      {
+        [K in keyof Payload]?: Payload[K] extends object
+          ? Frame<Payload[K]>
+          : never;
+      } & SD<Payload> &
+        DECOY
+    >
+  : SD<Payload> & DECOY;
 
-export type DisclosureFrame<T extends object> = Frame<T>;
+export type Extensible = Record<string, unknown>;
+
+export type DisclosureFrame<T extends Extensible> = Frame<T>;
 
 /**
  * This is a presentationFrame type that is used to represent the structure of what is being presented.
@@ -208,4 +210,4 @@ type PFrame<Payload> = Payload extends Array<infer U>
         : boolean;
     };
 
-export type PresentationFrame<T extends object> = PFrame<T>;
+export type PresentationFrame<T extends Extensible> = PFrame<T>;
