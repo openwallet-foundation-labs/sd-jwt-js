@@ -32,7 +32,7 @@ Ensure you have Node.js installed as a prerequisite.
 
 ### Usage
 
-Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/next/docs) or [examples](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/next/examples)
+Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/main/docs) or [examples](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/main/examples)
 
 ### Dependencies
 
