@@ -38,13 +38,13 @@ Here's a basic example of how to use this library:
 import { DisclosureFrame } from '@sd-jwt/sd-jwt-vc';
 
 // identifier of the issuer
-const iss = "University";
+const iss = 'University';
 
 // issuance time
 const iat = new Date().getTime() / 1000;
 
 //unique identifier of the schema
-const vct = "University-Degree";
+const vct = 'University-Degree';
 
 // Issuer defines the claims object with the user's information
 const claims = {
@@ -61,7 +61,10 @@ const disclosureFrame: DisclosureFrame<typeof claims> = {
 
 // Issuer issues a signed JWT credential with the specified claims and disclosure frame
 // returns an encoded JWT
-const credential = await sdjwt.issue({iss, iat, vct, ...claims}, disclosureFrame);
+const credential = await sdjwt.issue(
+  { iss, iat, vct, ...claims },
+  disclosureFrame,
+);
 
 // Holder may validate the credential from the issuer
 const valid = await sdjwt.validate(credential);
@@ -78,7 +81,7 @@ const presentation = await sdjwt.present(credential, presentationFrame);
 const verified = await sdjwt.verify(presentation);
 ```
 
-Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/next/docs) or [examples](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/next/examples)
+Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/main/docs) or [examples](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/main/examples)
 
 ### Dependencies
 
