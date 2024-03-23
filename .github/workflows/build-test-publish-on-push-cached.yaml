@@ -66,6 +66,7 @@ jobs:
           path: coverage/
 
   report-coverage:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: [test]
     steps:
