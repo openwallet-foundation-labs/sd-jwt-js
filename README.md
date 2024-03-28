@@ -1,7 +1,7 @@
 ![Coverage](https://img.shields.io/codecov/c/github/openwallet-foundation-labs/sd-jwt-js)
 ![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
 ![NPM](https://img.shields.io/npm/v/%40sd-jwt%2Fcore)
-![NPM-Downloads](https://img.shields.io/endpoint?&url=https://runkit.io/thetarnav/combined-weekly-npm-downloads/1.0.3/@sd-jwt/core,@sd-jwt/types,@sd-jwt/decode,@sd-jwt/utils,@sd-jwt/sd-jwt-vc,@sd-jwt/crypto-nodejs,@sd-jwt/crypto-browser,@sd-jwt/hash,@sd-jwt/present&label=npm%20downloads&color=ff7724)
+![NPM-Downloads](https://img.shields.io/endpoint?&url=https://runkit.io/lukasjhan/npm-combined-downloads/1.0.0?packages=@sd-jwt/core,@sd-jwt/types,@sd-jwt/decode,@sd-jwt/utils,@sd-jwt/sd-jwt-vc,@sd-jwt/crypto-nodejs,@sd-jwt/crypto-browser,@sd-jwt/hash,@sd-jwt/present&label=npm%20downloads&color=ff7724)
 ![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
 ![Stars](https://img.shields.io/github/stars/openwallet-foundation-labs/sd-jwt-js)
 
