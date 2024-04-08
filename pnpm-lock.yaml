@@ -22,7 +22,7 @@ importers:
         version: 9.0.11
       jose:
         specifier: ^5.2.2
-        version: 5.2.3
+        version: 5.2.4
       jsdom:
         specifier: ^24.0.0
         version: 24.0.0
@@ -3545,8 +3545,8 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dev: true
 
-  /jose@5.2.3:
-    resolution: {integrity: sha512-KUXdbctm1uHVL8BYhnyHkgp3zDX5KW8ZhAKVFEfUbU2P8Alpzjb+48hHvjOdQIyPshoblhzsuqOwEEAbtHVirA==}
+  /jose@5.2.4:
+    resolution: {integrity: sha512-6ScbIk2WWCeXkmzF6bRPmEuaqy1m8SbsRFMa/FLrSCkGIhj8OLVG/IH+XHVmNMx/KUo8cVWEE6oKR4dJ+S0Rkg==}
     dev: true
 
   /joycon@3.1.1:
