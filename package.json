@@ -13,9 +13,13 @@
     "publish:next": "lerna publish --no-private --conventional-prerelease --force-publish --canary --no-git-tag-version --include-merged-tags --preid next --pre-dist-tag next --yes",
     "prepare": "husky"
   },
-  "keywords": ["sd-jwt", "sdjwt", "sd-jwt-vc"],
+  "keywords": [
+    "sd-jwt",
+    "sdjwt",
+    "sd-jwt-vc"
+  ],
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "repository": {
     "type": "git",
