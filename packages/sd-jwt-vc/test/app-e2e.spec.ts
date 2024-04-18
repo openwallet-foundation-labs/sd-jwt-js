@@ -11,7 +11,7 @@ import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 
-export const createSignerVerifier = () => {
+const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
   const signer: Signer = async (data: string) => {
     const sig = Crypto.sign(null, Buffer.from(data), privateKey);

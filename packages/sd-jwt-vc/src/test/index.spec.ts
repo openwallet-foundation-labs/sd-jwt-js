@@ -1,13 +1,30 @@
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import type { DisclosureFrame } from '@sd-jwt/types';
+import type { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
 import { describe, test, expect } from 'vitest';
 import { SDJwtVcInstance } from '..';
-import { createSignerVerifier } from '../../test/app-e2e.spec';
 import type { SdJwtVcPayload } from '../sd-jwt-vc-payload';
+import Crypto from 'node:crypto';
 
 const iss = 'ExampleIssuer';
 const vct = 'https://example.com/schema/1';
 const iat = new Date().getTime() / 1000;
+
+const createSignerVerifier = () => {
+  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+  const signer: Signer = async (data: string) => {
+    const sig = Crypto.sign(null, Buffer.from(data), privateKey);
+    return Buffer.from(sig).toString('base64url');
+  };
+  const verifier: Verifier = async (data: string, sig: string) => {
+    return Crypto.verify(
+      null,
+      Buffer.from(data),
+      publicKey,
+      Buffer.from(sig, 'base64url'),
+    );
+  };
+  return { signer, verifier };
+};
 
 describe('App', () => {
   test('Example', async () => {
