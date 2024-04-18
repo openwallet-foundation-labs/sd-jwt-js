@@ -11,7 +11,7 @@ const nodeVersionMajor = Number.parseInt(
   10,
 );
 
-export const createSignerVerifier = () => {
+const createSignerVerifier = () => {
   const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
   const signer: Signer = async (data: string) => {
     const sig = Crypto.sign(null, Buffer.from(data), privateKey);
