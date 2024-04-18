@@ -21,7 +21,7 @@
   },
   "keywords": ["sd-jwt", "sdjwt", "sd-jwt-vc"],
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "repository": {
     "type": "git",
