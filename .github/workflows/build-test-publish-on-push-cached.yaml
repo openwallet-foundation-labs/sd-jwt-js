@@ -161,6 +161,12 @@ jobs:
           echo "registry=https://registry.npmjs.org/" >> .npmrc
           echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
           npm whoami
+      
+      #we only need this to debug the ci
+      - name: Show diff
+        run: |
+          git status
+          git diff
 
       - name: 'Publish next version'
         run: pnpm publish:next
