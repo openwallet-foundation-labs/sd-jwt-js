@@ -25,7 +25,7 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - name: 'Save build output'
         uses: actions/cache/save@v4
@@ -105,7 +105,7 @@ jobs:
           node-version: 20
           cache: 'pnpm'
         # we are not using the github action for biome, but the package.json script. this makes sure we are using the same versions.
-      - name: Run Biome      
+      - name: Run Biome
         run: pnpm run biome:ci
 
   # Only run this job when the push is on main
