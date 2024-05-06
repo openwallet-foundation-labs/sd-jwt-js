@@ -1,9 +1,16 @@
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
-import type { DisclosureFrame, Signer, Verifier } from '@sd-jwt/types';
+import type {
+  DisclosureFrame,
+  JwtPayload,
+  Signer,
+  Verifier,
+} from '@sd-jwt/types';
 import { describe, test, expect } from 'vitest';
 import { SDJwtVcInstance } from '..';
 import type { SdJwtVcPayload } from '../sd-jwt-vc-payload';
 import Crypto from 'node:crypto';
+import { StatusList, createUnsignedJWT } from 'jwt-status-list';
+import type { JWTHeaderParameters } from 'jose';
 
 const iss = 'ExampleIssuer';
 const vct = 'https://example.com/schema/1';
@@ -25,6 +32,22 @@ const createSignerVerifier = () => {
   };
   return { signer, verifier };
 };
+
+const generateStatusList = (): Promise<string> => {
+  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+  const statusList = new StatusList([0, 1, 0, 0, 0, 0, 1, 1], 1);
+  const payload: JwtPayload = {
+    iss: 'https://example.com',
+    sub: 'https://example.com/status/1',
+    iat: new Date().getTime() / 1000,
+  };
+  const header: JWTHeaderParameters = {
+    alg: 'EdDSA',
+  };
+  return createUnsignedJWT(statusList, payload, header).sign(privateKey);
+};
+
+const statusListJWT = await generateStatusList();
 
 describe('App', () => {
   test('Example', async () => {
@@ -51,5 +74,110 @@ describe('App', () => {
       disclosureFrame as unknown as DisclosureFrame<SdJwtVcPayload>,
     );
     expect(encodedSdjwt).rejects.toThrowError();
+  });
+});
+
+describe('Revocation', () => {
+  const { signer, verifier } = createSignerVerifier();
+  const sdjwt = new SDJwtVcInstance({
+    signer,
+    signAlg: 'EdDSA',
+    verifier,
+    hasher: digest,
+    hashAlg: 'SHA-256',
+    saltGenerator: generateSalt,
+    statusListFetcher(uri: string) {
+      // we emulate fetching the status list from the uri. Validation of the JWT is not done here in the test but should be done in the implementation.
+      return Promise.resolve(statusListJWT);
+    },
+    statusValidator(status: number) {
+      // we are only accepting status 0
+      if (status === 0) return Promise.resolve();
+      throw new Error('Status is not valid');
+    },
+  });
+
+  test('Test with a non revcoked credential', async () => {
+    const claims = {
+      firstname: 'John',
+      status: {
+        status_list: {
+          uri: 'https://example.com/status-list',
+          idx: 0,
+        },
+      },
+    };
+    const expectedPayload: SdJwtVcPayload = { iat, iss, vct, ...claims };
+    const encodedSdjwt = await sdjwt.issue(expectedPayload);
+    const result = await sdjwt.verify(encodedSdjwt);
+    expect(result).toBeDefined();
+  });
+
+  test('Test with a revoked credential', async () => {
+    const claims = {
+      firstname: 'John',
+      status: {
+        status_list: {
+          uri: 'https://example.com/status-list',
+          idx: 1,
+        },
+      },
+    };
+    const expectedPayload: SdJwtVcPayload = { iat, iss, vct, ...claims };
+    const encodedSdjwt = await sdjwt.issue(expectedPayload);
+    const result = sdjwt.verify(encodedSdjwt);
+    expect(result).rejects.toThrowError('Status is not valid');
+  });
+
+  test('Test with a revoked credential but without a statuslist fetcher', async () => {
+    const sdjwt = new SDJwtVcInstance({
+      signer,
+      signAlg: 'EdDSA',
+      verifier,
+      hasher: digest,
+      hashAlg: 'SHA-256',
+      saltGenerator: generateSalt,
+    });
+    const claims = {
+      firstname: 'John',
+      status: {
+        status_list: {
+          uri: 'https://example.com/status-list',
+          idx: 1,
+        },
+      },
+    };
+    const expectedPayload: SdJwtVcPayload = { iat, iss, vct, ...claims };
+    const encodedSdjwt = await sdjwt.issue(expectedPayload);
+    const result = sdjwt.verify(encodedSdjwt);
+    expect(result).rejects.toThrowError('Status list fetcher not found');
+  });
+
+  test('Test with a revoked credential but without a status validator', async () => {
+    const sdjwt = new SDJwtVcInstance({
+      signer,
+      signAlg: 'EdDSA',
+      verifier,
+      hasher: digest,
+      hashAlg: 'SHA-256',
+      saltGenerator: generateSalt,
+      statusListFetcher(uri: string) {
+        // we emulate fetching the status list from the uri. Validation of the JWT is not done here in the test but should be done in the implementation.
+        return Promise.resolve(statusListJWT);
+      },
+    });
+    const claims = {
+      firstname: 'John',
+      status: {
+        status_list: {
+          uri: 'https://example.com/status-list',
+          idx: 1,
+        },
+      },
+    };
+    const expectedPayload: SdJwtVcPayload = { iat, iss, vct, ...claims };
+    const encodedSdjwt = await sdjwt.issue(expectedPayload);
+    const result = sdjwt.verify(encodedSdjwt);
+    expect(result).rejects.toThrowError('Status validator not found');
   });
 });
