@@ -1,8 +1,8 @@
+import type { JwtPayload } from '@sd-jwt/types';
 import { StatusList } from './status-list.js';
 import type {
-  JWTPayload,
-  JWTHeaderParameters,
   JWTwithStatusListPayload,
+  JwtHeaderParameters,
   StatusListEntry,
   StatusListJWTPayload,
 } from './types.js';
@@ -27,8 +27,8 @@ function decodeJwt<T>(jwt: string): T {
  */
 export function createHeaderAndPayload(
   list: StatusList,
-  payload: JWTPayload,
-  header: JWTHeaderParameters,
+  payload: JwtPayload,
+  header: JwtHeaderParameters,
 ) {
   // validate if the required fieds are present based on https://www.ietf.org/archive/id/draft-ietf-oauth-status-list-02.html#section-5.1
 

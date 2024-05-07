@@ -185,6 +185,9 @@ importers:
 
   packages/jwt-status-list:
     dependencies:
+      '@sd-jwt/types':
+        specifier: workspace:*
+        version: link:../types
       base64url:
         specifier: ^3.0.1
         version: 3.0.1

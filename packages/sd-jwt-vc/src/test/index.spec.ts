@@ -1,16 +1,16 @@
 import { digest, generateSalt } from '@sd-jwt/crypto-nodejs';
 import type {
   DisclosureFrame,
-  JwtPayload,
   Signer,
   Verifier,
+  JwtPayload,
 } from '@sd-jwt/types';
 import { describe, test, expect } from 'vitest';
 import { SDJwtVcInstance } from '..';
 import type { SdJwtVcPayload } from '../sd-jwt-vc-payload';
 import Crypto from 'node:crypto';
-import { StatusList, createUnsignedJWT } from 'jwt-status-list';
-import type { JWTHeaderParameters } from 'jose';
+import { StatusList, createHeaderAndPayload } from '@sd-jwt/jwt-status-list';
+import { SignJWT, type JWTHeaderParameters } from 'jose';
 
 const iss = 'ExampleIssuer';
 const vct = 'https://example.com/schema/1';
@@ -44,7 +44,10 @@ const generateStatusList = (): Promise<string> => {
   const header: JWTHeaderParameters = {
     alg: 'EdDSA',
   };
-  return createUnsignedJWT(statusList, payload, header).sign(privateKey);
+  const values = createHeaderAndPayload(statusList, payload, header);
+  return new SignJWT(values.payload)
+    .setProtectedHeader(values.header)
+    .sign(privateKey);
 };
 
 const statusListJWT = await generateStatusList();

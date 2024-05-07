@@ -1,3 +1,5 @@
+import type { JwtPayload } from '@sd-jwt/types';
+
 /**
  * Reference to a status list entry.
  */
@@ -9,7 +11,7 @@ export interface StatusListEntry {
 /**
  * Payload for a JWT
  */
-export interface JWTwithStatusListPayload extends JWTPayload {
+export interface JWTwithStatusListPayload extends JwtPayload {
   status: {
     status_list: StatusListEntry;
   };
@@ -18,7 +20,8 @@ export interface JWTwithStatusListPayload extends JWTPayload {
 /**
  * Payload for a JWT with a status list.
  */
-export interface StatusListJWTPayload extends JWTPayload {
+export interface StatusListJWTPayload extends JwtPayload {
+  ttl?: number;
   status_list: {
     bits: BitsPerStatus;
     lst: string;
@@ -31,21 +34,9 @@ export interface StatusListJWTPayload extends JWTPayload {
 export type BitsPerStatus = 1 | 2 | 4 | 8;
 
 /**
- * Payload for a JWT.
- */
-export type JWTPayload = {
-  iss: string;
-  sub: string;
-  iat: number;
-  exp?: number;
-  ttl?: number;
-  [key: string]: unknown;
-};
-
-/**
  * Header parameters for a JWT.
  */
-export type JWTHeaderParameters = {
+export type JwtHeaderParameters = {
   alg: string;
   [key: string]: unknown;
 };
