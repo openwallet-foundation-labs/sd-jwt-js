@@ -2,7 +2,7 @@ import { SDJwtInstance } from '@sd-jwt/core';
 import type { DisclosureFrame } from '@sd-jwt/types';
 import { SDJWTException } from '../../utils/dist';
 import type { SdJwtVcPayload } from './sd-jwt-vc-payload';
-import { getListFromStatusListJWT } from 'jwt-status-list';
+import { getListFromStatusListJWT } from '@sd-jwt/jwt-status-list';
 import type { SDJWTVCConfig } from './sd-jwt-vc-config';
 export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
   /**

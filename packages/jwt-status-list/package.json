@@ -1,7 +1,7 @@
 {
-  "name": "@sd-jwt/sd-jwt-vc",
+  "name": "@sd-jwt/jwt-status-list",
   "version": "0.6.1",
-  "description": "sd-jwt draft 7 implementation in typescript",
+  "description": "Implementation based on https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -14,16 +14,15 @@
   "scripts": {
     "build": "rm -rf **/dist && tsup",
     "lint": "biome lint ./src",
-    "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:e2e && pnpm run test:cov",
-    "test:node": "vitest run ./src/test/*.spec.ts && vitest run ./src/test/*.spec.ts --environment jsdom",
+    "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:cov",
+    "test:node": "vitest run ./src/test/*.spec.ts",
     "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
-    "test:e2e": "vitest run ./test/*e2e.spec.ts --environment node",
     "test:cov": "vitest run --coverage"
   },
   "keywords": [
-    "sd-jwt",
-    "sdjwt",
-    "sd-jwt-vc"
+    "sd-jwt-vc",
+    "status-list",
+    "sd-jwt"
   ],
   "engines": {
     "node": ">=18"
@@ -32,20 +31,19 @@
     "type": "git",
     "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js"
   },
-  "author": "Lukas.J.Han <lukas.j.han@gmail.com>",
+  "author": "Mirko Mollik <mirkomollik@gmail.com>",
   "homepage": "https://github.com/openwallet-foundation-labs/sd-jwt-js/wiki",
   "bugs": {
     "url": "https://github.com/openwallet-foundation-labs/sd-jwt-js/issues"
   },
   "license": "Apache-2.0",
-  "dependencies": {
-    "@sd-jwt/core": "workspace:*",
-    "@sd-jwt/jwt-status-list": "workspace:*"
-  },
   "devDependencies": {
-    "@sd-jwt/crypto-nodejs": "workspace:*",
-    "@sd-jwt/types": "workspace:*",
+    "@types/pako": "^2.0.3",
     "jose": "^5.2.2"
+  },
+  "dependencies": {
+    "base64url": "^3.0.1",
+    "pako": "^2.1.0"
   },
   "publishConfig": {
     "access": "public"

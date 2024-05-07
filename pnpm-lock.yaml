@@ -183,6 +183,22 @@ importers:
         specifier: workspace:*
         version: link:../node-crypto
 
+  packages/jwt-status-list:
+    dependencies:
+      base64url:
+        specifier: ^3.0.1
+        version: 3.0.1
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
+    devDependencies:
+      '@types/pako':
+        specifier: ^2.0.3
+        version: 2.0.3
+      jose:
+        specifier: ^5.2.2
+        version: 5.2.4
+
   packages/node-crypto: {}
 
   packages/present:
@@ -206,9 +222,9 @@ importers:
       '@sd-jwt/core':
         specifier: workspace:*
         version: link:../core
-      jwt-status-list:
-        specifier: ^0.0.5
-        version: 0.0.5
+      '@sd-jwt/jwt-status-list':
+        specifier: workspace:*
+        version: link:../jwt-status-list
     devDependencies:
       '@sd-jwt/crypto-nodejs':
         specifier: workspace:*
@@ -1058,6 +1074,9 @@ packages:
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
+
+  '@types/pako@2.0.3':
+    resolution: {integrity: sha512-bq0hMV9opAcrmE0Byyo0fY3Ew4tgOevJmQ9grUhpXQhYfyLJ1Kqg3P33JT5fdbT2AjeAjR51zqqVjAL/HMkx7Q==}
 
   '@vitest/coverage-v8@1.5.1':
     resolution: {integrity: sha512-Zx+dYEDcZg+44ksjIWvWosIGlPLJB1PPpN3O8+Xrh/1qa7WSFA6Y8H7lsZJTYrxu4G2unk9tvP5TgjIGDliF1w==}
@@ -2136,10 +2155,6 @@ packages:
   jsonparse@1.3.1:
     resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
     engines: {'0': node >= 0.2.0}
-
-  jwt-status-list@0.0.5:
-    resolution: {integrity: sha512-vmcRQsUpk9v6/+GGGzxJN0+ylUd4b1pUQuD9RyonaQrOxBUzB9R4HpQ4Tlv5RY4u46VZX3HvKaaoClpU9OfdTQ==}
-    engines: {node: '>=18.0.0'}
 
   kind-of@6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
@@ -4244,6 +4259,8 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
+  '@types/pako@2.0.3': {}
+
   '@vitest/coverage-v8@1.5.1(vitest@1.5.1(@types/node@20.12.7)(jsdom@24.0.0))':
     dependencies:
       '@ampproject/remapping': 2.2.1
@@ -5419,11 +5436,6 @@ snapshots:
       graceful-fs: 4.2.11
 
   jsonparse@1.3.1: {}
-
-  jwt-status-list@0.0.5:
-    dependencies:
-      base64url: 3.0.1
-      pako: 2.1.0
 
   kind-of@6.0.3: {}
 
