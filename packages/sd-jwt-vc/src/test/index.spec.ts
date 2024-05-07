@@ -9,8 +9,12 @@ import { describe, test, expect } from 'vitest';
 import { SDJwtVcInstance } from '..';
 import type { SdJwtVcPayload } from '../sd-jwt-vc-payload';
 import Crypto from 'node:crypto';
-import { StatusList, createHeaderAndPayload } from '@sd-jwt/jwt-status-list';
-import { SignJWT, type JWTHeaderParameters } from 'jose';
+import {
+  StatusList,
+  type StatusListJWTHeaderParameters,
+  createHeaderAndPayload,
+} from '@sd-jwt/jwt-status-list';
+import { SignJWT } from 'jose';
 
 const iss = 'ExampleIssuer';
 const vct = 'https://example.com/schema/1';
@@ -40,8 +44,9 @@ const generateStatusList = async (): Promise<string> => {
     sub: 'https://example.com/status/1',
     iat: new Date().getTime() / 1000,
   };
-  const header: JWTHeaderParameters = {
+  const header: StatusListJWTHeaderParameters = {
     alg: 'EdDSA',
+    typ: 'statuslist+jwt',
   };
   const values = createHeaderAndPayload(statusList, payload, header);
   return new SignJWT(values.payload)
