@@ -83,8 +83,13 @@ const verified = await sdjwt.verify(presentation);
 
 Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/main/docs) or [examples](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/main/examples)
 
+### Revocation
+To add revocation capabilities, you can use the `@sd-jwt/jwt-status-list` library to create a JWT Status List and include it in the SD-JWT-VC.
+
+
 ### Dependencies
 
 - @sd-jwt/core
 - @sd-jwt/types
 - @sd-jwt/utils
+- @sd-jwt/jwt-status-list

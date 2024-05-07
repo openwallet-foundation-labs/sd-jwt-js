@@ -43,14 +43,16 @@ const payload: JWTPayload = {
 };
 const header: JWTHeaderParameters = { alg: 'ES256' };
 
-const jwt = createUnsignedJWT(list, payload, header);
+const jwt = createHeaderAndPayload(list, payload, header);
 
-// Sign the JWT with the private key
-const signedJwt = await jwt.sign(privateKey);
+// Sign the JWT with the private key, e.g. using the `jose` library
+const jwt = await new SignJWT(values.payload)
+      .setProtectedHeader(values.header)
+      .sign(privateKey);
 
 ```
 
-Interaction with a JWT Status List:
+Interaction with a JWT status list on low level:
 ```typescript
 //validation of the JWT is not provided by this library!!!
 
@@ -67,9 +69,12 @@ const statusList = getListFromStatusListJWT(list);
 
 //get the status of a specific entry
 const status = statusList.getStatus(reference.idx);
-
-// handle the status
 ```
+
+### Integration into sd-jwt-vc
+The status list can be integrated into the [sd-jwt-vc](../sd-jwt-vc/README.md) library to provide a way to verify the status of a credential. In the [test folder](../sd-jwt-vc/src/test/index.spec.ts) you will find an example how to add the status reference to a credential and also how to verify the status of a credential.
+
+```typescript
 
 ### Caching the status list
 Depending on the  `ttl` field if provided the status list can be cached for a certain amount of time. This library has no internal cache mechanism, so it is up to the user to implement it for example by providing a custom `fetchStatusList` function.

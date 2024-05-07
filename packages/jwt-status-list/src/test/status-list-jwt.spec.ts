@@ -3,7 +3,10 @@ import {
   getListFromStatusListJWT,
   getStatusListFromJWT,
 } from '../status-list-jwt';
-import type { JwtHeaderParameters, JWTwithStatusListPayload } from '../types';
+import type {
+  StatusListJWTHeaderParameters,
+  JWTwithStatusListPayload,
+} from '../types';
 import { StatusList } from '../status-list';
 import { jwtVerify, type KeyLike, SignJWT } from 'jose';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -13,6 +16,11 @@ import type { JwtPayload } from '@sd-jwt/types';
 describe('JWTStatusList', () => {
   let publicKey: KeyLike;
   let privateKey: KeyLike;
+
+  const header: StatusListJWTHeaderParameters = {
+    alg: 'ES256',
+    typ: 'statuslist+jwt',
+  };
 
   beforeAll(() => {
     // Generate a key pair for testing
@@ -31,7 +39,6 @@ describe('JWTStatusList', () => {
       sub: `${iss}/statuslist/1`,
       iat: new Date().getTime() / 1000,
     };
-    const header: JwtHeaderParameters = { alg: 'ES256' };
 
     const values = createHeaderAndPayload(statusList, payload, header);
 
@@ -56,7 +63,6 @@ describe('JWTStatusList', () => {
       sub: `${iss}/statuslist/1`,
       iat: new Date().getTime() / 1000,
     };
-    const header: JwtHeaderParameters = { alg: 'ES256' };
 
     const values = createHeaderAndPayload(statusList, payload, header);
 
@@ -74,7 +80,6 @@ describe('JWTStatusList', () => {
     const list = [1, 0, 1, 0, 1];
     const statusList = new StatusList(list, 2);
     const iss = 'https://example.com';
-    const header: JwtHeaderParameters = { alg: 'ES256' };
     let payload: JwtPayload = {
       sub: `${iss}/statuslist/1`,
       iat: new Date().getTime() / 1000,
