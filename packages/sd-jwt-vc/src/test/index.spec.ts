@@ -10,14 +10,14 @@ import { SDJwtVcInstance } from '..';
 import type { SdJwtVcPayload } from '../sd-jwt-vc-payload';
 import Crypto from 'node:crypto';
 import { StatusList, createHeaderAndPayload } from '@sd-jwt/jwt-status-list';
-import { SignJWT, type JWTHeaderParameters } from 'jose';
+import { SignJWT, exportJWK, jwtVerify, type JWTHeaderParameters } from 'jose';
 
 const iss = 'ExampleIssuer';
 const vct = 'https://example.com/schema/1';
 const iat = new Date().getTime() / 1000;
 
+const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
 const createSignerVerifier = () => {
-  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
   const signer: Signer = async (data: string) => {
     const sig = Crypto.sign(null, Buffer.from(data), privateKey);
     return Buffer.from(sig).toString('base64url');
@@ -33,8 +33,7 @@ const createSignerVerifier = () => {
   return { signer, verifier };
 };
 
-const generateStatusList = (): Promise<string> => {
-  const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+const generateStatusList = async (): Promise<string> => {
   const statusList = new StatusList([0, 1, 0, 0, 0, 0, 1, 1], 1);
   const payload: JwtPayload = {
     iss: 'https://example.com',
@@ -93,11 +92,11 @@ describe('Revocation', () => {
       // we emulate fetching the status list from the uri. Validation of the JWT is not done here in the test but should be done in the implementation.
       return Promise.resolve(statusListJWT);
     },
-    statusValidator(status: number) {
-      // we are only accepting status 0
-      if (status === 0) return Promise.resolve();
-      throw new Error('Status is not valid');
-    },
+    // statusValidator(status: number) {
+    //   // we are only accepting status 0
+    //   if (status === 0) return Promise.resolve();
+    //   throw new Error('Status is not valid');
+    // },
   });
 
   test('Test with a non revcoked credential', async () => {
@@ -132,55 +131,11 @@ describe('Revocation', () => {
     expect(result).rejects.toThrowError('Status is not valid');
   });
 
-  test('Test with a revoked credential but without a statuslist fetcher', async () => {
-    const sdjwt = new SDJwtVcInstance({
-      signer,
-      signAlg: 'EdDSA',
-      verifier,
-      hasher: digest,
-      hashAlg: 'SHA-256',
-      saltGenerator: generateSalt,
-    });
-    const claims = {
-      firstname: 'John',
-      status: {
-        status_list: {
-          uri: 'https://example.com/status-list',
-          idx: 1,
-        },
-      },
-    };
-    const expectedPayload: SdJwtVcPayload = { iat, iss, vct, ...claims };
-    const encodedSdjwt = await sdjwt.issue(expectedPayload);
-    const result = sdjwt.verify(encodedSdjwt);
-    expect(result).rejects.toThrowError('Status list fetcher not found');
+  test('test to fetch the statuslist', async () => {
+    //TODO: not implemented yet since we need to either mock the fetcher or use a real fetcher
   });
 
-  test('Test with a revoked credential but without a status validator', async () => {
-    const sdjwt = new SDJwtVcInstance({
-      signer,
-      signAlg: 'EdDSA',
-      verifier,
-      hasher: digest,
-      hashAlg: 'SHA-256',
-      saltGenerator: generateSalt,
-      statusListFetcher(uri: string) {
-        // we emulate fetching the status list from the uri. Validation of the JWT is not done here in the test but should be done in the implementation.
-        return Promise.resolve(statusListJWT);
-      },
-    });
-    const claims = {
-      firstname: 'John',
-      status: {
-        status_list: {
-          uri: 'https://example.com/status-list',
-          idx: 1,
-        },
-      },
-    };
-    const expectedPayload: SdJwtVcPayload = { iat, iss, vct, ...claims };
-    const encodedSdjwt = await sdjwt.issue(expectedPayload);
-    const result = sdjwt.verify(encodedSdjwt);
-    expect(result).rejects.toThrowError('Status validator not found');
+  test('test with an expired status list', async () => {
+    //TODO: needs to be implemented
   });
 });

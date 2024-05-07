@@ -66,6 +66,7 @@ export interface JwtPayload {
   cnf?: {
     jwk: JsonWebKey;
   };
+  exp?: number;
   [key: string]: unknown;
 }
 

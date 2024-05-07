@@ -36,7 +36,8 @@ export type BitsPerStatus = 1 | 2 | 4 | 8;
 /**
  * Header parameters for a JWT.
  */
-export type JwtHeaderParameters = {
+export type StatusListJWTHeaderParameters = {
   alg: string;
+  typ: 'statuslist+jwt';
   [key: string]: unknown;
 };

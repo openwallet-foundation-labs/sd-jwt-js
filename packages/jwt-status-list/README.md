@@ -3,19 +3,30 @@
 ![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
 ![Stars](https://img.shields.io/github/stars/openwallet-foundation-labs/sd-jwt-js)
 
-# JWT Status List
+# SD-JWT Implementation in JavaScript (TypeScript)
 
-This implementation is based on the this [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/)
+## jwt-status-list
+An implementation of the [Token Status List](https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/) for a JWT representation, not for CBOR.
+This library helps to verify the status of a specific entry in a JWT, and to generate a status list and pack it into a signed JWT. It does not provide any functions to manage the status list itself.
 
-This status list is an encoded bit string where the status can be represented by multiple bits. This library provides functions to create and read the status list from a JWT and also to verify the status of a specific entry.
 
 
 ## Installation
 
+To install this project, run the following command:
+
 ```bash
-npm install jwt-status-list
+# using npm
+npm install @sd-jwt/jwt-status-list
+
+# using yarn
+yarn add @sd-jwt/jwt-status-list
+
+# using pnpm
+pnpm install @sd-jwt/jwt-status-list
 ```
 
+Ensure you have Node.js installed as a prerequisite.
 ## Usage
 
 Creation of a JWT Status List:
@@ -27,6 +38,8 @@ const payload: JWTPayload = {
     iss,
     sub: `${iss}/statuslist/1`,
     iat: new Date().getTime() / 1000,
+    ttl: 3000, // time to live in seconds, optional
+    exp: new Date().getTime() / 1000 + 3600, // optional
 };
 const header: JWTHeaderParameters = { alg: 'ES256' };
 
@@ -57,6 +70,9 @@ const status = statusList.getStatus(reference.idx);
 
 // handle the status
 ```
+
+### Caching the status list
+Depending on the  `ttl` field if provided the status list can be cached for a certain amount of time. This library has no internal cache mechanism, so it is up to the user to implement it for example by providing a custom `fetchStatusList` function.
 
 ## Development
 

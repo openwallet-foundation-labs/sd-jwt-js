@@ -1,9 +1,13 @@
-import { SDJwtInstance } from '@sd-jwt/core';
-import type { DisclosureFrame } from '@sd-jwt/types';
+import { Jwt, SDJwtInstance } from '@sd-jwt/core';
+import type { DisclosureFrame, Verifier } from '@sd-jwt/types';
 import { SDJWTException } from '../../utils/dist';
 import type { SdJwtVcPayload } from './sd-jwt-vc-payload';
-import { getListFromStatusListJWT } from '@sd-jwt/jwt-status-list';
 import type { SDJWTVCConfig } from './sd-jwt-vc-config';
+import {
+  type StatusListJWTHeaderParameters,
+  type StatusListJWTPayload,
+  getListFromStatusListJWT,
+} from '@sd-jwt/jwt-status-list';
 export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
   /**
    * The type of the SD-JWT-VC set in the header.typ field.
@@ -44,6 +48,26 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
   }
 
   /**
+   * Fetches the status list from the uri.
+   * @param uri
+   * @returns compact JWT
+   */
+  private async statusListFetcher(uri: string): Promise<string> {
+    // according to the spec we assume according to the spec that the response is a compact JWT
+    return fetch(uri).then((res) => res.text());
+  }
+
+  /**
+   * Validates the status, throws an error if the status is not 0.
+   * @param status
+   * @returns
+   */
+  private async statusValidator(status: number): Promise<void> {
+    if (status !== 0) throw new SDJWTException('Status is not valid');
+    return Promise.resolve();
+  }
+
+  /**
    * Verifies the SD-JWT-VC.
    */
   async verify(
@@ -62,23 +86,36 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
       //checks if a status field is present in the payload based on https://www.ietf.org/archive/id/draft-ietf-oauth-status-list-02.html
       if (result.payload.status.status_list) {
         // fetch the status list from the uri
-        if (!this.userConfig.statusListFetcher) {
-          throw new SDJWTException('Status list fetcher not found');
-        }
+        result.payload.status.status_list.uri;
+        const fetcher =
+          this.userConfig.statusListFetcher ?? this.statusListFetcher;
         // fetch the status list from the uri
-        const statusListJWT = await this.userConfig.statusListFetcher(
+        const statusListJWT = await fetcher(
           result.payload.status.status_list.uri,
         );
+
+        const slJWT = Jwt.fromEncode<
+          StatusListJWTHeaderParameters,
+          StatusListJWTPayload
+        >(statusListJWT);
+        // check if the status list has a valid signature. The presence of the verifier is checked in the parent class.
+        await slJWT.verify(this.userConfig.verifier as Verifier);
+
+        //check if the status list is expired
+        if (slJWT.payload?.exp && slJWT.payload.exp < Date.now() / 1000) {
+          throw new SDJWTException('Status list is expired');
+        }
+
         // get the status list from the status list JWT
         const statusList = getListFromStatusListJWT(statusListJWT);
         const status = statusList.getStatus(
           result.payload.status.status_list.idx,
         );
+
         // validate the status
-        if (!this.userConfig.statusValidator) {
-          throw new SDJWTException('Status validator not found');
-        }
-        await this.userConfig.statusValidator(status);
+        const statusValidator =
+          this.userConfig.statusValidator ?? this.statusValidator;
+        await statusValidator(status);
       }
     }
 
