@@ -3,15 +3,12 @@ import {
   getListFromStatusListJWT,
   getStatusListFromJWT,
 } from '../status-list-jwt';
-import type {
-  JWTHeaderParameters,
-  JWTPayload,
-  JWTwithStatusListPayload,
-} from '../types';
+import type { JwtHeaderParameters, JWTwithStatusListPayload } from '../types';
 import { StatusList } from '../status-list';
-import { jwtVerify, KeyLike, SignJWT } from 'jose';
+import { jwtVerify, type KeyLike, SignJWT } from 'jose';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { generateKeyPairSync } from 'node:crypto';
+import type { JwtPayload } from '@sd-jwt/types';
 
 describe('JWTStatusList', () => {
   let publicKey: KeyLike;
@@ -29,12 +26,12 @@ describe('JWTStatusList', () => {
   it('should create a JWT with a status list', async () => {
     const statusList = new StatusList([1, 0, 1, 1, 1], 1);
     const iss = 'https://example.com';
-    const payload: JWTPayload = {
+    const payload: JwtPayload = {
       iss,
       sub: `${iss}/statuslist/1`,
       iat: new Date().getTime() / 1000,
     };
-    const header: JWTHeaderParameters = { alg: 'ES256' };
+    const header: JwtHeaderParameters = { alg: 'ES256' };
 
     const values = createHeaderAndPayload(statusList, payload, header);
 
@@ -54,12 +51,12 @@ describe('JWTStatusList', () => {
     const list = [1, 0, 1, 0, 1];
     const statusList = new StatusList(list, 1);
     const iss = 'https://example.com';
-    const payload: JWTPayload = {
+    const payload: JwtPayload = {
       iss,
       sub: `${iss}/statuslist/1`,
       iat: new Date().getTime() / 1000,
     };
-    const header: JWTHeaderParameters = { alg: 'ES256' };
+    const header: JwtHeaderParameters = { alg: 'ES256' };
 
     const values = createHeaderAndPayload(statusList, payload, header);
 
@@ -77,13 +74,13 @@ describe('JWTStatusList', () => {
     const list = [1, 0, 1, 0, 1];
     const statusList = new StatusList(list, 2);
     const iss = 'https://example.com';
-    const header: JWTHeaderParameters = { alg: 'ES256' };
-    let payload: any = {
+    const header: JwtHeaderParameters = { alg: 'ES256' };
+    let payload: JwtPayload = {
       sub: `${iss}/statuslist/1`,
       iat: new Date().getTime() / 1000,
     };
     expect(() => {
-      createHeaderAndPayload(statusList, payload as JWTPayload, header);
+      createHeaderAndPayload(statusList, payload as JwtPayload, header);
     }).toThrow('iss field is required');
 
     payload = {
