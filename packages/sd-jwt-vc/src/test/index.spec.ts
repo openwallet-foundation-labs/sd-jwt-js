@@ -10,7 +10,7 @@ import { SDJwtVcInstance } from '..';
 import type { SdJwtVcPayload } from '../sd-jwt-vc-payload';
 import Crypto from 'node:crypto';
 import { StatusList, createHeaderAndPayload } from '@sd-jwt/jwt-status-list';
-import { SignJWT, exportJWK, jwtVerify, type JWTHeaderParameters } from 'jose';
+import { SignJWT, type JWTHeaderParameters } from 'jose';
 
 const iss = 'ExampleIssuer';
 const vct = 'https://example.com/schema/1';
