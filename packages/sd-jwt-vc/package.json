@@ -20,7 +20,11 @@
     "test:e2e": "vitest run ./test/*e2e.spec.ts --environment node",
     "test:cov": "vitest run --coverage"
   },
-  "keywords": ["sd-jwt", "sdjwt", "sd-jwt-vc"],
+  "keywords": [
+    "sd-jwt",
+    "sdjwt",
+    "sd-jwt-vc"
+  ],
   "engines": {
     "node": ">=18"
   },
@@ -36,7 +40,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@sd-jwt/core": "workspace:*",
-    "jwt-status-list": "^0.0.4"
+    "jwt-status-list": "^0.0.5"
   },
   "devDependencies": {
     "@sd-jwt/crypto-nodejs": "workspace:*",
@@ -47,12 +51,17 @@
     "access": "public"
   },
   "tsup": {
-    "entry": ["./src/index.ts"],
+    "entry": [
+      "./src/index.ts"
+    ],
     "sourceMap": true,
     "splitting": false,
     "clean": true,
     "dts": true,
-    "format": ["cjs", "esm"]
+    "format": [
+      "cjs",
+      "esm"
+    ]
   },
   "gitHead": "ded40e4551bde7ae93083181bf26bd1b38bbfcfb"
 }
