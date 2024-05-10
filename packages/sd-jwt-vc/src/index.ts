@@ -47,15 +47,26 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
     }
   }
 
-  /**
-   * Fetches the status list from the uri.
-   * @param uri
-   * @returns compact JWT
-   */
-  private async statusListFetcher(uri: string): Promise<string> {
-    // according to the spec we assume according to the spec that the response is a compact JWT
-    return fetch(uri).then((res) => res.text());
+/**
+ * Fetches the status list from the uri with a timeout of 10 seconds.
+ * @param uri The URI to fetch from.
+ * @returns A promise that resolves to a compact JWT.
+ */
+private async statusListFetcher(uri: string): Promise<string> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const response = await fetch(uri, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error(`Error fetching status list: ${response.status} ${await response.text()}`);
+    }
+
+    return response.text();
+  } finally {
+      clearTimeout(timeoutId);
   }
+}
 
   /**
    * Validates the status, throws an error if the status is not 0.
