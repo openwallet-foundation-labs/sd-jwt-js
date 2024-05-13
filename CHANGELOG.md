@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/openwallet-foundation-labs/sd-jwt-js/compare/v0.6.1...v0.7.0) (2024-05-13)
+
+
+### Bug Fixes
+
+* revert Bump vite from 5.2.9 to 5.2.10 ([#212](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/212)) ([984b598](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/984b598321d2856ce358c8d6348afe96be694388))
+
+
+### Features
+
+* add clone ojbect logic in unpackObj ([#181](https://github.com/openwallet-foundation-labs/sd-jwt-js/issues/181)) ([2e92cb3](https://github.com/openwallet-foundation-labs/sd-jwt-js/commit/2e92cb3abc27f6dbde19c7c016bc1f8ba60f9ff6))
+
+
+
+
+
 ## [0.6.1](https://github.com/openwallet-foundation-labs/sd-jwt-js/compare/v0.6.0...v0.6.1) (2024-03-18)
 
 
