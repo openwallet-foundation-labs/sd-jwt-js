@@ -17,7 +17,7 @@ jobs:
           persist-credentials: false
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
       - run: pnpm add -g pnpm
       - name: 'Setup Node.js with pnpm cache'
         uses: actions/setup-node@v4
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
       - run: pnpm add -g pnpm
       - name: 'Restore build output'
         uses: actions/cache/restore@v4
@@ -90,7 +90,7 @@ jobs:
     steps:
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
       - run: pnpm add -g pnpm
       - name: 'Restore build output'
         uses: actions/cache/restore@v4
@@ -133,7 +133,7 @@ jobs:
           token: ${{secrets.GITHUB_TOKEN }}
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
       - run: pnpm add -g pnpm
       - name: 'Setup Node.js with pnpm cache'
         uses: actions/setup-node@v4
