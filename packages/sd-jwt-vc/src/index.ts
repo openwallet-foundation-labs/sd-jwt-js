@@ -101,7 +101,6 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
       //checks if a status field is present in the payload based on https://www.ietf.org/archive/id/draft-ietf-oauth-status-list-02.html
       if (result.payload.status.status_list) {
         // fetch the status list from the uri
-        result.payload.status.status_list.uri;
         const fetcher =
           this.userConfig.statusListFetcher ?? this.statusListFetcher;
         // fetch the status list from the uri
