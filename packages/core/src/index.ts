@@ -27,7 +27,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
 
   public static DEFAULT_hashAlg = 'sha-256';
 
-  private userConfig: SDJWTConfig = {};
+  protected userConfig: SDJWTConfig = {};
 
   constructor(userConfig?: SDJWTConfig) {
     if (userConfig) {

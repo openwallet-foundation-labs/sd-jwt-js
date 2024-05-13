@@ -1,4 +1,5 @@
 import type { SdJwtPayload } from '@sd-jwt/core';
+import type { SDJWTVCStatusReference } from './sd-jwt-vc-status-reference';
 
 export interface SdJwtVcPayload extends SdJwtPayload {
   // REQUIRED. The Issuer of the Verifiable Credential. The value of iss MUST be a URI. See [RFC7519] for more information.
@@ -11,9 +12,8 @@ export interface SdJwtVcPayload extends SdJwtPayload {
   cnf?: unknown;
   // REQUIRED. The type of the Verifiable Credential, e.g., https://credentials.example.com/identity_credential, as defined in Section 3.2.2.1.1.
   vct: string;
-  // OPTIONAL. The information on how to read the status of the Verifiable Credential. See [I-D.looker-oauth-jwt-cwt-status-list] for more information.
-  status?: unknown;
-
+  // OPTIONAL. The information on how to read the status of the Verifiable Credential. See [https://www.ietf.org/archive/id/draft-ietf-oauth-status-list-02.html] for more information.
+  status?: SDJWTVCStatusReference;
   // OPTIONAL. The identifier of the Subject of the Verifiable Credential. The Issuer MAY use it to provide the Subject identifier known by the Issuer. There is no requirement for a binding to exist between sub and cnf claims.
   sub?: string;
   // OPTIONAL. The time of issuance of the Verifiable Credential. See [RFC7519] for more information.
