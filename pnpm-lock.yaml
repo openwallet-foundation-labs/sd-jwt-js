@@ -228,6 +228,9 @@ importers:
       '@sd-jwt/jwt-status-list':
         specifier: workspace:*
         version: link:../jwt-status-list
+      '@sd-jwt/utils':
+        specifier: workspace:*
+        version: link:../utils
     devDependencies:
       '@sd-jwt/crypto-nodejs':
         specifier: workspace:*

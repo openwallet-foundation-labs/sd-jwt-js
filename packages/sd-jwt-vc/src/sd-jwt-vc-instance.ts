@@ -1,13 +1,13 @@
 import { Jwt, SDJwtInstance } from '@sd-jwt/core';
 import type { DisclosureFrame, Verifier } from '@sd-jwt/types';
-import { SDJWTException } from '../../utils/dist';
+import { SDJWTException } from '@sd-jwt/utils';
 import type { SdJwtVcPayload } from './sd-jwt-vc-payload';
 import type { SDJWTVCConfig } from './sd-jwt-vc-config';
 import {
   type StatusListJWTPayload,
   getListFromStatusListJWT,
 } from '@sd-jwt/jwt-status-list';
-import { StatusListJWTHeaderParameters } from '../../jwt-status-list/src/types';
+import type { StatusListJWTHeaderParameters } from '@sd-jwt/jwt-status-list';
 export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
   /**
    * The type of the SD-JWT-VC set in the header.typ field.

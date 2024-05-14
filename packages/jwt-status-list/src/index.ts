@@ -1,3 +1,3 @@
-export * from './status-list.js';
-export * from './status-list-jwt.js';
-export * from './types.js';
+export * from './status-list';
+export * from './status-list-jwt';
+export * from './types';
