@@ -1,4 +1,4 @@
-  ![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
+![License](https://img.shields.io/github/license/openwallet-foundation-labs/sd-jwt-js.svg)
 ![NPM](https://img.shields.io/npm/v/%40sd-jwt%2Fcore)
 ![Release](https://img.shields.io/github/v/release/openwallet-foundation-labs/sd-jwt-js)
 ![Stars](https://img.shields.io/github/stars/openwallet-foundation-labs/sd-jwt-js)
