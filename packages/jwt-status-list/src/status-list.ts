@@ -1,6 +1,6 @@
 import { deflate, inflate } from 'pako';
 import base64Url from 'base64url';
-import type { BitsPerStatus } from './types.js';
+import type { BitsPerStatus } from './types';
 /**
  * StatusListManager is a class that manages a list of statuses with variable bit size.
  */

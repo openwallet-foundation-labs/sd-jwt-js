@@ -74,8 +74,6 @@ const status = statusList.getStatus(reference.idx);
 ### Integration into sd-jwt-vc
 The status list can be integrated into the [sd-jwt-vc](../sd-jwt-vc/README.md) library to provide a way to verify the status of a credential. In the [test folder](../sd-jwt-vc/src/test/index.spec.ts) you will find an example how to add the status reference to a credential and also how to verify the status of a credential.
 
-```typescript
-
 ### Caching the status list
 Depending on the  `ttl` field if provided the status list can be cached for a certain amount of time. This library has no internal cache mechanism, so it is up to the user to implement it for example by providing a custom `fetchStatusList` function.
 
