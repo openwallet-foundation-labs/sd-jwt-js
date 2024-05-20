@@ -30,6 +30,12 @@ describe('StatusList', () => {
     for (let i = 0; i < status.length; i++) {
       expect(l.getStatus(i)).toBe(status[i]);
     }
+
+    //get the whole list and check if it is equal
+    const list = l.getStatusList();
+    for (let i = 0; i < status.length; i++) {
+      expect(list[i]).toBe(status[i]);
+    }
   });
 
   it('test from the example with 2 bit status', () => {
