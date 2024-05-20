@@ -32,6 +32,14 @@ export class StatusList {
   }
 
   /**
+   * Get the status list.
+   * @returns
+   */
+  getStatusList(): number[] {
+    return this.statusList;
+  }
+
+  /**
    * Get the number of statuses.
    * @returns
    */
