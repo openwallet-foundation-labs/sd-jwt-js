@@ -183,3 +183,10 @@ jobs:
 
       - name: 'Publish latest version'        
         run: pnpm publish:latest
+
+      - name: 'Format generated files and commit changes'
+        run: | 
+          pnpm format
+          git add .
+          git commit -m "chore: format generated files"
+          git push origin HEAD:main          
