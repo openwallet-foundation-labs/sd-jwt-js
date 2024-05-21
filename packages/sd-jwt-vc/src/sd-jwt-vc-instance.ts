@@ -57,13 +57,23 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     try {
-      const response = await fetch(uri, { signal: controller.signal });
+      const response = await fetch(uri, {
+        signal: controller.signal,
+        headers: { Accept: 'application/statuslist+jwt' },
+      });
       if (!response.ok) {
         throw new Error(
           `Error fetching status list: ${
             response.status
           } ${await response.text()}`,
         );
+      }
+
+      // according to the spec the content type should be application/statuslist+jwt
+      if (
+        response.headers.get('content-type') !== 'application/statuslist+jwt'
+      ) {
+        throw new Error('Invalid content type');
       }
 
       return response.text();
