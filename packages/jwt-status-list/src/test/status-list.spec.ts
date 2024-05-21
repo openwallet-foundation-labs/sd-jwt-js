@@ -33,7 +33,7 @@ describe('StatusList', () => {
 
     //get the whole list and check if it is equal
     for (let i = 0; i < list.statusList.length; i++) {
-      expect(list[i]).toBe(status[i]);
+      expect(list.statusList[i]).toBe(status[i]);
     }
   });
 
