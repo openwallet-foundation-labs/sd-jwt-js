@@ -26,14 +26,13 @@ describe('StatusList', () => {
     const manager = new StatusList(status, 1);
     const encoded = manager.compressStatusList();
     expect(encoded).toBe('eNrbuRgAAhcBXQ');
-    const l = StatusList.decompressStatusList(encoded, 1);
+    const list = StatusList.decompressStatusList(encoded, 1);
     for (let i = 0; i < status.length; i++) {
-      expect(l.getStatus(i)).toBe(status[i]);
+      expect(list.getStatus(i)).toBe(status[i]);
     }
 
     //get the whole list and check if it is equal
-    const list = l.getStatusList();
-    for (let i = 0; i < status.length; i++) {
+    for (let i = 0; i < list.statusList.length; i++) {
       expect(list[i]).toBe(status[i]);
     }
   });

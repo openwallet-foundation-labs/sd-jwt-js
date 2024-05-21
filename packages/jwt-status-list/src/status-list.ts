@@ -5,7 +5,7 @@ import type { BitsPerStatus } from './types';
  * StatusListManager is a class that manages a list of statuses with variable bit size.
  */
 export class StatusList {
-  private statusList: number[];
+  private _statusList: number[];
   private bitsPerStatus: BitsPerStatus;
   private totalStatuses: number;
 
@@ -26,17 +26,16 @@ export class StatusList {
         );
       }
     }
-    this.statusList = statusList;
+    this._statusList = statusList;
     this.bitsPerStatus = bitsPerStatus;
     this.totalStatuses = statusList.length;
   }
 
   /**
    * Get the status list.
-   * @returns
    */
-  getStatusList(): number[] {
-    return this.statusList;
+  get statusList(): number[] {
+    return this._statusList;
   }
 
   /**
@@ -50,13 +49,12 @@ export class StatusList {
   /**
    * Get the status at a specific index.
    * @param index
-   * @returns
    */
   getStatus(index: number): number {
     if (index < 0 || index >= this.totalStatuses) {
       throw new Error('Index out of bounds');
     }
-    return this.statusList[index];
+    return this._statusList[index];
   }
 
   /**
@@ -68,12 +66,11 @@ export class StatusList {
     if (index < 0 || index >= this.totalStatuses) {
       throw new Error('Index out of bounds');
     }
-    this.statusList[index] = value;
+    this._statusList[index] = value;
   }
 
   /**
    * Compress the status list.
-   * @returns
    */
   compressStatusList(): string {
     const byteArray = this.encodeStatusList();
@@ -85,7 +82,6 @@ export class StatusList {
    * Decompress the compressed status list and return a new StatusList instance.
    * @param compressed
    * @param bitsPerStatus
-   * @returns
    */
   static decompressStatusList(
     compressed: string,
@@ -121,7 +117,7 @@ export class StatusList {
     let bitIndex = 0;
     let currentByte = '';
     for (let i = 0; i < this.totalStatuses; i++) {
-      const status = this.statusList[i];
+      const status = this._statusList[i];
       // Place bits from status into currentByte, starting from the most significant bit.
       currentByte = status.toString(2).padStart(numBits, '0') + currentByte;
       bitIndex += numBits;
