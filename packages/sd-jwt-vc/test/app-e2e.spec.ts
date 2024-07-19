@@ -260,6 +260,7 @@ async function JSONtest(filename: string) {
   expect(verified).toBeDefined();
   expect(verified).toStrictEqual({
     header: { alg: 'EdDSA', typ: 'vc+sd-jwt' },
+    kb: undefined,
     payload,
   });
 }

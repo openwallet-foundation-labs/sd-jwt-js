@@ -104,7 +104,11 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
     const result = await super
       .verify(encodedSDJwt, requiredClaimKeys, requireKeyBindings)
       .then((res) => {
-        return { payload: res.payload as SdJwtVcPayload, header: res.header };
+        return {
+          payload: res.payload as SdJwtVcPayload,
+          header: res.header,
+          kb: res.kb,
+        };
       });
 
     if (result.payload.status) {
