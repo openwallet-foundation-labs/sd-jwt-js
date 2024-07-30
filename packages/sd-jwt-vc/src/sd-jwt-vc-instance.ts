@@ -71,7 +71,9 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
 
       // according to the spec the content type should be application/statuslist+jwt
       if (
-        response.headers.get('content-type') !== 'application/statuslist+jwt'
+        !response.headers
+          .get('content-type')
+          ?.includes('application/statuslist+jwt')
       ) {
         throw new Error('Invalid content type');
       }
