@@ -189,4 +189,4 @@ jobs:
           pnpm format
           git add .
           git commit -m "chore: format generated files"
-          git push origin HEAD:main          
+          git push origin HEAD:main --tags
