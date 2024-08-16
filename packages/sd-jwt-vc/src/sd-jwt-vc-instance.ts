@@ -243,7 +243,7 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
     const loadedSchemas = new Set<string>();
     // init the json schema validator
     const ajv = new Ajv({
-      loadSchema: async (uri) => {
+      loadSchema: async (uri: string) => {
         if (loadedSchemas.has(uri)) {
           return {};
         }

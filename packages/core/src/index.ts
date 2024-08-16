@@ -10,7 +10,7 @@ import {
   type PresentationFrame,
   type SDJWTCompact,
   type SDJWTConfig,
-  JwtPayload,
+  type JwtPayload,
 } from '@sd-jwt/types';
 import { getSDAlgAndPayload } from '@sd-jwt/decode';
 
