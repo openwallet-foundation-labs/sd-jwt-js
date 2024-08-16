@@ -1,13 +1,23 @@
 import { Jwt, SDJwtInstance } from '@sd-jwt/core';
-import type { DisclosureFrame, Verifier } from '@sd-jwt/types';
+import type { DisclosureFrame, Hasher, Verifier } from '@sd-jwt/types';
 import { SDJWTException } from '@sd-jwt/utils';
 import type { SdJwtVcPayload } from './sd-jwt-vc-payload';
-import type { SDJWTVCConfig } from './sd-jwt-vc-config';
+import type {
+  SDJWTVCConfig,
+  StatusListFetcher,
+  StatusValidator,
+} from './sd-jwt-vc-config';
 import {
   type StatusListJWTPayload,
   getListFromStatusListJWT,
+  type StatusListJWTHeaderParameters,
 } from '@sd-jwt/jwt-status-list';
-import type { StatusListJWTHeaderParameters } from '@sd-jwt/jwt-status-list';
+import type { TypeMetadataFormat } from './sd-jwt-vc-type-metadata-format';
+import Ajv, { type SchemaObject } from 'ajv';
+import type { VerificationResult } from './verification-result';
+import addFormats from 'ajv-formats';
+import type { VcTFetcher } from './sd-jwt-vc-vct';
+
 export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
   /**
    * The type of the SD-JWT-VC set in the header.typ field.
@@ -95,7 +105,7 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
   }
 
   /**
-   * Verifies the SD-JWT-VC.
+   * Verifies the SD-JWT-VC. It will validate the signature, the keybindings when required, the status, and the VCT.
    */
   async verify(
     encodedSDJwt: string,
@@ -103,7 +113,7 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
     requireKeyBindings?: boolean,
   ) {
     // Call the parent class's verify method
-    const result = await super
+    const result: VerificationResult = await super
       .verify(encodedSDJwt, requiredClaimKeys, requireKeyBindings)
       .then((res) => {
         return {
@@ -113,12 +123,167 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
         };
       });
 
+    await this.verifyStatus(result);
+    if (this.userConfig.loadTypeMetadataFormat) {
+      await this.verifyVct(result);
+    }
+    return result;
+  }
+
+  /**
+   * Default function to fetch the VCT from the uri. We assume that the vct is a URL that is used to fetch the VCT.
+   * @param uri
+   * @returns
+   */
+  private async vctFetcher(
+    uri: string,
+    integrity?: string,
+  ): Promise<TypeMetadataFormat> {
+    // modify the uri based on https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-04.html#section-6.3.1
+    const elements = uri.split('/');
+    //insert a new element on the thrid position, but not replace it
+    elements.splice(3, 0, '.well-known/vct');
+    const url = elements.join('/');
+    return this.fetch<TypeMetadataFormat>(url, integrity);
+  }
+
+  /**
+   * Validates the integrity of the response if the integrity is passed. If the integrity does not match, an error is thrown.
+   * @param integrity
+   * @param response
+   */
+  private async validateIntegrity(
+    response: Response,
+    url: string,
+    integrity?: string,
+  ) {
+    if (integrity) {
+      // validate the integrity of the response according to https://www.w3.org/TR/SRI/
+      const arrayBuffer = await response.arrayBuffer();
+      const alg = integrity.split('-')[0];
+      //TODO: error handling when a hasher is passed that is not supporting the required algorithm acording to the spec
+      const hashBuffer = await (this.userConfig.hasher as Hasher)(
+        arrayBuffer,
+        alg,
+      );
+      const integrityHash = integrity.split('-')[1];
+      const hash = Array.from(new Uint8Array(hashBuffer))
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('');
+      if (hash !== integrityHash) {
+        throw new Error(
+          `Integrity check for ${url} failed: is ${hash}, but expected ${integrityHash}`,
+        );
+      }
+    }
+  }
+
+  /**
+   * Fetches the content from the url with a timeout of 10 seconds.
+   * @param url
+   * @returns
+   */
+  private async fetch<T>(url: string, integrity?: string) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      await this.validateIntegrity(response.clone(), url, integrity);
+      return response.json() as Promise<T>;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  /**
+   * Loads the schema either from the object or as fallback from the uri.
+   * @param typeMetadataFormat
+   * @returns
+   */
+  private async loadSchema(typeMetadataFormat: TypeMetadataFormat) {
+    //if schema is present, return it
+    if (typeMetadataFormat.schema) return typeMetadataFormat.schema;
+    if (typeMetadataFormat.schema_uri) {
+      const schema = await this.fetch<SchemaObject>(
+        typeMetadataFormat.schema_uri,
+        typeMetadataFormat['schema_uri#Integrity'],
+      );
+      return schema;
+    }
+    throw new Error('No schema or schema_uri found');
+  }
+
+  /**
+   * Verifies the VCT of the SD-JWT-VC. Returns the type metadata format. If the schema does not match, an error is thrown. If it matches, it will return the type metadata format.
+   * @param result
+   * @returns
+   */
+  private async verifyVct(
+    result: VerificationResult,
+  ): Promise<TypeMetadataFormat | undefined> {
+    const fetcher: VcTFetcher =
+      this.userConfig.vctFetcher ?? this.vctFetcher.bind(this);
+    const typeMetadataFormat = await fetcher(
+      result.payload.vct,
+      result.payload['vct#Integrity'],
+    );
+
+    if (typeMetadataFormat.extends) {
+      // implement based on https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-04.html#name-extending-type-metadata
+      //TODO: needs to be implemented. Unclear at this point which values will overwrite the values from the extended type metadata format
+    }
+
+    //init the json schema validator, load referenced schemas on demand
+    const schema = await this.loadSchema(typeMetadataFormat);
+    const loadedSchemas = new Set<string>();
+    // init the json schema validator
+    const ajv = new Ajv({
+      loadSchema: async (uri) => {
+        if (loadedSchemas.has(uri)) {
+          return {};
+        }
+        const response = await fetch(uri);
+        if (!response.ok) {
+          throw new Error(
+            `Error fetching schema: ${
+              response.status
+            } ${await response.text()}`,
+          );
+        }
+        loadedSchemas.add(uri);
+        return response.json();
+      },
+    });
+    addFormats(ajv);
+    const validate = await ajv.compileAsync(schema);
+    const valid = validate(result.payload);
+
+    if (!valid) {
+      throw new SDJWTException(
+        `Payload does not match the schema: ${JSON.stringify(validate.errors)}`,
+      );
+    }
+
+    return typeMetadataFormat;
+  }
+
+  /**
+   * Verifies the status of the SD-JWT-VC.
+   * @param result
+   */
+  private async verifyStatus(result: VerificationResult): Promise<void> {
     if (result.payload.status) {
       //checks if a status field is present in the payload based on https://www.ietf.org/archive/id/draft-ietf-oauth-status-list-02.html
       if (result.payload.status.status_list) {
         // fetch the status list from the uri
-        const fetcher =
-          this.userConfig.statusListFetcher ?? this.statusListFetcher;
+        const fetcher: StatusListFetcher =
+          this.userConfig.statusListFetcher ??
+          this.statusListFetcher.bind(this);
         // fetch the status list from the uri
         const statusListJWT = await fetcher(
           result.payload.status.status_list.uri,
@@ -146,12 +311,10 @@ export class SDJwtVcInstance extends SDJwtInstance<SdJwtVcPayload> {
         );
 
         // validate the status
-        const statusValidator =
-          this.userConfig.statusValidator ?? this.statusValidator;
+        const statusValidator: StatusValidator =
+          this.userConfig.statusValidator ?? this.statusValidator.bind(this);
         await statusValidator(status);
       }
     }
-
-    return result;
   }
 }

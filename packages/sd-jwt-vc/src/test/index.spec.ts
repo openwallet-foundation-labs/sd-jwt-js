@@ -17,10 +17,13 @@ import {
 import { SignJWT } from 'jose';
 
 const iss = 'ExampleIssuer';
-const vct = 'https://example.com/schema/1';
+const vct = 'ExampleCredentialType';
 const iat = new Date().getTime() / 1000;
 
 const { privateKey, publicKey } = Crypto.generateKeyPairSync('ed25519');
+
+//TODO: to simulate a hosted status list, use the same appraoch as in vct.spec.ts
+
 const createSignerVerifier = () => {
   const signer: Signer = async (data: string) => {
     const sig = Crypto.sign(null, Buffer.from(data), privateKey);

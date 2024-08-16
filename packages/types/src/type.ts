@@ -79,7 +79,10 @@ export type KbVerifier = (
   sig: string,
   payload: JwtPayload,
 ) => OrPromise<boolean>;
-export type Hasher = (data: string, alg: string) => OrPromise<Uint8Array>;
+export type Hasher = (
+  data: string | ArrayBuffer,
+  alg: string,
+) => OrPromise<Uint8Array>;
 export type SaltGenerator = (length: number) => OrPromise<string>;
 export type HasherAndAlg = {
   hasher: Hasher;
@@ -144,15 +147,15 @@ type Frame<Payload> = Payload extends Array<infer U>
     ? Record<number, Frame<U>> & SD<Payload> & DECOY
     : SD<Payload> & DECOY
   : Payload extends Record<string, unknown>
-    ? NonNever<
-        {
-          [K in keyof Payload]?: Payload[K] extends object
-            ? Frame<Payload[K]>
-            : never;
-        } & SD<Payload> &
-          DECOY
-      >
-    : SD<Payload> & DECOY;
+  ? NonNever<
+      {
+        [K in keyof Payload]?: Payload[K] extends object
+          ? Frame<Payload[K]>
+          : never;
+      } & SD<Payload> &
+        DECOY
+    >
+  : SD<Payload> & DECOY;
 
 /**
  * This is a disclosureFrame type that is used to represent the structure of what is being disclosed.
