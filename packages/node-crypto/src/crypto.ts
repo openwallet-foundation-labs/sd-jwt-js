@@ -9,10 +9,17 @@ export const generateSalt = (length: number): string => {
   return salt.substring(0, length);
 };
 
-export const digest = (data: string, algorithm = 'SHA-256'): Uint8Array => {
+export const digest = (
+  data: string | ArrayBuffer,
+  algorithm = 'SHA-256',
+): Uint8Array => {
   const nodeAlg = toNodeCryptoAlg(algorithm);
   const hash = createHash(nodeAlg);
-  hash.update(data);
+  if (typeof data === 'string') {
+    hash.update(data);
+  } else {
+    hash.update(Buffer.from(data));
+  }
   const hashBuffer = hash.digest();
   return new Uint8Array(hashBuffer);
 };

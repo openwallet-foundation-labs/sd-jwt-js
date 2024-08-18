@@ -79,7 +79,10 @@ export type KbVerifier = (
   sig: string,
   payload: JwtPayload,
 ) => OrPromise<boolean>;
-export type Hasher = (data: string, alg: string) => OrPromise<Uint8Array>;
+export type Hasher = (
+  data: string | ArrayBuffer,
+  alg: string,
+) => OrPromise<Uint8Array>;
 export type SaltGenerator = (length: number) => OrPromise<string>;
 export type HasherAndAlg = {
   hasher: Hasher;

@@ -30,7 +30,7 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
     {
       iss: 'Issuer',
       iat: new Date().getTime(),
-      vct: 'https://example.com',
+      vct: 'ExampleCredentials',
       ...claims,
     },
     disclosureFrame,

@@ -84,8 +84,28 @@ const verified = await sdjwt.verify(presentation);
 Check out more details in our [documentation](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/main/docs) or [examples](https://github.com/openwallet-foundation-labs/sd-jwt-js/tree/main/examples)
 
 ### Revocation
+
 To add revocation capabilities, you can use the `@sd-jwt/jwt-status-list` library to create a JWT Status List and include it in the SD-JWT-VC.
 
+### Type Metadata
+
+By setting the `loadTypeMetadataFormat` to `true` like this:
+
+```typescript
+const sdjwt = new SDJwtVcInstance({
+  signer,
+  signAlg: 'EdDSA',
+  verifier,
+  hasher: digest,
+  hashAlg: 'SHA-256',
+  saltGenerator: generateSalt,
+  loadTypeMetadataFormat: true,
+});
+```
+
+The library will load load the type metadata format based on the `vct` value according to the [SD-JWT-VC specification](https://www.ietf.org/archive/id/draft-ietf-oauth-sd-jwt-vc-04.html#name-type-metadata) and validate this schema.
+
+Since at this point the display is not yet implemented, the library will only validate the schema and return the type metadata format. In the future the values of the type metadata can be fetched via a function call.
 
 ### Dependencies
 

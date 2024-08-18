@@ -14,11 +14,14 @@ export const generateSalt = (length: number): string => {
 };
 
 export async function digest(
-  data: string,
+  data: string | ArrayBuffer,
   algorithm = 'SHA-256',
 ): Promise<Uint8Array> {
   const ec = new TextEncoder();
-  const digest = await window.crypto.subtle.digest(algorithm, ec.encode(data));
+  const digest = await window.crypto.subtle.digest(
+    algorithm,
+    typeof data === 'string' ? ec.encode(data) : data,
+  );
   return new Uint8Array(digest);
 }
 

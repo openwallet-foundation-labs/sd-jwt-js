@@ -10,9 +10,9 @@ import {
   type PresentationFrame,
   type SDJWTCompact,
   type SDJWTConfig,
+  type JwtPayload,
 } from '@sd-jwt/types';
 import { getSDAlgAndPayload } from '@sd-jwt/decode';
-import type { JwtPayload } from '@sd-jwt/types';
 
 export * from './sdjwt';
 export * from './kbjwt';
@@ -25,7 +25,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
   //header type
   protected type?: string;
 
-  public static DEFAULT_hashAlg = 'sha-256';
+  public static readonly DEFAULT_hashAlg = 'sha-256';
 
   protected userConfig: SDJWTConfig = {};
 

@@ -15,7 +15,7 @@
     "build": "rm -rf **/dist && tsup",
     "lint": "biome lint ./src",
     "test": "pnpm run test:node && pnpm run test:browser && pnpm run test:e2e && pnpm run test:cov",
-    "test:node": "vitest run ./src/test/*.spec.ts && vitest run ./src/test/*.spec.ts --environment jsdom",
+    "test:node": "vitest run ./src/test/*.spec.ts",
     "test:browser": "vitest run ./src/test/*.spec.ts --environment jsdom",
     "test:e2e": "vitest run ./test/*e2e.spec.ts --environment node",
     "test:cov": "vitest run --coverage"
@@ -37,12 +37,15 @@
   "dependencies": {
     "@sd-jwt/core": "workspace:*",
     "@sd-jwt/jwt-status-list": "workspace:*",
-    "@sd-jwt/utils": "workspace:*"
+    "@sd-jwt/utils": "workspace:*",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
   },
   "devDependencies": {
     "@sd-jwt/crypto-nodejs": "workspace:*",
     "@sd-jwt/types": "workspace:*",
-    "jose": "^5.2.2"
+    "jose": "^5.2.2",
+    "msw": "^2.3.5"
   },
   "publishConfig": {
     "access": "public"

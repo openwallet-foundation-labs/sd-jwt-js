@@ -1,5 +1,5 @@
 import Crypto from 'node:crypto';
-import { SDJwtVcInstance, SdJwtVcPayload } from '../src/index';
+import { SDJwtVcInstance } from '../src/index';
 import type {
   DisclosureFrame,
   PresentationFrame,
@@ -29,7 +29,7 @@ const createSignerVerifier = () => {
 };
 
 const iss = 'ExampleIssuer';
-const vct = 'https://example.com/schema/1';
+const vct = 'ExampleCredentials';
 const iat = new Date().getTime() / 1000;
 
 describe('App', () => {
