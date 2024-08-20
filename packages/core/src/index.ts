@@ -130,10 +130,10 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
       jwt,
       disclosures,
     });
-    if (options?.serialization === 'compact') {
-      return sdJwt.encodeSDJwt();
+    if (options?.serialization !== 'compact') {
+      return sdJwt.encodeSDJwtJson(options.serialization);
     }
-    return sdJwt.encodeSDJwtJson(options?.serialization);
+    return sdJwt.encodeSDJwt();
   }
 
   /**
