@@ -1,7 +1,7 @@
 import { SDJWTException, uint8ArrayToBase64Url } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
-import { SDJwt, pack } from './sdjwt';
+import { SDJwt, pack, type SDJWTType } from './sdjwt';
 import {
   type DisclosureFrame,
   type Hasher,
@@ -18,6 +18,10 @@ export * from './sdjwt';
 export * from './kbjwt';
 export * from './jwt';
 export * from './decoy';
+
+export type SerializationJson = 'json' | 'json-flattended';
+
+export type Serialization = 'compact' | SerializationJson;
 
 export type SdJwtPayload = Record<string, unknown>;
 
@@ -77,10 +81,11 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
   public async issue<Payload extends ExtendedPayload>(
     payload: Payload,
     disclosureFrame?: DisclosureFrame<Payload>,
-    options?: {
+    options: {
       header?: object; // This is for customizing the header of the jwt
-    },
-  ): Promise<SDJWTCompact> {
+      serialization?: Serialization; // This is for specifying the serialization of the jwt, default is compact
+    } = { serialization: 'compact' },
+  ): Promise<SDJWTType> {
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
@@ -125,8 +130,10 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
       jwt,
       disclosures,
     });
-
-    return sdJwt.encodeSDJwt();
+    if (options?.serialization === 'compact') {
+      return sdJwt.encodeSDJwt();
+    }
+    return sdJwt.encodeSDJwtJson(options?.serialization);
   }
 
   /**
@@ -146,7 +153,8 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     options?: {
       kb?: KBOptions;
     },
-  ): Promise<SDJWTCompact> {
+  ): Promise<SDJWTType> {
+    //TODO: update
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
@@ -276,18 +284,21 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     this.userConfig = { ...this.userConfig, ...newConfig };
   }
 
-  public encode(sdJwt: SDJwt): SDJWTCompact {
-    return sdJwt.encodeSDJwt();
+  public encode(sdJwt: SDJwt, type: SDJWTType = 'compact') {
+    if (type === 'json') {
+      return sdJwt.encodeSDJwt();
+    }
+    return sdJwt.encodeSDJwtJson();
   }
 
-  public decode(endcodedSDJwt: SDJWTCompact) {
+  public decode(endcodedSDJwt: SDJWTType) {
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
     return SDJwt.fromEncode(endcodedSDJwt, this.userConfig.hasher);
   }
 
-  public async keys(endcodedSDJwt: SDJWTCompact) {
+  public async keys(endcodedSDJwt: SDJWTType) {
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
@@ -295,7 +306,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     return sdjwt.keys(this.userConfig.hasher);
   }
 
-  public async presentableKeys(endcodedSDJwt: SDJWTCompact) {
+  public async presentableKeys(endcodedSDJwt: SDJWTType) {
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
@@ -303,7 +314,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     return sdjwt.presentableKeys(this.userConfig.hasher);
   }
 
-  public async getClaims(endcodedSDJwt: SDJWTCompact) {
+  public async getClaims(endcodedSDJwt: SDJWTType) {
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
