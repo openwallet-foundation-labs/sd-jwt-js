@@ -1,14 +1,19 @@
 import { SDJWTException, uint8ArrayToBase64Url } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
-import { SDJwt, pack, type SDJWTType } from './sdjwt';
+import {
+  SDJJWTJson,
+  SDJWTJsonFlattened,
+  SDJwt,
+  pack,
+  type SDJWTType,
+} from './sdjwt';
 import {
   type DisclosureFrame,
   type Hasher,
   type KBOptions,
   KB_JWT_TYP,
   type PresentationFrame,
-  type SDJWTCompact,
   type SDJWTConfig,
   type JwtPayload,
 } from '@sd-jwt/types';
@@ -148,7 +153,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
   }
 
   public async present<T extends Record<string, unknown>>(
-    encodedSDJwt: string,
+    encodedSDJwt: SDJWTType,
     presentationFrame?: PresentationFrame<T>,
     options?: {
       kb?: KBOptions;
@@ -186,7 +191,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
   // If requiredClaimKeys is provided, it will check if the required claim keys are presentation in the SD JWT
   // If requireKeyBindings is true, it will check if the key binding JWT is presentation and verify it
   public async verify(
-    encodedSDJwt: string,
+    encodedSDJwt: SDJWTType,
     requiredClaimKeys?: string[],
     requireKeyBindings?: boolean,
   ) {
@@ -248,6 +253,13 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     return { payload, header, kb };
   }
 
+  /**
+   * Calculate the SD hash
+   * @param presentSdJwtWithoutKb
+   * @param sdjwt
+   * @param hasher
+   * @returns
+   */
   private async calculateSDHash(
     presentSdJwtWithoutKb: SDJWTType,
     sdjwt: SDJwt,
@@ -257,17 +269,33 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
       throw new SDJWTException('Invalid SD JWT');
     }
     const { _sd_alg } = getSDAlgAndPayload(sdjwt.jwt.payload);
-    if (typeof presentSdJwtWithoutKb !== 'string') {
-      throw new SDJWTException('Not implemented yet');
+    if (
+      typeof presentSdJwtWithoutKb !== 'string' &&
+      (presentSdJwtWithoutKb as SDJJWTJson).signatures
+    ) {
+      const sdJwtJson = presentSdJwtWithoutKb as SDJJWTJson;
+      presentSdJwtWithoutKb = `${sdJwtJson.signatures[0].protected}.${sdJwtJson.payload}.${sdJwtJson.signatures[0].signature}~`;
+      sdJwtJson.signatures[0].header.disclosures.forEach((d) => {
+        (presentSdJwtWithoutKb as string) += `${d}~`;
+      });
+    } else if (
+      typeof presentSdJwtWithoutKb !== 'string' &&
+      (presentSdJwtWithoutKb as SDJWTJsonFlattened).signature
+    ) {
+      const sdJwtJsonFlattened = presentSdJwtWithoutKb as SDJWTJsonFlattened;
+      presentSdJwtWithoutKb = `${sdJwtJsonFlattened.protected}.${sdJwtJsonFlattened.payload}.${sdJwtJsonFlattened.signature}~`;
+      sdJwtJsonFlattened.header?.disclosures?.forEach((d) => {
+        (presentSdJwtWithoutKb as string) += `${d}~`;
+      });
     }
-    const sdHash = await hasher(presentSdJwtWithoutKb, _sd_alg);
+    const sdHash = await hasher(presentSdJwtWithoutKb as string, _sd_alg);
     const sdHashStr = uint8ArrayToBase64Url(sdHash);
     return sdHashStr;
   }
 
   // This function is for validating the SD JWT
   // Just checking signature and return its the claims
-  public async validate(encodedSDJwt: string) {
+  public async validate(encodedSDJwt: SDJWTType) {
     if (!this.userConfig.hasher) {
       throw new SDJWTException('Hasher not found');
     }
