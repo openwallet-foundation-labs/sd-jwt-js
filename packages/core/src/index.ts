@@ -2,8 +2,8 @@ import { SDJWTException, uint8ArrayToBase64Url } from '@sd-jwt/utils';
 import { Jwt } from './jwt';
 import { KBJwt } from './kbjwt';
 import {
-  SDJJWTJson,
-  SDJWTJsonFlattened,
+  type SDJJWTJson,
+  type SDJWTJsonFlattened,
   SDJwt,
   pack,
   type SDJWTType,
@@ -265,6 +265,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
     sdjwt: SDJwt,
     hasher: Hasher,
   ) {
+    let data: string;
     if (!sdjwt.jwt || !sdjwt.jwt.payload) {
       throw new SDJWTException('Invalid SD JWT');
     }
@@ -274,21 +275,23 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
       (presentSdJwtWithoutKb as SDJJWTJson).signatures
     ) {
       const sdJwtJson = presentSdJwtWithoutKb as SDJJWTJson;
-      presentSdJwtWithoutKb = `${sdJwtJson.signatures[0].protected}.${sdJwtJson.payload}.${sdJwtJson.signatures[0].signature}~`;
-      sdJwtJson.signatures[0].header.disclosures.forEach((d) => {
-        (presentSdJwtWithoutKb as string) += `${d}~`;
-      });
+      data = `${sdJwtJson.signatures[0].protected}.${sdJwtJson.payload}.${sdJwtJson.signatures[0].signature}~`;
+      for (const disclosure of sdJwtJson.signatures[0].header.disclosures) {
+        data += `${disclosure}~`;
+      }
     } else if (
       typeof presentSdJwtWithoutKb !== 'string' &&
       (presentSdJwtWithoutKb as SDJWTJsonFlattened).signature
     ) {
       const sdJwtJsonFlattened = presentSdJwtWithoutKb as SDJWTJsonFlattened;
-      presentSdJwtWithoutKb = `${sdJwtJsonFlattened.protected}.${sdJwtJsonFlattened.payload}.${sdJwtJsonFlattened.signature}~`;
-      sdJwtJsonFlattened.header?.disclosures?.forEach((d) => {
-        (presentSdJwtWithoutKb as string) += `${d}~`;
-      });
+      data = `${sdJwtJsonFlattened.protected}.${sdJwtJsonFlattened.payload}.${sdJwtJsonFlattened.signature}~`;
+      for (const disclosure of sdJwtJsonFlattened.header?.disclosures ?? []) {
+        data += `${disclosure}~`;
+      }
+    } else {
+      data = presentSdJwtWithoutKb as string;
     }
-    const sdHash = await hasher(presentSdJwtWithoutKb as string, _sd_alg);
+    const sdHash = await hasher(data, _sd_alg);
     const sdHashStr = uint8ArrayToBase64Url(sdHash);
     return sdHashStr;
   }
