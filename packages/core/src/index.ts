@@ -249,7 +249,7 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
   }
 
   private async calculateSDHash(
-    presentSdJwtWithoutKb: string,
+    presentSdJwtWithoutKb: SDJWTType,
     sdjwt: SDJwt,
     hasher: Hasher,
   ) {
@@ -257,6 +257,9 @@ export class SDJwtInstance<ExtendedPayload extends SdJwtPayload> {
       throw new SDJWTException('Invalid SD JWT');
     }
     const { _sd_alg } = getSDAlgAndPayload(sdjwt.jwt.payload);
+    if (typeof presentSdJwtWithoutKb !== 'string') {
+      throw new SDJWTException('Not implemented yet');
+    }
     const sdHash = await hasher(presentSdJwtWithoutKb, _sd_alg);
     const sdHashStr = uint8ArrayToBase64Url(sdHash);
     return sdHashStr;
