@@ -8,12 +8,12 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   // Create SDJwt instance for use
   const sdjwt = new SDJwtInstance({
     signer,
-    signAlg: 'EdDSA',
+    signAlg: 'ES256',
     verifier,
     hasher: digest,
     saltGenerator: generateSalt,
     kbSigner: signer,
-    kbSignAlg: 'EdDSA',
+    kbSignAlg: 'ES256',
     kbVerifier: verifier,
   });
   // Issuer Define the claims object with the user's information

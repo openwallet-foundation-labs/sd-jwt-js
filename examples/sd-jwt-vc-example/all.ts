@@ -9,7 +9,7 @@ import { createSignerVerifier, digest, generateSalt } from './utils';
   const sdjwt = new SDJwtVcInstance({
     signer,
     verifier,
-    signAlg: 'EdDSA',
+    signAlg: 'ES256',
     hasher: digest,
     hashAlg: 'SHA-256',
     saltGenerator: generateSalt,
